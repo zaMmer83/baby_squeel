@@ -79,7 +79,7 @@ describe BabySqueel::QueryMethods do
     end
 
     it 'orders on an aggregates' do
-      relation = Post.ordering { id.count }.group(:id)
+      relation = Post.ordering { id.count }.group('"posts"."id"')
 
       expect(relation).to produce_sql(<<-EOSQL)
         SELECT "posts".* FROM "posts"

@@ -2,7 +2,7 @@ module BabySqueel
   module Operators
     def self.arel_alias(operator, arel_name)
       define_method operator do |other|
-        self.send(arel_name, other)
+        send(arel_name, other)
       end
     end
 

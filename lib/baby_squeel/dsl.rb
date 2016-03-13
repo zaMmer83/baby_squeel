@@ -34,9 +34,9 @@ module BabySqueel
 
     def evaluate(&block)
       if block.arity.zero?
-        [instance_eval(&block)]
+        instance_eval(&block)
       else
-        [block.call(self)]
+        block.call(self)
       end
     end
 
@@ -51,7 +51,7 @@ module BabySqueel
       if args.empty? && !block_given?
         if @scope.column_names.include?(name.to_s)
           self[name]
-        elsif @scope.reflections.key?(name.to_s)
+        elsif @scope.reflect_on_association(name)
           association(name)
         else
           super
