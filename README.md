@@ -1,5 +1,9 @@
 # BabySqueel
 
+[![Build Status](https://travis-ci.org/rzane/baby_squeel.svg?branch=master)](https://travis-ci.org/rzane/baby_squeel)
+[![Code Climate](https://codeclimate.com/github/rzane/baby_squeel/badges/gpa.svg)](https://codeclimate.com/github/rzane/baby_squeel)
+[![Coverage Status](https://coveralls.io/repos/github/rzane/baby_squeel/badge.svg?branch=master)](https://coveralls.io/github/rzane/baby_squeel?branch=master)
+
 Ever used the squeel gem? It was a really nice way to build complex queries. However, squeel monkeypatches ActiveRecord internals, so it has a tendency to break every time a new ActiveRecord version comes out.
 
 For me, that's a deal breaker. BabySqueel provides a *zero monkeypatch* query DSL for ActiveRecord.
@@ -32,7 +36,7 @@ class Post < ActiveRecord::Base
 end
 ```
 
-##### Selects
+#### Selects
 
 ```ruby
 Post.selecting { (id + 5).as('id_plus_five') }
@@ -60,7 +64,7 @@ Post.where.has { title =~ 'My P%' }
 # SELECT "posts".* FROM "posts" WHERE "posts"."title" LIKE 'My P%'
 ```
 
-##### Orders
+#### Orders
 
 ```ruby
 Post.ordering { [id.desc, title.asc] }
@@ -75,7 +79,7 @@ Post.select(:author_id).group(:author_id).ordering { id.count }
 # ORDER BY COUNT("posts"."id")
 ```
 
-##### Functions
+#### Functions
 
 You can even use SQL functions!
 
