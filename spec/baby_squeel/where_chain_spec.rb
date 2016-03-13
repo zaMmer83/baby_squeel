@@ -2,27 +2,61 @@ require 'spec_helper'
 
 describe BabySqueel::WhereChain do
   describe '#has' do
-    it 'generates proper sql' do
+    it 'wheres on an attribute' do
       relation = Post.where.has {
-        title.eq('OJ Simpson')
+        title == 'OJ Simpson'
       }
 
-      expect(relation.to_sql).to eq(<<-EOSQL.squish)
+      expect(relation).to produce_sql(<<-EOSQL)
         SELECT "posts".* FROM "posts"
         WHERE "posts"."title" = 'OJ Simpson'
       EOSQL
     end
 
-    it 'handles complex conditions' do
-      relation = Post.where.has {
-        title.matches('Simp%').or(
-          title.eq('meatloaf')
+    it 'wheres on associations' do
+      relation = Post.joins(:author).where.has {
+        author.name == 'Yo Gotti'
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        WHERE "authors"."name" = 'Yo Gotti'
+      EOSQL
+    end
+
+    it 'wheres using functions' do
+      relation = Post.joins(:author).where.has {
+        coalesce(title, author.name) == 'meatloaf'
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        WHERE coalesce("posts"."title", "authors"."name") = 'meatloaf'
+      EOSQL
+    end
+
+    it 'wheres using operations' do
+      relation = Post.where.has { (id + 1) == 2 }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        WHERE "posts"."id" + 1 = 2
+      EOSQL
+    end
+
+    it 'wheres using complex conditions' do
+      relation = Post.joins(:author).where.has {
+        (title =~ ('Simp%')).or(
+          author.name == 'meatloaf'
         )
       }
 
-      expect(relation.to_sql).to eq(<<-EOSQL.squish)
+      expect(relation).to produce_sql(<<-EOSQL)
         SELECT "posts".* FROM "posts"
-        WHERE ("posts"."title" LIKE 'Simp%' OR "posts"."title" = 'meatloaf')
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        WHERE ("posts"."title" LIKE 'Simp%' OR "authors"."name" = 'meatloaf')
       EOSQL
     end
   end

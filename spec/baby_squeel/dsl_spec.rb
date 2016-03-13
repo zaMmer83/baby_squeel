@@ -2,7 +2,9 @@ require 'spec_helper'
 require 'baby_squeel/dsl'
 
 describe BabySqueel::DSL do
-  subject(:dsl) { BabySqueel::DSL.new(Post) }
+  subject(:dsl) {
+    BabySqueel::DSL.new(Post)
+  }
 
   describe '#respond_to?' do
     it 'resolves attributes' do
@@ -16,15 +18,15 @@ describe BabySqueel::DSL do
 
   describe '#method_missing' do
     it 'resolves attributes' do
-      expect(dsl.id).to be_an(Arel::Attribute)
+      expect(dsl.id).to be_an(BabySqueel::Nodes::Attribute)
     end
 
     it 'resolves associations' do
-      expect(dsl.author).to eq(Author.arel_table)
+      expect(dsl.author).to be_a(BabySqueel::DSL)
     end
 
-    it 'does not resolve when arguments are given' do
-      expect { dsl.id(:arg) }.to raise_error(NameError)
+    it 'resolves functions' do
+      expect(dsl.coalesce(0, 1)).to be_a(BabySqueel::Nodes::Function)
     end
 
     it 'does not resolve when a block is given' do
@@ -47,7 +49,7 @@ describe BabySqueel::DSL do
       it 'does not change self' do
         this = self
         that = nil
-        dsl.evaluate { |t| that = self }
+        dsl.evaluate { |_t| that = self }
         expect(that).to equal(this)
       end
     end
@@ -63,20 +65,40 @@ describe BabySqueel::DSL do
       it 'resolves attributes without a receiver' do
         resolution = nil
         dsl.evaluate { resolution = title }
-        expect(resolution).to eq(Post.arel_table[:title])
+        expect(resolution).to be_an(BabySqueel::Nodes::Attribute)
       end
     end
   end
 
   describe '#[]' do
     it 'returns an arel attribute' do
-      expect(dsl[:title]).to be_an(Arel::Attribute)
+      expect(dsl[:title]).to be_an(BabySqueel::Nodes::Attribute)
     end
   end
 
   describe '#func' do
     it 'constructs a named function' do
-      expect(dsl.func(:coalesce, 0, 1).to_sql).to eq('coalesce(0, 1)')
+      expect(dsl.func(:coalesce, 0, 1)).to produce_sql('coalesce(0, 1)')
+    end
+  end
+
+  describe '#association' do
+    it 'builds a dsl from the associated class' do
+      expect(dsl.association(:author)).to be_a(BabySqueel::DSL)
+    end
+
+    it 'allows chaining attributes' do
+      assoc = dsl.association :author
+      expect(assoc.id).to be_a(BabySqueel::Nodes::Attribute)
+    end
+
+    it 'raises an error for non-existant associations' do
+      expect {
+        dsl.association :non_existent
+      }.to raise_error(
+        BabySqueel::DSL::AssociationNotFoundError,
+        /named 'non_existent'(.+)on Post/
+      )
     end
   end
 end
