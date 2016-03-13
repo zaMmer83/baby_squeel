@@ -2,17 +2,11 @@
 
 require 'bundler/setup'
 require 'baby_squeel'
-
-ActiveRecord::Base.establish_connection(
-  adapter: 'sqlite3',
-  database: ':memory:'
-)
-
 require_relative '../spec/support/schema'
 require_relative '../spec/support/models'
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
 
-require 'pry'
-Pry.start
+require 'irb'
+IRB.start
