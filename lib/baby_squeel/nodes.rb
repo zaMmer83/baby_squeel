@@ -9,6 +9,7 @@ module BabySqueel
     end
 
     class Function < Arel::Nodes::NamedFunction
+      include Arel::Math
       include Arel::OrderPredications
       include BabySqueel::Operators
     end

@@ -6,12 +6,6 @@ module BabySqueel
       end
     end
 
-    def self.arel_operation(operator)
-      define_method operator do |other|
-        op(operator, other)
-      end
-    end
-
     arel_alias :==, :eq
     arel_alias :'!=', :not_eq
     arel_alias :<, :lt
@@ -20,11 +14,6 @@ module BabySqueel
     arel_alias :>=, :gteq
     arel_alias :=~, :matches
     arel_alias :'!~', :does_not_match
-
-    arel_operation :+
-    arel_operation :-
-    arel_operation :*
-    arel_operation :/
 
     def op(operator, other)
       Nodes::Operation.new(operator, self, other)

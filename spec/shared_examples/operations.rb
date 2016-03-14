@@ -37,13 +37,13 @@ RSpec.shared_examples_for 'a node with operations' do
 
   describe '#+' do
     it 'translates to sql' do
-      expect(attribute + 1).to produce_sql("#{attribute_sql} + 1")
+      expect(attribute + 1).to produce_sql("(#{attribute_sql} + 1)")
     end
   end
 
   describe '#-' do
     it 'translates to sql' do
-      expect(attribute - 1).to produce_sql("#{attribute_sql} - 1")
+      expect(attribute - 1).to produce_sql("(#{attribute_sql} - 1)")
     end
   end
 
