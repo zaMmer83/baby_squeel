@@ -3,19 +3,18 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'simplecov'
 require 'coveralls'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
-]
+])
 
 SimpleCov.start { add_filter 'spec/' }
 
 require 'baby_squeel'
 
-require_relative 'support/schema'
-require_relative 'support/models'
-require_relative 'support/matchers'
-require_relative 'support/shared_examples'
+require 'support/schema'
+require 'support/models'
+require 'support/matchers'
 
 RSpec.configure do |config|
   config.filter_run focus: true

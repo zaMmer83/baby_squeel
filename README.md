@@ -73,15 +73,13 @@ Post.ordering { [id.desc, title.asc] }
 Post.ordering { (id * 5).desc }
 # SELECT "posts".* FROM "posts" ORDER BY "posts"."id" * 5 DESC
 
-Post.select(:author_id).group(:author_id).ordering { id.count }
+Post.select(:author_id).group(:author_id).ordering { id.count.desc }
 # SELECT "posts"."author_id"
 # FROM "posts" GROUP BY "posts"."author_id"
-# ORDER BY COUNT("posts"."id")
+# ORDER BY COUNT("posts"."id") DESC
 ```
 
 #### Functions
-
-You can even use SQL functions!
 
 ```ruby
 Post.selecting { coalesce(author_id, 5).as('author_id_with_default') }

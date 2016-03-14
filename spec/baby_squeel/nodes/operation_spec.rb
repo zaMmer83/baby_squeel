@@ -1,5 +1,7 @@
 require 'spec_helper'
 require 'baby_squeel/nodes'
+require 'shared_examples/operations'
+require 'shared_examples/like_operations'
 
 describe BabySqueel::Nodes::Operation do
   it_behaves_like 'a node with operations' do

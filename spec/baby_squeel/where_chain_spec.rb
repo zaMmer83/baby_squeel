@@ -48,9 +48,7 @@ describe BabySqueel::WhereChain do
 
     it 'wheres using complex conditions', :pre_ar42 do
       relation = Post.joins(:author).where.has {
-        (title =~ ('Simp%')).or(
-          author.name == 'meatloaf'
-        )
+        (title =~ 'Simp%').or(author.name == 'meatloaf')
       }
 
       expect(relation).to produce_sql(<<-EOSQL)
@@ -62,9 +60,7 @@ describe BabySqueel::WhereChain do
 
     it 'wheres using complex conditions', :post_ar42 do
       relation = Post.joins(:author).where.has {
-        (title =~ ('Simp%')).or(
-          author.name == 'meatloaf'
-        )
+        (title =~ 'Simp%').or(author.name == 'meatloaf')
       }
 
       expect(relation).to produce_sql(<<-EOSQL)
