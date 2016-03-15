@@ -69,5 +69,18 @@ describe BabySqueel::ActiveRecord::WhereChain do
         WHERE ("posts"."title" LIKE 'Simp%' OR "authors"."name" = 'meatloaf')
       EOSQL
     end
+
+    it 'can query through associations' do
+      relation = Post.joins(author: :comments).where.has {
+        author.comments.id > 0
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+        WHERE ("comments"."id" > 0)
+      EOSQL
+    end
   end
 end
