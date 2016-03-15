@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::WhereChain do
+describe BabySqueel::ActiveRecord::WhereChain do
   describe '#has' do
     it 'wheres on an attribute' do
       relation = Post.where.has {
