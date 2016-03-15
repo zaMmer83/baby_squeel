@@ -8,5 +8,18 @@ require_relative '../spec/support/models'
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
 
+puts 'Creating 2 authors...'
+authors = [
+  Author.create!(name: 'Ray Zane'),
+  Author.create!(name: 'Jimmy Hoffa')
+]
+
+puts 'Creating 15 posts...'
+15.times do
+  Post.create! title: "Post #{n}", author: authors.sample
+end
+
+ActiveRecord::Base.logger = Logger.new(STDOUT)
+
 require 'pry'
 Pry.start

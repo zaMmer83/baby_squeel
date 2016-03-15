@@ -45,8 +45,7 @@ module BabySqueel
 
       def method_missing(meth, *args, &block)
         if _arel.respond_to?(meth)
-          arel_result = _arel.send(meth, *args, &block)
-          Nodes.wrap(arel_result)
+          Nodes.wrap _arel.send(meth, *args, &block)
         else
           super
         end
