@@ -64,5 +64,28 @@ module BabySqueel
       include Operators::Grouping
       include Operators::Matching
     end
+
+    class Join
+      def initialize(left, type = Arel::Nodes::InnerJoin)
+        @table = Nodes.unwrap(left) # an Arel::Table
+        @type  = type
+      end
+
+      def on(node)
+        @type.new(@table, Arel::Nodes::On.new(node))
+      end
+
+      def as(alias_name)
+        Join.new(@table.alias(alias_name), @type)
+      end
+
+      def inner
+        Join.new(@table, Arel::Nodes::InnerJoin)
+      end
+
+      def outer
+        Join.new(@table, Arel::Nodes::OuterJoin)
+      end
+    end
   end
 end
