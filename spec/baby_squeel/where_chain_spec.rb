@@ -38,12 +38,11 @@ describe BabySqueel::WhereChain do
     end
 
     it 'wheres using operations' do
-      pending 'need to find a seamless way to patch all possible arel types'
       relation = Post.where.has { (id + 1) == 2 }
 
       expect(relation).to produce_sql(<<-EOSQL)
         SELECT "posts".* FROM "posts"
-        WHERE "posts"."id" + 1 = 2
+        WHERE ("posts"."id" + 1) = 2
       EOSQL
     end
 

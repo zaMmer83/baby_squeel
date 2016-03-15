@@ -1,12 +1,16 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
-require 'simplecov'
-require 'coveralls'
+require 'bundler/setup'
+Bundler.require :test
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
-  SimpleCov::Formatter::HTMLFormatter,
-  Coveralls::SimpleCov::Formatter
-])
+SimpleCov.formatter =
+  if ENV['CI']
+    SimpleCov.formatter = Coveralls::SimpleCov::Formatter
+  elsif ENV['COVERAGE']
+    SimpleCov::Formatter::HTMLFormatter
+  else
+    SimpleCov::Formatter::Console
+  end
 
 SimpleCov.start { add_filter 'spec/' }
 

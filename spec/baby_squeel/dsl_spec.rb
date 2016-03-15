@@ -8,17 +8,17 @@ describe BabySqueel::DSL do
 
   describe '#respond_to?' do
     it 'resolves attributes' do
-      expect(dsl.respond_to?(:id)).to eq(true)
+      expect(dsl).to respond_to(:title)
     end
 
     it 'resolves associations' do
-      expect(dsl.respond_to?(:author)).to eq(true)
+      expect(dsl).to respond_to(:author)
     end
   end
 
   describe '#method_missing' do
     it 'resolves attributes' do
-      expect(dsl.id).to be_an(BabySqueel::Nodes::Attribute)
+      expect(dsl.id).to be_an(Arel::Attributes::Attribute)
     end
 
     it 'resolves associations' do
@@ -26,7 +26,7 @@ describe BabySqueel::DSL do
     end
 
     it 'resolves functions' do
-      expect(dsl.coalesce(0, 1)).to be_a(BabySqueel::Nodes::Function)
+      expect(dsl.coalesce(0, 1)).to be_a(Arel::Nodes::NamedFunction)
     end
 
     it 'does not resolve when a block is given' do
@@ -65,14 +65,14 @@ describe BabySqueel::DSL do
       it 'resolves attributes without a receiver' do
         resolution = nil
         dsl.evaluate { resolution = title }
-        expect(resolution).to be_an(BabySqueel::Nodes::Attribute)
+        expect(resolution).to be_an(Arel::Attributes::Attribute)
       end
     end
   end
 
   describe '#[]' do
     it 'returns an arel attribute' do
-      expect(dsl[:title]).to be_an(BabySqueel::Nodes::Attribute)
+      expect(dsl[:title]).to be_an(Arel::Attributes::Attribute)
     end
   end
 
@@ -89,7 +89,7 @@ describe BabySqueel::DSL do
 
     it 'allows chaining attributes' do
       assoc = dsl.association :author
-      expect(assoc.id).to be_a(BabySqueel::Nodes::Attribute)
+      expect(assoc.id).to be_a(Arel::Attributes::Attribute)
     end
 
     it 'raises an error for non-existant associations' do

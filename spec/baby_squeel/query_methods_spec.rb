@@ -104,8 +104,6 @@ describe BabySqueel::QueryMethods do
     end
 
     it 'orders using operations' do
-      pending 'need to find a better way to patch arel'
-
       relation = Post.joins(:author).ordering {
         (author.id - id).desc
       }
@@ -114,7 +112,7 @@ describe BabySqueel::QueryMethods do
         SELECT "posts".*
         FROM "posts"
         INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-        ORDER BY "authors"."id" - "posts"."id" DESC
+        ORDER BY ("authors"."id" - "posts"."id") DESC
       EOSQL
     end
   end

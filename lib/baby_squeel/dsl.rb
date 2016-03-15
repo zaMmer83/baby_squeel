@@ -17,7 +17,11 @@ module BabySqueel
     end
 
     def [](key)
-      Nodes::Attribute.new(@scope.arel_table, key)
+      Nodes.wrap @scope.arel_table[key]
+    end
+
+    def func(name, *args)
+      Nodes.wrap Arel::Nodes::NamedFunction.new(name.to_s, args)
     end
 
     def association(name)
@@ -28,23 +32,21 @@ module BabySqueel
       end
     end
 
-    def func(name, *args)
-      Nodes::Function.new(name.to_s, args)
-    end
-
     def evaluate(&block)
       if block.arity.zero?
-        instance_eval(&block)
+        Nodes.unwrap instance_eval(&block)
       else
-        block.call(self)
+        Nodes.unwrap block.call(self)
       end
     end
 
     private
 
+    # Unfortunately, there's no way to respond_to? a SQL function
     def respond_to_missing?(name, *)
       @scope.column_names.include?(name.to_s) ||
-        !@scope.reflect_on_association(name).nil?
+        !@scope.reflect_on_association(name).nil? ||
+        super
     end
 
     def method_missing(name, *args, &block)
