@@ -3,6 +3,10 @@ require 'baby_squeel/dsl'
 module BabySqueel
   module ActiveRecord
     module QueryMethods
+      def joining(&block)
+        joins DSL.evaluate(self, &block)
+      end
+
       def selecting(&block)
         select DSL.evaluate(self, &block)
       end

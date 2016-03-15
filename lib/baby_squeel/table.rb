@@ -8,10 +8,12 @@ module BabySqueel
   class Table
     def initialize(scope)
       @scope = scope
+      @arel = scope.arel_table
+      @join_type = Arel::Nodes::InnerJoin
     end
 
     def [](key)
-      Nodes.wrap @scope.arel_table[key]
+      Nodes.wrap @arel[key]
     end
 
     def association(name)
@@ -22,7 +24,42 @@ module BabySqueel
       end
     end
 
+    def alias(alias_name)
+      spawn.alias! alias_name
+    end
+
+    def alias!(alias_name)
+      @arel = @arel.alias(alias_name)
+      self
+    end
+
+    def outer
+      spawn.outer!
+    end
+
+    def outer!
+      @join_type = Arel::Nodes::OuterJoin
+      self
+    end
+
+    def inner
+      spawn.inner!
+    end
+
+    def inner!
+      @join_type = Arel::Nodes::InnerJoin
+      self
+    end
+
+    def on(node)
+      @join_type.new(@arel, Arel::Nodes::On.new(node))
+    end
+
     private
+
+    def spawn
+      Table.new(@scope)
+    end
 
     def resolve(name)
       if @scope.column_names.include?(name.to_s)
@@ -32,7 +69,6 @@ module BabySqueel
       end
     end
 
-    # Unfortunately, there's no way to respond_to? a SQL function
     def respond_to_missing?(name, *)
       resolve(name).present? || super
     end

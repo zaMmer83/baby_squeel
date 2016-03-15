@@ -37,6 +37,10 @@ module BabySqueel
         @_arel = Nodes.unwrap(arel)
       end
 
+      def block_given?
+        ::Kernel.block_given?
+      end
+
       def respond_to?(meth, include_private = false)
         meth.to_s == '_arel' || _arel.respond_to?(meth, include_private)
       end
@@ -45,7 +49,7 @@ module BabySqueel
 
       def method_missing(meth, *args, &block)
         if _arel.respond_to?(meth)
-          Nodes.wrap _arel.send(meth, *args, &block)
+          Nodes.wrap _arel.send(meth, *Nodes.unwrap(args), &block)
         else
           super
         end
@@ -63,29 +67,6 @@ module BabySqueel
       include Operators::Generic
       include Operators::Grouping
       include Operators::Matching
-    end
-
-    class Join
-      def initialize(left, type = Arel::Nodes::InnerJoin)
-        @table = Nodes.unwrap(left) # an Arel::Table
-        @type  = type
-      end
-
-      def on(node)
-        @type.new(@table, Arel::Nodes::On.new(node))
-      end
-
-      def as(alias_name)
-        Join.new(@table.alias(alias_name), @type)
-      end
-
-      def inner
-        Join.new(@table, Arel::Nodes::InnerJoin)
-      end
-
-      def outer
-        Join.new(@table, Arel::Nodes::OuterJoin)
-      end
     end
   end
 end
