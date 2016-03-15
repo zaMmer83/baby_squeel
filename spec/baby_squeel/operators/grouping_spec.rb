@@ -14,13 +14,13 @@ describe BabySqueel::Operators::Grouping do
 
   describe '#&' do
     let(:sql) { '"posts"."id" IS NOT NULL AND "posts"."id" != 1' }
-    subject   { attribute.not_eq(nil) & attribute.not_eq(1)  }
+    subject   { attribute.not_eq(nil) & attribute.not_eq(1) }
     specify   { is_expected.to produce_sql sql }
   end
 
   describe '#|' do
     let(:sql) { '("posts"."id" IS NULL OR "posts"."id" = 1)' }
-    subject   { attribute.eq(nil) | attribute.eq(1)  }
+    subject   { attribute.eq(nil) | attribute.eq(1) }
     specify   { is_expected.to produce_sql sql }
   end
 end

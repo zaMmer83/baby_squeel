@@ -1,0 +1,8 @@
+Lint/AssignmentInCondition:
+  Enabled: false
+
+Style/BlockDelimiters:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false

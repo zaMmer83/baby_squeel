@@ -36,32 +36,32 @@ module BabySqueel
       if block.arity.zero?
         Nodes.unwrap instance_eval(&block)
       else
-        Nodes.unwrap block.call(self)
+        Nodes.unwrap yield(self)
       end
     end
 
     private
 
+    def resolve(name)
+      if @scope.column_names.include?(name.to_s)
+        self[name]
+      elsif @scope.reflect_on_association(name)
+        association(name)
+      end
+    end
+
     # Unfortunately, there's no way to respond_to? a SQL function
     def respond_to_missing?(name, *)
-      @scope.column_names.include?(name.to_s) ||
-        !@scope.reflect_on_association(name).nil? ||
-        super
+      resolve(name).present? || super
     end
 
     def method_missing(name, *args, &block)
-      if args.empty? && !block_given?
-        if @scope.column_names.include?(name.to_s)
-          self[name]
-        elsif @scope.reflect_on_association(name)
-          association(name)
-        else
-          super
-        end
-      elsif !block_given?
-        func(name, *args)
-      else
+      if block_given?
         super
+      elsif args.empty?
+        resolve(name) || super
+      else
+        func(name, *args)
       end
     end
   end

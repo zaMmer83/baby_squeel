@@ -14,7 +14,7 @@ module BabySqueel
       def unwrap(node)
         if node.respond_to? :_arel
           node._arel
-        elsif node.kind_of? Array
+        elsif node.is_a? Array
           node.map { |n| unwrap(n) }
         else
           node
