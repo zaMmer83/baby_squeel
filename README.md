@@ -4,9 +4,11 @@
 [![Code Climate](https://codeclimate.com/github/rzane/baby_squeel/badges/gpa.svg)](https://codeclimate.com/github/rzane/baby_squeel)
 [![Coverage Status](https://coveralls.io/repos/github/rzane/baby_squeel/badge.svg?branch=master)](https://coveralls.io/github/rzane/baby_squeel?branch=master)
 
-Ever used the squeel gem? It was a really nice way to build complex queries. However, squeel monkeypatches ActiveRecord internals, so it has a tendency to break every time a new ActiveRecord version comes out.
+![biddy piggy](http://static.thefrisky.com/uploads/2010/07/01/pig_in_boots_070110_m.jpg)
 
-For me, that's a deal breaker. BabySqueel provides a *zero monkeypatch* query DSL for ActiveRecord.
+Have you ever used the [squeel](https://github.com/activerecord-hackery/squeel) gem? It's a really nice way to build complex queries. However, squeel monkeypatches ActiveRecord internals, so it has a tendency to break every time a new ActiveRecord version comes out.
+
+For me, that's a deal breaker. BabySqueel provides a query DSL for ActiveRecord without all of the evil :heart:.
 
 It's also suprisingly uncomplicated. It's really just a layer of sugar on top of Arel.
 
@@ -57,11 +59,15 @@ Post.joins(:author).selecting { [id, author.id] }
 Post.where.has { title == 'My Post' }
 # SELECT "posts".* FROM "posts" WHERE "posts"."title" = 'My Post'
 
-Post.where.has { (id > 0).and(id < 500) }
-# SELECT "posts".* FROM "posts" WHERE "posts"."id" > 0
-
 Post.where.has { title =~ 'My P%' }
 # SELECT "posts".* FROM "posts" WHERE "posts"."title" LIKE 'My P%'
+
+Author.where.has { (name =~ 'Ray%') & (id < 5) | (name.lower =~ 'zane%') & (id > 100) }
+# SELECT "authors".* FROM "authors"
+# WHERE (
+#   "authors"."name" LIKE 'Ray%' AND "authors"."id" < 5 OR
+#   LOWER("authors"."name") LIKE 'zane%' AND "authors"."id" > 100
+# )
 ```
 
 #### Orders
@@ -99,9 +105,15 @@ Post.where.has { |table| table.title == 'Test' }
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+1. Pick an ActiveRecord version to develop against, then export it: `export AR=4.2.6`.
+2. Run `bin/setup` to install dependencies.
+3. Run `rake` to run the specs.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+You can also run `bin/console` to open up a prompt where you'll have access to some models to experiment with.
+
+## Todo
+
+I'd like to support complex joins with explicit outer joins and aliasing.
 
 ## Contributing
 
