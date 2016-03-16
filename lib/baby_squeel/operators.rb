@@ -38,6 +38,10 @@ module BabySqueel
       extend ArelAliasing
       arel_alias :=~, :matches
       arel_alias :'!~', :does_not_match
+      arel_alias :like, :matches
+      arel_alias :not_like, :does_not_match
+      arel_alias :like_any, :matches_any
+      arel_alias :not_like_any, :does_not_match_any
     end
   end
 end

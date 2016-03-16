@@ -12,4 +12,4 @@ Style/NilComparison:
     - spec/**/*
 
 Metrics/LineLength:
-  Max: 85
+  Max: 100
