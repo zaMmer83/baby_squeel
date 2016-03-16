@@ -54,6 +54,17 @@ describe BabySqueel::ActiveRecord::QueryMethods do
         EOSQL
       end
 
+      it 'self joins with alias' do
+        relation = Post.joining {
+          on(id == 1).alias('meatloaf')
+        }
+
+        expect(relation).to produce_sql(<<-EOSQL)
+          SELECT "posts".* FROM "posts"
+          INNER JOIN "posts" "meatloaf" ON "posts"."id" = 1
+        EOSQL
+      end
+
       it 'aliases' do
         relation = Post.joining {
           author.alias('a').on(author.id == author_id)
