@@ -53,6 +53,41 @@ Post.joins(:author).selecting { [id, author.id] }
 # INNER JOIN "authors" ON "posts"."author_id" = "authors"."id"
 ```
 
+#### Joins
+
+```ruby
+Post.joining { author }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+
+Post.joining { [author.outer, comments] }
+# SELECT "posts".* FROM "posts"
+# LEFT OUTER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# INNER JOIN "comments" ON "comments"."post_id" = "posts"."id"
+
+Post.joining { author.comments }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+
+Post.joining { author.outer.comments.outer }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+
+Post.joining { author.comments.outer }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+
+Post.joining { author.alias('a').on((author.id == author_id) | (author.name == title)) }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" "a" ON (
+#   "authors"."id" = "posts"."author_id" OR
+#   "authors"."name" = "posts"."title"
+# )
+```
+
 #### Wheres
 
 ```ruby
@@ -68,6 +103,11 @@ Author.where.has { (name =~ 'Ray%') & (id < 5) | (name.lower =~ 'zane%') & (id >
 #   "authors"."name" LIKE 'Ray%' AND "authors"."id" < 5 OR
 #   LOWER("authors"."name") LIKE 'zane%' AND "authors"."id" > 100
 # )
+
+Post.joins(:author).where.has { author.name == 'Ray' }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# WHERE "authors"."name" = 'Ray'
 ```
 
 #### Orders
@@ -83,6 +123,11 @@ Post.select(:author_id).group(:author_id).ordering { id.count.desc }
 # SELECT "posts"."author_id"
 # FROM "posts" GROUP BY "posts"."author_id"
 # ORDER BY COUNT("posts"."id") DESC
+
+Post.joins(:author).ordering { author.id.desc }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# ORDER BY "authors"."id" DESC
 ```
 
 #### Functions
