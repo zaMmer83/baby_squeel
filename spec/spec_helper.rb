@@ -20,16 +20,8 @@ require 'support/matchers'
 
 RSpec.configure do |config|
   config.filter_run focus: true
-
+  config.run_all_when_everything_filtered = true
   config.before :suite do
     puts "\nRunning with ActiveRecord #{ActiveRecord::VERSION::STRING}"
   end
-
-  if ActiveRecord::VERSION::STRING <= '4.2.0'
-    config.filter_run_excluding :post_ar42
-  else
-    config.filter_run_excluding :pre_ar42
-  end
-
-  config.run_all_when_everything_filtered = true
 end
