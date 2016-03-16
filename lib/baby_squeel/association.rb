@@ -1,13 +1,15 @@
 require 'baby_squeel/table'
+require 'baby_squeel/join_dependency'
 
 module BabySqueel
   class AliasingError < StandardError
+    MESSAGE =
+      "Attempted to alias '%{association}' as '%{alias_name}', but the " \
+      "association was implicitly joined. Either join the association " \
+      "with `on` or remove the alias."
+
     def initialize(association, alias_name)
-      super(<<-EOMSG.strip_heredoc.tr("\n", ' '))
-        Attempted to alias '#{association}' as '#{alias_name}', but the
-        association was implicitly joined. Either join the association with `on`
-        or remove the alias.
-      EOMSG
+      super format(MESSAGE, association: association, alias_name: alias_name)
     end
   end
 
@@ -19,13 +21,7 @@ module BabySqueel
     end
 
     def _arel
-      return super if props[:on] # they're doing an explicit join
-
-      [*@parent._arel] + join_constraints.flat_map do |constraint|
-        constraint.joins.map do |join|
-          props[:join].new(join.left, join.right)
-        end
-      end
+      props[:on] ? super : ([*@parent._arel] + join_constraints)
     end
 
     private
@@ -35,11 +31,7 @@ module BabySqueel
         raise AliasingError.new(@reflection.name, props[:table].right)
       end
 
-      ::ActiveRecord::Associations::JoinDependency.new(
-        @reflection.active_record,
-        [@reflection.name],
-        []
-      ).join_constraints([])
+      JoinDependency.new(@scope, @reflection, props[:join]).constraints
     end
 
     def spawn
