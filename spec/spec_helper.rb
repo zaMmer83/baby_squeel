@@ -6,10 +6,8 @@ Bundler.require :test
 SimpleCov.formatter =
   if ENV['CI']
     SimpleCov.formatter = Coveralls::SimpleCov::Formatter
-  elsif ENV['COVERAGE']
-    SimpleCov::Formatter::HTMLFormatter
   else
-    SimpleCov::Formatter::Console
+    SimpleCov::Formatter::HTMLFormatter
   end
 
 SimpleCov.start { add_filter 'spec/' }

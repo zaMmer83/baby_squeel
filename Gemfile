@@ -13,7 +13,6 @@ group :test do
   gem 'pry'
   gem 'coveralls'
   gem 'simplecov'
-  gem 'simplecov-console'
 end
 
 gem 'rubocop', require: false
