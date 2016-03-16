@@ -1,14 +1,11 @@
 require 'baby_squeel/nodes'
 require 'baby_squeel/table'
+require 'baby_squeel/association'
 
 module BabySqueel
-  class DSL
+  class DSL < Table
     def self.evaluate(scope, &block)
       new(scope).evaluate(&block)
-    end
-
-    def initialize(scope)
-      @table = Table.new(scope)
     end
 
     def func(name, *args)
@@ -25,14 +22,8 @@ module BabySqueel
 
     private
 
-    def respond_to_missing?(meth, include_all = false)
-      @table.respond_to?(meth, include_all)
-    end
-
     def method_missing(meth, *args, &block)
-      if @table.respond_to?(meth)
-        @table.send(meth, *args, &block)
-      elsif !args.empty? && !block_given?
+      if !args.empty? && !block_given?
         func(meth, args)
       else
         super

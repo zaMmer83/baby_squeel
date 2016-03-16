@@ -18,7 +18,7 @@ module BabySqueel
 
     def association(name)
       if reflection = @scope.reflect_on_association(name)
-        Table.new(reflection.klass)
+        Association.new(self, reflection)
       else
         raise AssociationNotFoundError.new(@scope, name)
       end
