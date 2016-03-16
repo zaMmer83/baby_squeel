@@ -7,5 +7,9 @@ Style/BlockDelimiters:
 Style/Documentation:
   Enabled: false
 
+Style/NilComparison:
+  Exclude:
+    - spec/**/*
+
 Metrics/LineLength:
   Max: 85

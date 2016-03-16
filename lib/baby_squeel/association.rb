@@ -1,6 +1,16 @@
 require 'baby_squeel/table'
 
 module BabySqueel
+  class AliasingError < StandardError
+    def initialize(association, alias_name)
+      super(<<-EOMSG.strip_heredoc.tr("\n", ' '))
+        Attempted to alias '#{association}' as '#{alias_name}', but the
+        association was implicitly joined. Either join the association with `on`
+        or remove the alias.
+      EOMSG
+    end
+  end
+
   class Association < Table
     def initialize(parent, reflection)
       @parent = parent
@@ -9,29 +19,33 @@ module BabySqueel
     end
 
     def _arel
-      theirs = @parent._arel if @parent.respond_to?(:_arel)
+      return super if props[:on] # they're doing an explicit join
 
-      mine = join_dependency.join_constraints([]).flat_map do |constraint|
+      [*@parent._arel] + join_constraints.flat_map do |constraint|
         constraint.joins.map do |join|
-          @join_type.new(join.left, join.right)
+          props[:join].new(join.left, join.right)
         end
       end
-
-      [*theirs, *mine].uniq
     end
 
     private
 
-    def join_dependency
+    def join_constraints
+      if props[:table].is_a? Arel::Nodes::TableAlias
+        raise AliasingError.new(@reflection.name, props[:table].right)
+      end
+
       ::ActiveRecord::Associations::JoinDependency.new(
         @reflection.active_record,
         [@reflection.name],
         []
-      )
+      ).join_constraints([])
     end
 
     def spawn
-      Association.new(@parent, @reflection)
+      Association.new(@parent, @reflection).tap do |table|
+        table.props = props
+      end
     end
   end
 end

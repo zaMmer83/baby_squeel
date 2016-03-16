@@ -6,14 +6,14 @@ module BabySqueel
   end
 
   class Table
+    attr_writer :props
+
     def initialize(scope)
       @scope = scope
-      @arel = scope.arel_table
-      @join_type = Arel::Nodes::InnerJoin
     end
 
     def [](key)
-      Nodes.wrap @arel[key]
+      Nodes.wrap props[:table][key]
     end
 
     def association(name)
@@ -29,7 +29,7 @@ module BabySqueel
     end
 
     def alias!(alias_name)
-      @arel = @arel.alias(alias_name)
+      props.store :table, props[:table].alias(alias_name)
       self
     end
 
@@ -38,7 +38,7 @@ module BabySqueel
     end
 
     def outer!
-      @join_type = Arel::Nodes::OuterJoin
+      props.store :join, Arel::Nodes::OuterJoin
       self
     end
 
@@ -47,18 +47,33 @@ module BabySqueel
     end
 
     def inner!
-      @join_type = Arel::Nodes::InnerJoin
+      props.store :join, Arel::Nodes::InnerJoin
       self
     end
 
     def on(node)
-      @join_type.new(@arel, Arel::Nodes::On.new(node))
+      spawn.on! node
+    end
+
+    def on!(node)
+      props.store :on, Arel::Nodes::On.new(node)
+      self
+    end
+
+    def _arel
+      props[:join].new(props[:table], props[:on]) if props[:on]
     end
 
     private
 
+    def props
+      @props ||= { table: @scope.arel_table, join: Arel::Nodes::InnerJoin }
+    end
+
     def spawn
-      Table.new(@scope)
+      Table.new(@scope).tap do |table|
+        table.props = props
+      end
     end
 
     def resolve(name)
