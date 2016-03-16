@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 gemspec
 
 if ar_version = ENV['AR']
-  gem 'activerecord', "~> #{ar_version}"
+  gem 'activerecord', ar_version
 else
   gem 'activerecord', github: 'rails/rails'
 end
