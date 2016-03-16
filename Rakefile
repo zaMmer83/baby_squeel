@@ -15,7 +15,7 @@ def run_version(version, cmd)
     system({ 'AR' => version }, cmd)
   end
 
-  abort "\nFAILED: #{display}" unless $?.success?
+  abort "\nFAILED: #{display}" unless $CHILD_STATUS.success?
 end
 
 task 'spec:matrix' do

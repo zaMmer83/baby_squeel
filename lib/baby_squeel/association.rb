@@ -4,9 +4,9 @@ require 'baby_squeel/join_dependency'
 module BabySqueel
   class AliasingError < StandardError
     MESSAGE =
-      "Attempted to alias '%{association}' as '%{alias_name}', but the " \
-      "association was implicitly joined. Either join the association " \
-      "with `on` or remove the alias."
+      'Attempted to alias \'%{association}\' as \'%{alias_name}\', but the ' \
+      'association was implicitly joined. Either join the association ' \
+      'with `on` or remove the alias.'.freeze
 
     def initialize(association, alias_name)
       super format(MESSAGE, association: association, alias_name: alias_name)
