@@ -1,5 +1,4 @@
 require 'baby_squeel/table'
-require 'baby_squeel/join_dependency'
 
 module BabySqueel
   class AliasingError < StandardError
@@ -31,11 +30,9 @@ module BabySqueel
         raise AliasingError.new(@reflection.name, props[:table].right)
       end
 
-      JoinDependency.new(
-        @reflection.active_record,
-        @reflection.name,
-        props[:join]
-      ).constraints
+      @reflection.active_record.joins(@reflection.name).join_sources.map do |join|
+        props[:join].new(join.left, join.right)
+      end
     end
 
     def spawn
