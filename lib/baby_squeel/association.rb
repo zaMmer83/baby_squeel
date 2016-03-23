@@ -31,7 +31,11 @@ module BabySqueel
         raise AliasingError.new(@reflection.name, props[:table].right)
       end
 
-      JoinDependency.new(@scope, @reflection, props[:join]).constraints
+      JoinDependency.new(
+        @reflection.active_record,
+        @reflection.name,
+        props[:join]
+      ).constraints
     end
 
     def spawn

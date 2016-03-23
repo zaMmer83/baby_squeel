@@ -67,7 +67,10 @@ module BabySqueel
     private
 
     def props
-      @props ||= { table: @scope.arel_table, join: Arel::Nodes::InnerJoin }
+      @props ||= {
+        table: @scope.arel_table,
+        join: Arel::Nodes::InnerJoin
+      }
     end
 
     def spawn

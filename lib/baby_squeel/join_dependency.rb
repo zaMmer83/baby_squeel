@@ -5,9 +5,9 @@
 #
 module BabySqueel
   class JoinDependency
-    def initialize(scope, reflection, join_type)
-      @scope = scope
-      @reflection = reflection
+    def initialize(base, associations, join_type = Arel::Nodes::InnerJoin)
+      @base = base
+      @associations = associations
       @join_type = join_type
     end
 
@@ -27,7 +27,7 @@ module BabySqueel
       end
     else
       def constraints
-        manager = Arel::SelectManager.new(@scope)
+        manager = Arel::SelectManager.new(@base)
 
         dependency.join_associations.each do |assoc|
           assoc.join_type = @join_type
@@ -45,11 +45,7 @@ module BabySqueel
     end
 
     def dependency
-      ::ActiveRecord::Associations::JoinDependency.new(
-        @reflection.active_record,
-        [@reflection.name],
-        []
-      )
+      ::ActiveRecord::Associations::JoinDependency.new(@base, [*@associations], [])
     end
   end
 end
