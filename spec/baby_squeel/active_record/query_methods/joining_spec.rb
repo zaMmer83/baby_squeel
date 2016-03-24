@@ -200,15 +200,29 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
       end
 
       it 'joins a through association' do
-        relation = Post.joining {
-          author.posts.author_comments
-        }
+        relation = Post.joining { author.posts.author_comments }
 
         expect(relation).to produce_sql(<<-EOSQL)
           SELECT "posts".* FROM "posts"
           INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-          INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id" INNER JOIN "authors" "authors_posts_join" ON "authors_posts_join"."id" = "posts_authors"."author_id"
+          INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+          INNER JOIN "authors" "authors_posts_join" ON "authors_posts_join"."id" = "posts_authors"."author_id"
           INNER JOIN "comments" ON "comments"."author_id" = "authors_posts_join"."id"
+        EOSQL
+      end
+
+      it 'joins a through association and then back again' do
+        relation = Post.joining { author.posts.author_comments.outer.post.author_comments }
+
+        expect(relation).to produce_sql(<<-EOSQL)
+          SELECT "posts".* FROM "posts"
+          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+          INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+          LEFT OUTER JOIN "authors" "authors_posts_join" ON "authors_posts_join"."id" = "posts_authors"."author_id"
+          LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors_posts_join"."id"
+          INNER JOIN "posts" "posts_comments" ON "posts_comments"."id" = "comments"."post_id"
+          INNER JOIN "authors" "authors_posts_join_2" ON "authors_posts_join_2"."id" = "posts_comments"."author_id"
+          INNER JOIN "comments" "author_comments_posts" ON "author_comments_posts"."author_id" = "authors_posts_join_2"."id"
         EOSQL
       end
     end

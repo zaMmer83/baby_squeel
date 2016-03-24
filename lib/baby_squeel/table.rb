@@ -1,3 +1,5 @@
+require 'baby_squeel/join_dependency'
+
 module BabySqueel
   class AssociationNotFoundError < StandardError
     def initialize(scope, name)
@@ -7,14 +9,6 @@ module BabySqueel
 
   class Table
     attr_accessor :_on, :_join, :_table
-
-    class << self
-      def inject_joins(associations = [])
-        associations.reverse.inject({}) do |hsh, assoc|
-          { assoc._reflection.name => hsh }
-        end
-      end
-    end
 
     def initialize(scope)
       @scope = scope
@@ -74,17 +68,7 @@ module BabySqueel
       if _on
         _join.new(_table, _on)
       else
-        completed = 0 # an index of the number of completed joins
-
-        associations.flat_map.with_index do |assoc, i|
-          names = self.class.inject_joins associations[0..i]
-
-          result = @scope.joins(names).join_sources.map do |join|
-            assoc._join.new(join.left, join.right)
-          end
-
-          result[completed..-1].tap { completed = i + 1 }
-        end
+        JoinDependency.new(@scope, associations).constraints
       end
     end
 
