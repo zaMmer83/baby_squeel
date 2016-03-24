@@ -6,14 +6,16 @@ module BabySqueel
   end
 
   class Table
-    attr_writer :props
+    attr_accessor :_on, :_join, :_table
 
     def initialize(scope)
       @scope = scope
+      @_table = scope.arel_table
+      @_join = Arel::Nodes::InnerJoin
     end
 
     def [](key)
-      Nodes.wrap props[:table][key]
+      Nodes.wrap _table[key]
     end
 
     def association(name)
@@ -25,59 +27,56 @@ module BabySqueel
     end
 
     def alias(alias_name)
-      spawn.alias! alias_name
+      clone.alias! alias_name
     end
 
     def alias!(alias_name)
-      props.store :table, props[:table].alias(alias_name)
+      self._table = _table.alias(alias_name)
       self
     end
 
     def outer
-      spawn.outer!
+      clone.outer!
     end
 
     def outer!
-      props.store :join, Arel::Nodes::OuterJoin
+      self._join = Arel::Nodes::OuterJoin
       self
     end
 
     def inner
-      spawn.inner!
+      clone.inner!
     end
 
     def inner!
-      props.store :join, Arel::Nodes::InnerJoin
+      self._join = Arel::Nodes::InnerJoin
       self
     end
 
     def on(node)
-      spawn.on! node
+      clone.on! node
     end
 
     def on!(node)
-      props.store :on, Arel::Nodes::On.new(node)
+      self._on = Arel::Nodes::On.new(node)
       self
     end
 
-    def _arel
-      props[:join].new(props[:table], props[:on]) if props[:on]
+    def _arel(associations = [])
+      if _on
+        _join.new(_table, _on)
+      else
+        path = associations.reverse.inject({}) do |hsh, assoc|
+          { assoc._reflection.name => hsh }
+        end
+
+        @scope.joins(path).join_sources.zip(associations).map do |join, assoc|
+          assoc._join.new(join.left, join.right)
+        end
+      end
     end
 
     private
-
-    def props
-      @props ||= {
-        table: @scope.arel_table,
-        join: Arel::Nodes::InnerJoin
-      }
-    end
-
-    def spawn
-      Table.new(@scope).tap do |table|
-        table.props = props
-      end
-    end
 
     def resolve(name)
       if @scope.column_names.include?(name.to_s)

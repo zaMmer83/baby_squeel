@@ -7,6 +7,14 @@ shared_examples_for 'a table' do
     end
   end
 
+  describe '#outer' do
+    it 'does not mutate the original instance' do
+      next_table = table.outer
+      expect(table._join).to eq(Arel::Nodes::InnerJoin)
+      expect(next_table._join).to eq(Arel::Nodes::OuterJoin)
+    end
+  end
+
   describe '#association' do
     it 'builds a table from the associated class' do
       expect(table.association(:author)).to be_a(BabySqueel::Table)

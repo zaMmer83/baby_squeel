@@ -178,7 +178,6 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
       end
 
       it 'joins back with a new alias' do
-        pending 'Joins will need to be reworked in order to get this working'
         relation = Post.joining { author.posts }
 
         expect(relation).to produce_sql(<<-EOSQL)
@@ -187,18 +186,30 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
           INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
         EOSQL
       end
+
+      it 'prevents mutation of the original instance' do
+        relation = Post.joining {
+          author.posts # this should have absolutely no effect
+          author
+        }
+
+        expect(relation).to produce_sql(<<-EOSQL)
+          SELECT "posts".* FROM "posts"
+          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        EOSQL
+      end
     end
 
     it 'raises an error when attempting to alias an inner join' do
       expect {
         Post.joining { author.alias('a') }.to_sql
-      }.to raise_error(BabySqueel::AliasingError, /'author' as 'a'/)
+      }.to raise_error(BabySqueel::Association::AliasingError, /'author' as 'a'/)
     end
 
     it 'raises an error when attempting to alias an outer join' do
       expect {
         Post.joining { author.outer.alias('a') }.to_sql
-      }.to raise_error(BabySqueel::AliasingError, /'author' as 'a'/)
+      }.to raise_error(BabySqueel::Association::AliasingError, /'author' as 'a'/)
     end
   end
 end
