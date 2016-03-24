@@ -80,6 +80,11 @@ Post.joining { author.comments.outer }
 # INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
 # LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id"
 
+Post.joining { author.outer.posts }
+# SELECT "posts".* FROM "posts"
+# LEFT OUTER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+
 Post.joining { author.alias('a').on((author.id == author_id) | (author.name == title)) }
 # SELECT "posts".* FROM "posts"
 # INNER JOIN "authors" "a" ON (
