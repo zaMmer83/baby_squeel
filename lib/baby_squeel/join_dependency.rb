@@ -1,15 +1,18 @@
 module BabySqueel
   class JoinDependency
-    attr_reader :scope, :associations
-
     def initialize(scope, associations = [])
       @scope = scope
       @associations = associations
     end
 
+    # Converts an array of BabySqueel::Associations into an array
+    # of Arel join nodes.
+    #
+    # Each association is built individually so that the correct
+    # Arel join node will be used for each individual association.
     def constraints
-      associations.each.with_index.inject([]) do |joins, (assoc, i)|
-        inject associations[0..i], joins, assoc._join
+      @associations.each.with_index.inject([]) do |joins, (assoc, i)|
+        inject @associations[0..i], joins, assoc._join
       end
     end
 
@@ -22,7 +25,7 @@ module BabySqueel
     end
 
     def build(names, join_node)
-      scope.joins(names).join_sources.map do |join|
+      @scope.joins(names).join_sources.map do |join|
         join_node.new(join.left, join.right)
       end
     end

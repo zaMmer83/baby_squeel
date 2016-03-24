@@ -3,6 +3,8 @@ require 'baby_squeel/operators'
 module BabySqueel
   module Nodes
     class << self
+      # Wraps an Arel node in a Proxy so that it can
+      # be extended.
       def wrap(arel)
         if arel.class.parents.include?(Arel)
           Generic.new(arel)
@@ -11,6 +13,8 @@ module BabySqueel
         end
       end
 
+      # Unwraps a BabySqueel::Proxy before being passed to
+      # ActiveRecord.
       def unwrap(node)
         if node.respond_to? :_arel
           node._arel
@@ -57,6 +61,7 @@ module BabySqueel
     # proxy classes should be more specific and
     # only include necessary/applicable modules.
     class Generic < Proxy
+      extend Operators::ArelAliasing
       include Arel::OrderPredications
       include Operators::Comparison
       include Operators::Equality

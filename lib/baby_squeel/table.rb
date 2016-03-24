@@ -16,10 +16,13 @@ module BabySqueel
       @_join = Arel::Nodes::InnerJoin
     end
 
+    # See Arel::Table#[]
     def [](key)
       Nodes.wrap _table[key]
     end
 
+    # Constructs a new BabySqueel::Association. Raises
+    # an exception if the association is not found.
     def association(name)
       if reflection = @scope.reflect_on_association(name)
         Association.new(self, reflection)
@@ -28,6 +31,8 @@ module BabySqueel
       end
     end
 
+    # Alias a table. This is only possible when joining
+    # an association explicitly.
     def alias(alias_name)
       clone.alias! alias_name
     end
@@ -37,6 +42,7 @@ module BabySqueel
       self
     end
 
+    # Instruct the table to be joined with an INNER JOIN.
     def outer
       clone.outer!
     end
@@ -46,6 +52,7 @@ module BabySqueel
       self
     end
 
+    # Instruct the table to be joined with an INNER JOIN.
     def inner
       clone.inner!
     end
@@ -55,6 +62,7 @@ module BabySqueel
       self
     end
 
+    # Specify an explicit join.
     def on(node)
       clone.on! node
     end
@@ -64,6 +72,12 @@ module BabySqueel
       self
     end
 
+    # This method will be invoked by BabySqueel::Nodes::unwrap. When called,
+    # there are two possible outcomes:
+    #
+    # 1. Join explicitly using an on clause.
+    # 2. Resolve the assocition's join clauses using ActiveRecord.
+    #
     def _arel(associations = [])
       if _on
         _join.new(_table, _on)
