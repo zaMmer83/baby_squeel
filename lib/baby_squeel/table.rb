@@ -8,6 +8,14 @@ module BabySqueel
   class Table
     attr_accessor :_on, :_join, :_table
 
+    class << self
+      def inject_joins(associations = [])
+        associations.reverse.inject({}) do |hsh, assoc|
+          { assoc._reflection.name => hsh }
+        end
+      end
+    end
+
     def initialize(scope)
       @scope = scope
       @_table = scope.arel_table
@@ -66,12 +74,16 @@ module BabySqueel
       if _on
         _join.new(_table, _on)
       else
-        path = associations.reverse.inject({}) do |hsh, assoc|
-          { assoc._reflection.name => hsh }
-        end
+        completed = 0 # an index of the number of completed joins
 
-        @scope.joins(path).join_sources.zip(associations).map do |join, assoc|
-          assoc._join.new(join.left, join.right)
+        associations.flat_map.with_index do |assoc, i|
+          names = self.class.inject_joins associations[0..i]
+
+          result = @scope.joins(names).join_sources.map do |join|
+            assoc._join.new(join.left, join.right)
+          end
+
+          result[completed..-1].tap { completed = i + 1 }
         end
       end
     end

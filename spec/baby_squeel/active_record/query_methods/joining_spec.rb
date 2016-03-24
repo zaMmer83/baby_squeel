@@ -198,6 +198,19 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
           INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
         EOSQL
       end
+
+      it 'joins a through association' do
+        relation = Post.joining {
+          author.posts.author_comments
+        }
+
+        expect(relation).to produce_sql(<<-EOSQL)
+          SELECT "posts".* FROM "posts"
+          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+          INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id" INNER JOIN "authors" "authors_posts_join" ON "authors_posts_join"."id" = "posts_authors"."author_id"
+          INNER JOIN "comments" ON "comments"."author_id" = "authors_posts_join"."id"
+        EOSQL
+      end
     end
 
     it 'raises an error when attempting to alias an inner join' do
