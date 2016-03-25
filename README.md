@@ -53,6 +53,59 @@ Post.joins(:author).selecting { [id, author.id] }
 # INNER JOIN "authors" ON "posts"."author_id" = "authors"."id"
 ```
 
+#### Wheres
+
+```ruby
+Post.where.has { title == 'My Post' }
+# SELECT "posts".* FROM "posts" WHERE "posts"."title" = 'My Post'
+
+Post.where.has { title =~ 'My P%' }
+# SELECT "posts".* FROM "posts" WHERE "posts"."title" LIKE 'My P%'
+
+Author.where.has { (name =~ 'Ray%') & (id < 5) | (name.lower =~ 'zane%') & (id > 100) }
+# SELECT "authors".* FROM "authors"
+# WHERE (
+#   "authors"."name" LIKE 'Ray%' AND "authors"."id" < 5 OR
+#   LOWER("authors"."name") LIKE 'zane%' AND "authors"."id" > 100
+# )
+
+Post.joins(:author).where.has { author.name == 'Ray' }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# WHERE "authors"."name" = 'Ray'
+```
+
+Here's the best part. Where conditions will always reference the correct table alias for a given association:
+
+```ruby
+Post.joins(author: :posts).where.has { author.posts.title =~ '%fun%' }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+# WHERE ("posts_authors"."title" LIKE '%fun%')
+```
+
+#### Orders
+
+```ruby
+Post.ordering { [id.desc, title.asc] }
+# SELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC, "posts"."title" ASC
+
+Post.ordering { (id * 5).desc }
+# SELECT "posts".* FROM "posts" ORDER BY "posts"."id" * 5 DESC
+
+Post.select(:author_id).group(:author_id).ordering { id.count.desc }
+# SELECT "posts"."author_id"
+# FROM "posts" GROUP BY "posts"."author_id"
+# ORDER BY COUNT("posts"."id") DESC
+
+Post.joins(:author).ordering { author.id.desc }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# ORDER BY "authors"."id" DESC
+```
+
+
 #### Joins
 
 ```ruby
@@ -91,48 +144,6 @@ Post.joining { author.alias('a').on((author.id == author_id) | (author.name == t
 #   "authors"."id" = "posts"."author_id" OR
 #   "authors"."name" = "posts"."title"
 # )
-```
-
-#### Wheres
-
-```ruby
-Post.where.has { title == 'My Post' }
-# SELECT "posts".* FROM "posts" WHERE "posts"."title" = 'My Post'
-
-Post.where.has { title =~ 'My P%' }
-# SELECT "posts".* FROM "posts" WHERE "posts"."title" LIKE 'My P%'
-
-Author.where.has { (name =~ 'Ray%') & (id < 5) | (name.lower =~ 'zane%') & (id > 100) }
-# SELECT "authors".* FROM "authors"
-# WHERE (
-#   "authors"."name" LIKE 'Ray%' AND "authors"."id" < 5 OR
-#   LOWER("authors"."name") LIKE 'zane%' AND "authors"."id" > 100
-# )
-
-Post.joins(:author).where.has { author.name == 'Ray' }
-# SELECT "posts".* FROM "posts"
-# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-# WHERE "authors"."name" = 'Ray'
-```
-
-#### Orders
-
-```ruby
-Post.ordering { [id.desc, title.asc] }
-# SELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC, "posts"."title" ASC
-
-Post.ordering { (id * 5).desc }
-# SELECT "posts".* FROM "posts" ORDER BY "posts"."id" * 5 DESC
-
-Post.select(:author_id).group(:author_id).ordering { id.count.desc }
-# SELECT "posts"."author_id"
-# FROM "posts" GROUP BY "posts"."author_id"
-# ORDER BY COUNT("posts"."id") DESC
-
-Post.joins(:author).ordering { author.id.desc }
-# SELECT "posts".* FROM "posts"
-# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-# ORDER BY "authors"."id" DESC
 ```
 
 #### Functions
