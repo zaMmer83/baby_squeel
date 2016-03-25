@@ -72,7 +72,7 @@ describe BabySqueel::ActiveRecord::WhereChain do
       end
     end
 
-    it 'can query through associations' do
+    it 'wheres on associations' do
       relation = Post.joins(author: :comments).where.has {
         author.comments.id > 0
       }
@@ -82,6 +82,46 @@ describe BabySqueel::ActiveRecord::WhereChain do
         INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
         INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
         WHERE ("comments"."id" > 0)
+      EOSQL
+    end
+
+    it 'wheres on an aliased association' do
+      relation = Post.joins(author: :posts).where.has {
+        author.posts.id > 0
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+        WHERE ("posts_authors"."id" > 0)
+      EOSQL
+    end
+
+    it 'wheres on an aliased association with through' do
+      relation = Post.joins(:comments, :author_comments).where.has {
+        author_comments.id > 0
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "comments" ON "comments"."post_id" = "posts"."id"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        INNER JOIN "comments" "author_comments_posts" ON "author_comments_posts"."author_id" = "authors"."id"
+        WHERE ("author_comments_posts"."id" > 0)
+      EOSQL
+    end
+
+    it 'wheres on an alias with a function' do
+      relation = Post.joins(author: :posts).where.has {
+        coalesce(author.posts.id, 1) > 0
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+        WHERE (coalesce("posts_authors"."id", 1) > 0)
       EOSQL
     end
   end

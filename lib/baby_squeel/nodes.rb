@@ -67,5 +67,23 @@ module BabySqueel
       include Operators::Grouping
       include Operators::Matching
     end
+
+    class Attribute < Generic
+      def initialize(parent, name)
+        @parent = parent
+        @name = name
+        super(parent._table[name])
+      end
+
+      def _arel
+        parent_arel = @parent._arel
+
+        if parent_arel && parent_arel.last
+          parent_arel.last.left[@name]
+        else
+          super
+        end
+      end
+    end
   end
 end

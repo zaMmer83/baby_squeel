@@ -18,7 +18,7 @@ module BabySqueel
 
     # See Arel::Table#[]
     def [](key)
-      Nodes.wrap _table[key]
+      Nodes::Attribute.new(self, key)
     end
 
     # Constructs a new BabySqueel::Association. Raises
