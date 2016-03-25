@@ -60,6 +60,7 @@ module BabySqueel
     # include necessary/applicable modules.
     class Generic < Proxy
       extend Operators::ArelAliasing
+      include Arel::AliasPredication
       include Arel::OrderPredications
       include Operators::Comparison
       include Operators::Equality
