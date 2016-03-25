@@ -227,6 +227,25 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
       end
     end
 
+    it 'ensures that the join values are unique' do
+      relation = Post.joining { author }.joining { author }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+      EOSQL
+    end
+
+    it 'ensures that the join values are unique, but allow progressive joins' do
+      relation = Post.joining { author }.joining { author.posts }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+      EOSQL
+    end
+
     it 'raises an error when attempting to alias an inner join' do
       expect {
         Post.joining { author.alias('a') }.to_sql
