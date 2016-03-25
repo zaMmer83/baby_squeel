@@ -23,14 +23,16 @@ module BabySqueel
 
     # Intelligently constructs Arel nodes. There are three outcomes:
     #
-    # 1. The user explicitly constructed their join using #on. See BabySqueel::Table#_arel.
+    # 1. The user explicitly constructed their join using #on.
+    #    See BabySqueel::Table#_arel.
     #
-    # 2. The user aliased an implicitly joined association. ActiveRecord's join dependency
-    #    gives us no way of handling this, so we have to throw an error.
+    # 2. The user aliased an implicitly joined association. ActiveRecord's
+    #    join dependency gives us no way of handling this, so we have to
+    #    throw an error.
     #
-    # 3. The user implicitly joined this association, so we pass this association up the tree
-    #    until it hits the top-level BabySqueel::Table. Once it gets there, Arel join nodes
-    #    will be constructed.
+    # 3. The user implicitly joined this association, so we pass this
+    #    association up the tree until it hits the top-level BabySqueel::Table.
+    #    Once it gets there, Arel join nodes will be constructed.
     def _arel(associations = [])
       if _on
         super

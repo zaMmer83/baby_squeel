@@ -26,9 +26,8 @@ module BabySqueel
       end
     end
 
-    # This proxy class allows us to quack like
-    # any arel object. When a method missing is
-    # hit, we'll instantiate a new proxy object.
+    # This proxy class allows us to quack like any arel object. When a
+    # method missing is hit, we'll instantiate a new proxy object.
     class Proxy < ActiveSupport::ProxyObject
       # Resolve constants the normal way
       def self.const_missing(name)
@@ -56,10 +55,9 @@ module BabySqueel
       end
     end
 
-    # This is a generic proxy class that includes
-    # all possible modules. In the future, these
-    # proxy classes should be more specific and
-    # only include necessary/applicable modules.
+    # This is a generic proxy class that includes all possible modules.
+    # In the future, these proxy classes should be more specific and only
+    # include necessary/applicable modules.
     class Generic < Proxy
       extend Operators::ArelAliasing
       include Arel::OrderPredications
