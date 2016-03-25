@@ -54,4 +54,16 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#selecting' do
       INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
     EOSQL
   end
+
+  it 'selects on an aliased table' do
+    relation = Post.joins(author: :posts).selecting {
+      author.posts.id
+    }
+
+    expect(relation).to produce_sql(<<-EOSQL)
+      SELECT "posts_authors"."id" FROM "posts"
+      INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+      INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+    EOSQL
+  end
 end

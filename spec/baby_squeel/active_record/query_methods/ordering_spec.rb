@@ -58,4 +58,17 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#ordering' do
       ORDER BY ("authors"."id" - "posts"."id") DESC
     EOSQL
   end
+
+  it 'orders on an aliased table' do
+    relation = Post.joins(author: :posts).ordering {
+      author.posts.id
+    }
+
+    expect(relation).to produce_sql(<<-EOSQL)
+      SELECT "posts".* FROM "posts"
+      INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+      INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+      ORDER BY "posts_authors"."id"
+    EOSQL
+  end
 end
