@@ -15,9 +15,10 @@ def run_version(version, cmd)
     system({ 'AR' => version }, cmd)
   end
 
-  abort "\nFAILED: #{display}" unless $CHILD_STATUS.success?
+  abort "\nFAILED: #{display}" unless $?.success?
 end
 
+desc 'Run against all ActiveRecord versions'
 task 'spec:matrix' do
   travis = YAML.load_file '.travis.yml'
 
