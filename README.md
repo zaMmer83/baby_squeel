@@ -30,11 +30,21 @@ Or install it yourself as:
 
 ## Usage
 
-Okay, so we have a `Post` model:
+Okay, so we have some models:
 
 ```ruby
 class Post < ActiveRecord::Base
   belongs_to :author
+  has_many :comments
+end
+
+class Author < ActiveRecord::Base
+  has_many :posts
+  has_many :comments, through: :posts
+end
+
+class Comment < ActiveRecord::Base
+  belongs_to :post
 end
 ```
 
