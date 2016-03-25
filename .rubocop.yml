@@ -7,6 +7,9 @@ Style/BlockDelimiters:
 Style/Documentation:
   Enabled: false
 
+Style/SpecialGlobalVars:
+  Enabled: false
+
 Style/NilComparison:
   Exclude:
     - spec/**/*
