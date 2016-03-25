@@ -163,7 +163,7 @@ You can also run `bin/console` to open up a prompt where you'll have access to s
 
 ## Todo
 
-I'd like to support complex joins with explicit outer joins and aliasing.
++ Subqueries
 
 ## Contributing
 
