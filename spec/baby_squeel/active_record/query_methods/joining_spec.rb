@@ -96,8 +96,11 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
 
         expect(relation).to produce_sql(<<-EOSQL)
           SELECT "posts".* FROM "posts"
-          INNER JOIN "authors" ON ("posts"."author_id" = "authors"."id"
-            AND "authors"."id" != 5 OR "authors"."name" IS NULL)
+          INNER JOIN "authors" ON (
+            "posts"."author_id" = "authors"."id" AND
+            "authors"."id" != 5 OR
+            "authors"."name" IS NULL
+          )
         EOSQL
       end
 
@@ -110,8 +113,11 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
 
         expect(relation).to produce_sql(<<-EOSQL)
           SELECT "posts".* FROM "posts"
-          LEFT OUTER JOIN "authors" ON ("posts"."author_id" = "authors"."id"
-            AND "authors"."id" != 5 OR "authors"."name" IS NULL)
+          LEFT OUTER JOIN "authors" ON (
+            "posts"."author_id" = "authors"."id" AND
+            "authors"."id" != 5 OR
+            "authors"."name" IS NULL
+          )
         EOSQL
       end
     end
