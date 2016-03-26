@@ -76,6 +76,14 @@ module BabySqueel
         super(parent._table[name])
       end
 
+      def in(relation)
+        if relation.respond_to?(:arel)
+          @_arel.in(relation.arel)
+        else
+          @_arel.in(relation)
+        end
+      end
+
       def _arel
         parent_arel = @parent._arel
 

@@ -12,5 +12,7 @@ RSpec::Matchers.define :produce_sql do
     str.gsub(/\A[[:space:]]+/, '')
        .gsub(/[[:space:]]+\z/, '')
        .gsub(/[[:space:]]+/, ' ')
+       .gsub(/\( /, '(')
+       .gsub(/ \)/, ')')
   end
 end
