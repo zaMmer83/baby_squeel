@@ -158,6 +158,20 @@ Post.selecting { coalesce(author_id, 5).as('author_id_with_default') }
 # SELECT coalesce("posts"."author_id", 5) AS author_id_with_default FROM "posts"
 ```
 
+##### Subqueries
+
+```ruby
+Post.joins(:author).where.has {
+  author.id.in Author.select(:id).where(name: 'Ray')
+}
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# WHERE "authors"."id" IN (
+#   SELECT "authors"."id" FROM "authors"
+#   WHERE "authors"."name" = 'Ray'
+# )
+```
+
 ## Important Notes
 
 While inside one of BabySqueel's blocks, `self` will be something totally different. You won't have access to your instance variables or methods.
@@ -176,10 +190,6 @@ Post.where.has { |table| table.title == 'Test' }
 3. Run `rake` to run the specs.
 
 You can also run `bin/console` to open up a prompt where you'll have access to some models to experiment with.
-
-## Todo
-
-+ Subqueries
 
 ## Contributing
 
