@@ -127,7 +127,7 @@ describe BabySqueel::ActiveRecord::WhereChain do
 
     it 'wheres with a subquery' do
       relation = Post.joins(:author).where.has {
-        author.id.in Author.select(:id).limit(3)
+        author.id.in Author.selecting { id }.limit(3)
       }
 
       expect(relation).to produce_sql(<<-EOSQL)
