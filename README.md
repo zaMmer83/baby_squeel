@@ -4,13 +4,13 @@
 [![Code Climate](https://codeclimate.com/github/rzane/baby_squeel/badges/gpa.svg)](https://codeclimate.com/github/rzane/baby_squeel)
 [![Coverage Status](https://coveralls.io/repos/github/rzane/baby_squeel/badge.svg?branch=master)](https://coveralls.io/github/rzane/baby_squeel?branch=master)
 
-![biddy piggy](http://static.thefrisky.com/uploads/2010/07/01/pig_in_boots_070110_m.jpg)
+<img align="right" src="http://static.thefrisky.com/uploads/2010/07/01/pig_in_boots_070110_m.jpg" alt="biddy piggy">
 
 Have you ever used the [squeel](https://github.com/activerecord-hackery/squeel) gem? It's a really nice way to build complex queries. However, squeel monkeypatches ActiveRecord internals, so it has a tendency to break every time a new ActiveRecord version comes out.
 
-For me, that's a deal breaker. BabySqueel provides a query DSL for ActiveRecord without all of the evil :heart:.
+For me, that's a deal breaker. BabySqueel provides a query DSL for ActiveRecord without all of the evil. :heart:
 
-It's also suprisingly uncomplicated. It's really just a layer of sugar on top of Arel.
+It's really just a layer of sugar on top of Arel.
 
 ## Installation
 
