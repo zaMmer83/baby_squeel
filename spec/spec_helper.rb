@@ -10,7 +10,7 @@ SimpleCov.formatter =
     SimpleCov::Formatter::HTMLFormatter
   end
 
-SimpleCov.start { add_filter 'spec/' }
+SimpleCov.start { add_filter 'spec/' } unless ENV['SKIPCOV']
 
 require 'baby_squeel'
 
