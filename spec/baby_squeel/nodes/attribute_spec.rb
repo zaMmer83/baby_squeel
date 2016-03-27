@@ -26,5 +26,13 @@ describe BabySqueel::Nodes::Attribute do
         )
       EOSQL
     end
+
+    it 'accepts an ActiveRecord relation with limit' do
+      relation = Post.selecting { id }.limit(3)
+
+      expect(attribute.in(relation)).to produce_sql(<<-EOSQL)
+        "posts"."id" IN (SELECT "posts"."id" FROM "posts" LIMIT 3)
+      EOSQL
+    end
   end
 end

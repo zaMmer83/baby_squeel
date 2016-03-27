@@ -124,5 +124,17 @@ describe BabySqueel::ActiveRecord::WhereChain do
         WHERE (coalesce("posts_authors"."id", 1) > 0)
       EOSQL
     end
+
+    it 'wheres with a subquery' do
+      relation = Post.joins(:author).where.has {
+        author.id.in Author.select(:id).limit(3)
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        WHERE "authors"."id" IN (SELECT "authors"."id" FROM "authors" LIMIT 3)
+      EOSQL
+    end
   end
 end

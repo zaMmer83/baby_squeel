@@ -76,11 +76,11 @@ module BabySqueel
         super(parent._table[name])
       end
 
-      def in(relation)
-        if relation.respond_to?(:arel)
-          @_arel.in(relation.arel)
+      def in(rel)
+        if rel.is_a? ::ActiveRecord::Relation
+          ::Arel::Nodes::In.new(self, Arel.sql(rel.to_sql))
         else
-          @_arel.in(relation)
+          super
         end
       end
 
