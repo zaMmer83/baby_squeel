@@ -15,4 +15,3 @@ group :test do
   gem 'simplecov'
 end
 
-gem 'rubocop', require: false
