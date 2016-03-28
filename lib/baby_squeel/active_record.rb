@@ -17,6 +17,10 @@ module BabySqueel
       def ordering(&block)
         order DSL.evaluate(self, &block)
       end
+
+      def grouping(&block)
+        group DSL.evaluate(self, &block)
+      end
     end
 
     module WhereChain
