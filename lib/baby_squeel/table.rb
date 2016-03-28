@@ -1,9 +1,15 @@
 require 'baby_squeel/join_dependency'
 
 module BabySqueel
+  class NotFoundError < StandardError
+    def initialize(model_name, name)
+      super "There is no column or association named '#{name}' for #{model_name}."
+    end
+  end
+
   class AssociationNotFoundError < StandardError
-    def initialize(scope, name)
-      super "Association named '#{name}' was not found on #{scope.model_name}"
+    def initialize(model_name, name)
+      super "Association named '#{name}' was not found for #{model_name}."
     end
   end
 
@@ -27,7 +33,7 @@ module BabySqueel
       if reflection = @scope.reflect_on_association(name)
         Association.new(self, reflection)
       else
-        raise AssociationNotFoundError.new(@scope, name)
+        raise AssociationNotFoundError.new(@scope.model_name, name)
       end
     end
 
@@ -101,10 +107,10 @@ module BabySqueel
     end
 
     def method_missing(name, *args, &block)
-      if !args.empty? || block_given?
-        super
-      else
-        resolve(name) || super
+      return super if !args.empty? || block_given?
+
+      resolve(name) || begin
+        raise NotFoundError.new(@scope.model_name, name)
       end
     end
   end

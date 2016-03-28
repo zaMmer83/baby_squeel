@@ -30,7 +30,7 @@ shared_examples_for 'a table' do
         table.association :non_existent
       }.to raise_error(
         BabySqueel::AssociationNotFoundError,
-        /named 'non_existent'(.+)on Post/
+        /named 'non_existent'(.+)for Post/
       )
     end
   end
@@ -58,8 +58,8 @@ shared_examples_for 'a table' do
       expect { table.id { 'block' } }.to raise_error(NameError)
     end
 
-    it 'does not resolve for non-existent columns' do
-      expect { table.non_existent_column }.to raise_error(NameError)
+    it 'raises a custom error for things that look like columns' do
+      expect { table.non_existent_column }.to raise_error(BabySqueel::NotFoundError)
     end
   end
 end
