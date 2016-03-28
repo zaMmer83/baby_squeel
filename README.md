@@ -172,6 +172,19 @@ Post.joins(:author).where.has {
 # )
 ```
 
+## What's what?
+
+The following methods give you access to BabySqueel's DSL:
+
+| BabySqueel       | ActiveRecord Equivalent |
+|------------------|-------------------------|
+| `selecting`      | `select`                |
+| `ordering`       | `order`                 |
+| `joining`        | `joins`                 |
+| `grouping`       | `group`                 |
+| `where.has`      | `where`                 |
+| `having_grouped` | `having`                |
+
 ## Important Notes
 
 While inside one of BabySqueel's blocks, `self` will be something totally different. You won't have access to your instance variables or methods.
