@@ -60,13 +60,22 @@ module BabySqueel
     # include necessary/applicable modules.
     class Generic < Proxy
       extend Operators::ArelAliasing
-      include Arel::AliasPredication
-      include Arel::OrderPredications
       include Operators::Comparison
       include Operators::Equality
       include Operators::Generic
       include Operators::Grouping
       include Operators::Matching
+
+      # Extend the Arel node with some extra modules. For example,
+      # Arel::Nodes::Grouping does not implement Math. InfixOperation doesn't
+      # implement AliasPredication. Without these extensions, the interface
+      # just seems inconsistent.
+      def initialize(node)
+        node.extend Arel::Math
+        node.extend Arel::AliasPredication
+        node.extend Arel::OrderPredications
+        super(node)
+      end
     end
 
     class Attribute < Generic

@@ -2,6 +2,10 @@ require 'spec_helper'
 require 'baby_squeel/nodes'
 
 describe BabySqueel::Nodes::Generic do
+  subject(:node) {
+    described_class.new(Post.arel_table[:id])
+  }
+
   describe 'included modules' do
     subject { described_class.ancestors }
     specify { is_expected.to include(BabySqueel::Operators::Comparison) }
@@ -9,5 +13,9 @@ describe BabySqueel::Nodes::Generic do
     specify { is_expected.to include(BabySqueel::Operators::Generic) }
     specify { is_expected.to include(BabySqueel::Operators::Grouping) }
     specify { is_expected.to include(BabySqueel::Operators::Matching) }
+  end
+
+  it 'extends any node with math' do
+    expect((node + 5) * 5).to produce_sql('("posts"."id" + 5) * 5')
   end
 end
