@@ -18,8 +18,14 @@ module BabySqueel
         order DSL.evaluate(self, &block)
       end
 
+      # Constructs Arel for ActiveRecord::Base#group using the DSL.
       def grouping(&block)
         group DSL.evaluate(self, &block)
+      end
+
+      # Constructs Arel for ActiveRecord::Base#having using the DSL.
+      def having_grouped(&block)
+        having DSL.evaluate(self, &block)
       end
     end
 
