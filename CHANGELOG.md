@@ -2,6 +2,9 @@
 ### Plans
 - Support for `group` and `having`.
 
+### Added
+- More descriptive error messages when a column or association is not found.
+
 ## [0.2.1] - 2015-03-27
 ### Added
 - Support for subqueries.
