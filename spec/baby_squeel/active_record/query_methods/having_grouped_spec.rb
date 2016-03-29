@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 describe BabySqueel::ActiveRecord::QueryMethods, '#having_grouped' do
+  def having_sql(expr)
+    if ActiveRecord::VERSION::MAJOR > 4
+      "HAVING (#{expr})" # AR5 wraps with parenthesis
+    else
+      "HAVING #{expr}"
+    end
+  end
+
   it 'adds a having clause' do
     relation = Post.selecting { id.count }
                    .grouping { author_id }
@@ -9,7 +17,7 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#having_grouped' do
     expect(relation).to produce_sql(<<-EOSQL)
       SELECT COUNT("posts"."id") FROM "posts"
       GROUP BY "posts"."author_id"
-      HAVING (COUNT("posts"."id") > 5)
+      #{having_sql 'COUNT("posts"."id") > 5'}
     EOSQL
   end
 
@@ -21,7 +29,7 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#having_grouped' do
     expect(relation).to produce_sql(<<-EOSQL)
       SELECT COUNT("posts"."id") FROM "posts"
       GROUP BY ("posts"."author_id" + 5) * 3
-      HAVING (COUNT("posts"."id") > 5)
+      #{having_sql 'COUNT("posts"."id") > 5'}
     EOSQL
   end
 
@@ -35,7 +43,7 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#having_grouped' do
       SELECT COUNT("posts"."id") FROM "posts"
       INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
       GROUP BY "authors"."id"
-      HAVING (COUNT("authors"."id") > 5)
+      #{having_sql 'COUNT("authors"."id") > 5'}
     EOSQL
   end
 
@@ -50,7 +58,7 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#having_grouped' do
       INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
       INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
       GROUP BY "posts_authors"."id"
-      HAVING (COUNT("posts_authors"."id") > 5)
+      #{having_sql 'COUNT("posts_authors"."id") > 5'}
     EOSQL
   end
 end

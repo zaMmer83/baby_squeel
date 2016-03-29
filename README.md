@@ -151,6 +151,15 @@ Post.joining { author.alias('a').on((author.id == author_id) | (author.name == t
 # INNER JOIN "authors" "a" ON ("authors"."id" = "posts"."author_id" OR "authors"."name" = "posts"."title")
 ```
 
+##### Grouping
+
+```ruby
+Post.selecting { id.count }.grouping { author_id }.having_grouped { id.count > 5 }
+# SELECT COUNT("posts"."id") FROM "posts"
+# GROUP BY "posts"."author_id"
+# HAVING (COUNT("posts"."id") > 5)
+```
+
 ##### Functions
 
 ```ruby
