@@ -1,8 +1,7 @@
 ## [Unreleased]
-### Plans
-- Support for `group` and `having`.
 
 ### Added
+- Support for `group` (`grouping`) and `having` (`having_grouped`).
 - More descriptive error messages when a column or association is not found.
 
 ### Fixed

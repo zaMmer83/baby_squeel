@@ -46,24 +46,18 @@ describe BabySqueel::ActiveRecord::WhereChain do
       EOSQL
     end
 
-    if ActiveRecord::VERSION::STRING < '4.2.0'
-      it 'wheres using complex conditions' do
-        relation = Post.joins(:author).where.has {
-          (title =~ 'Simp%').or(author.name == 'meatloaf')
-        }
+    it 'wheres using complex conditions' do
+      relation = Post.joins(:author).where.has {
+        (title =~ 'Simp%').or(author.name == 'meatloaf')
+      }
 
+      if ActiveRecord::VERSION::STRING < '4.2.0'
         expect(relation).to produce_sql(<<-EOSQL)
           SELECT "posts".* FROM "posts"
           INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
           WHERE (("posts"."title" LIKE 'Simp%' OR "authors"."name" = 'meatloaf'))
         EOSQL
-      end
-    else
-      it 'wheres using complex conditions' do
-        relation = Post.joins(:author).where.has {
-          (title =~ 'Simp%').or(author.name == 'meatloaf')
-        }
-
+      else
         expect(relation).to produce_sql(<<-EOSQL)
           SELECT "posts".* FROM "posts"
           INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
