@@ -154,7 +154,7 @@ Post.joining { author.alias('a').on((author.id == author_id) | (author.name == t
 ##### Grouping
 
 ```ruby
-Post.selecting { id.count }.grouping { author_id }.having_grouped { id.count > 5 }
+Post.selecting { id.count }.grouping { author_id }.when_having { id.count > 5 }
 # SELECT COUNT("posts"."id") FROM "posts"
 # GROUP BY "posts"."author_id"
 # HAVING (COUNT("posts"."id") > 5)
@@ -210,14 +210,14 @@ Post.joins(:author).where.has {
 
 The following methods give you access to BabySqueel's DSL:
 
-| BabySqueel       | ActiveRecord Equivalent |
-|------------------|-------------------------|
-| `selecting`      | `select`                |
-| `ordering`       | `order`                 |
-| `joining`        | `joins`                 |
-| `grouping`       | `group`                 |
-| `where.has`      | `where`                 |
-| `having_grouped` | `having`                |
+| BabySqueel    | ActiveRecord Equivalent |
+|---------------|-------------------------|
+| `selecting`   | `select`                |
+| `ordering`    | `order`                 |
+| `joining`     | `joins`                 |
+| `grouping`    | `group`                 |
+| `where.has`   | `where`                 |
+| `when_having` | `having`                |
 
 ## Important Notes
 

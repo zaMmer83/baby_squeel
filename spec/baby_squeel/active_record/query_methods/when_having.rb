@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::QueryMethods, '#having_grouped' do
+describe BabySqueel::ActiveRecord::QueryMethods, '#when_having' do
   def having_sql(expr)
     if ActiveRecord::VERSION::MAJOR > 4
       "HAVING (#{expr})" # AR5 wraps with parenthesis
@@ -12,7 +12,7 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#having_grouped' do
   it 'adds a having clause' do
     relation = Post.selecting { id.count }
                    .grouping { author_id }
-                   .having_grouped { id.count > 5 }
+                   .when_having { id.count > 5 }
 
     expect(relation).to produce_sql(<<-EOSQL)
       SELECT COUNT("posts"."id") FROM "posts"
@@ -24,7 +24,7 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#having_grouped' do
   it 'adds a having clause with a calculation' do
     relation = Post.selecting { id.count }
                    .grouping { (author_id + 5 ) * 3 }
-                   .having_grouped { id.count > 5 }
+                   .when_having { id.count > 5 }
 
     expect(relation).to produce_sql(<<-EOSQL)
       SELECT COUNT("posts"."id") FROM "posts"
@@ -37,7 +37,7 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#having_grouped' do
     relation = Post.selecting { id.count }
                    .joins(:author)
                    .grouping { author.id }
-                   .having_grouped { author.id.count > 5 }
+                   .when_having { author.id.count > 5 }
 
     expect(relation).to produce_sql(<<-EOSQL)
       SELECT COUNT("posts"."id") FROM "posts"
@@ -51,7 +51,7 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#having_grouped' do
     relation = Post.selecting { author.posts.id.count }
                    .joining { author.posts }
                    .grouping { author.posts.id }
-                   .having_grouped { author.posts.id.count > 5 }
+                   .when_having { author.posts.id.count > 5 }
 
     expect(relation).to produce_sql(<<-EOSQL)
       SELECT COUNT("posts_authors"."id") FROM "posts"

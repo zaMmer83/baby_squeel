@@ -32,7 +32,7 @@ module BabySqueel
       end
 
       # Constructs Arel for ActiveRecord::Base#having using the DSL.
-      def having_grouped(&block)
+      def when_having(&block)
         having DSL.evaluate(self, &block)
       end
     end
