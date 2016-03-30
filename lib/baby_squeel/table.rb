@@ -38,7 +38,7 @@ module BabySqueel
     end
 
     def sift(sifter_name, *args)
-      @scope.public_send("sift_#{sifter_name}", *args)
+      Nodes.wrap @scope.public_send("sift_#{sifter_name}", *args)
     end
 
     # Alias a table. This is only possible when joining
