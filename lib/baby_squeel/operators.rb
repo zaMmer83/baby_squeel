@@ -42,7 +42,7 @@ module BabySqueel
       # * +other+ - The argument to be passed to the SQL operator.
       #
       # ==== Example
-      #    Post.select { title.op('||', 'diddly') }
+      #    Post.select { title.op('||', quoted('diddly')) }
       #    #=> SELECT "posts"."title" || 'diddly' FROM "posts"
       #
       def op(operator, other)

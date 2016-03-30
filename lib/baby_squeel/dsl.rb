@@ -32,6 +32,16 @@ module BabySqueel
       Nodes.wrap Arel::Nodes::NamedFunction.new(name.to_s, args)
     end
 
+    # See Arel::sql
+    def sql(value)
+      ::Arel.sql value
+    end
+
+    # Quotes a string and marks it as SQL
+    def quoted(value)
+      sql @scope.connection.quote(value)
+    end
+
     # Evaluates a DSL block. If arity is given, this method
     # `yield` itself, rather than `instance_eval`.
     def evaluate(&block)
