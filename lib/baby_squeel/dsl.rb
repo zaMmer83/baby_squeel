@@ -9,6 +9,14 @@ module BabySqueel
       new(scope).evaluate(&block)
     end
 
+    # Evaluates a block in the context of a new DSL instance
+    # and passes all arguments to the block.
+    def self.evaluate_sifter(scope, *args, &block)
+      evaluate scope do |root|
+        root.instance_exec(*args, &block)
+      end
+    end
+
     # Create a SQL function. See Arel::Nodes::NamedFunction.
     #
     # ==== Arguments

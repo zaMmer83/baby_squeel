@@ -2,6 +2,14 @@ require 'baby_squeel/dsl'
 
 module BabySqueel
   module ActiveRecord
+    module Sifting
+      def sifter(name, &block)
+        define_singleton_method "sift_#{name}" do |*args|
+          DSL.evaluate_sifter(self, *args, &block)
+        end
+      end
+    end
+
     module QueryMethods
       # Constructs Arel for ActiveRecord::Base#joins using the DSL.
       def joining(&block)
