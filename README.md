@@ -28,6 +28,34 @@ Or install it yourself as:
 
     $ gem install baby_squeel
 
+## Introduction
+
+With ActiveRecord, you might write something like this:
+
+```ruby
+Post.where('created_at >= ?', 2.weeks.ago)
+```
+
+But then someone tells you, "Hey, you should use Arel!". So you convert your query to use Arel:
+
+```ruby
+Post.where(Post.arel_table[:created_at].gteq(2.weeks.ago))
+```
+
+Well, that's great, but it's also pretty verbose. Why don't you give BabySqueel a try:
+
+```ruby
+Post.where.has { created_at >= 2.weeks.ago }
+```
+
+#### Quick note
+
+BabySqueel's blocks use `instance_eval`, which means you won't have access to your instance variables or methods. Don't worry, there's a really easy solution. Just give arity to the block:
+
+```ruby
+Post.where.has { |post| post.created_at >= 2.weeks.ago }
+```
+
 ## Usage
 
 Okay, so we have some models:
@@ -218,17 +246,6 @@ The following methods give you access to BabySqueel's DSL:
 | `grouping`    | `group`                 |
 | `where.has`   | `where`                 |
 | `when_having` | `having`                |
-
-## Important Notes
-
-While inside one of BabySqueel's blocks, `self` will be something totally different. You won't have access to your instance variables or methods.
-
-Don't worry, there's an easy solution. Just give arity to the block:
-
-```ruby
-Post.where.has { |table| table.title == 'Test' }
-# SELECT "posts".* WHERE "posts"."title" = 'Test'
-```
 
 ## Development
 
