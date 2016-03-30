@@ -7,6 +7,7 @@
 
 ### Fixed
 - `Arel::Nodes::Grouping` does not include `Arel::Math`, so operations like `(id + 5) + 3` would fail unexpectedly.
+- Removed `ActiveRecord::VERSION` specific handling of the `WhereChain`.
 
 ## [0.2.1] - 2015-03-27
 ### Added
