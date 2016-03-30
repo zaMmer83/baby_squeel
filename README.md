@@ -181,6 +181,31 @@ Post.joins(:author).where.has {
 # )
 ```
 
+## Sifters
+
+Sifters are like little snippets of conditions that take parameters.
+
+```ruby
+class Post < ActiveRecord::Base
+  sifter :funny do |str|
+    title == 'rabies'
+  end
+end
+
+class Author < ActiveRecord::Base
+  sifter :name_contains do |string|
+    name =~ "%#{string}%"
+  end
+end
+
+Post.joins(:author).where.has {
+  sift(:funny) | author.sift(:name_contains, 'blergh')
+}
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+# WHERE ("posts"."title" = 'rabies' OR "authors"."name" LIKE '%blergh%')
+```
+
 ## What's what?
 
 The following methods give you access to BabySqueel's DSL:

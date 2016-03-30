@@ -2,6 +2,7 @@
 
 ### Added
 - Support for `group` (`grouping`) and `having` (`having_grouped`).
+- Support for sifters.
 - More descriptive error messages when a column or association is not found.
 
 ### Fixed
