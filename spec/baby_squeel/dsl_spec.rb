@@ -11,6 +11,24 @@ describe BabySqueel::DSL do
     subject(:table) { dsl }
   end
 
+  describe '#sql' do
+    it 'converts something to a sql literal' do
+      expect(dsl.sql('something')).to be_a(Arel::Nodes::SqlLiteral)
+    end
+  end
+
+  describe '#quoted' do
+    subject { dsl.quoted('fat') }
+
+    it 'quotes using the connection adapter' do
+      is_expected.to eq("'fat'")
+    end
+
+    it 'returns a sql literal' do
+      is_expected.to be_a(Arel::Nodes::SqlLiteral)
+    end
+  end
+
   describe '#func' do
     it 'constructs a named function' do
       expect(dsl.func(:coalesce, 0, 1)).to produce_sql('coalesce(0, 1)')

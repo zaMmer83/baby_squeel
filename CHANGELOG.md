@@ -3,6 +3,7 @@
 ### Added
 - Support for `group` (`grouping`) and `having` (`when_having`).
 - Support for sifters.
+- Added `quoted` and `sql` helpers for quoting strings and SQL literals.
 - More descriptive error messages when a column or association is not found.
 
 ### Fixed
