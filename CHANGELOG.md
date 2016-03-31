@@ -8,6 +8,7 @@
 
 ### Fixed
 - `Arel::Nodes::Grouping` does not include `Arel::Math`, so operations like `(id + 5) + 3` would fail unexpectedly.
+- Fix missing bind values When joining through associations with default scope.
 - Removed `ActiveRecord::VERSION` specific handling of the `WhereChain`.
 
 ## [0.2.1] - 2015-03-27
