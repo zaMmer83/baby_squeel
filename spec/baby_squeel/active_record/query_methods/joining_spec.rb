@@ -86,6 +86,16 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
       EOSQL
     end
 
+    it 'merges bind values' do
+      relation = Post.joining { ugly_author_comments }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id" AND "authors"."ugly" = 't'
+        INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+      EOSQL
+    end
+
     context 'with complex conditions' do
       it 'inner joins' do
         relation = Post.joining {

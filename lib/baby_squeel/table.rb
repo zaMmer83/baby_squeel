@@ -14,10 +14,10 @@ module BabySqueel
   end
 
   class Table
-    attr_accessor :_on, :_join, :_table
+    attr_accessor :_scope, :_on, :_join, :_table
 
     def initialize(scope)
-      @scope = scope
+      @_scope = scope
       @_table = scope.arel_table
       @_join = Arel::Nodes::InnerJoin
     end
@@ -30,15 +30,15 @@ module BabySqueel
     # Constructs a new BabySqueel::Association. Raises
     # an exception if the association is not found.
     def association(name)
-      if reflection = @scope.reflect_on_association(name)
+      if reflection = _scope.reflect_on_association(name)
         Association.new(self, reflection)
       else
-        raise AssociationNotFoundError.new(@scope.model_name, name)
+        raise AssociationNotFoundError.new(_scope.model_name, name)
       end
     end
 
     def sift(sifter_name, *args)
-      Nodes.wrap @scope.public_send("sift_#{sifter_name}", *args)
+      Nodes.wrap _scope.public_send("sift_#{sifter_name}", *args)
     end
 
     # Alias a table. This is only possible when joining
@@ -89,19 +89,15 @@ module BabySqueel
     # 2. Resolve the assocition's join clauses using ActiveRecord.
     #
     def _arel(associations = [])
-      if _on
-        _join.new(_table, _on)
-      else
-        JoinDependency.new(@scope, associations).constraints
-      end
+      JoinDependency.new(self, associations)
     end
 
     private
 
     def resolve(name)
-      if @scope.column_names.include?(name.to_s)
+      if _scope.column_names.include?(name.to_s)
         self[name]
-      elsif @scope.reflect_on_association(name)
+      elsif _scope.reflect_on_association(name)
         association(name)
       end
     end
@@ -114,7 +110,7 @@ module BabySqueel
       return super if !args.empty? || block_given?
 
       resolve(name) || begin
-        raise NotFoundError.new(@scope.model_name, name)
+        raise NotFoundError.new(_scope.model_name, name)
       end
     end
   end
