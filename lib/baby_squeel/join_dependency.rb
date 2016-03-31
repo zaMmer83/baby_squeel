@@ -1,11 +1,23 @@
 module BabySqueel
   class JoinDependency
-    attr_reader :bind_values
+    delegate :_scope, :_join, :_on, :_table, to: :@table
 
     def initialize(table, associations = [])
       @table = table
-      @bind_values = []
       @associations = associations
+    end
+
+    if ActiveRecord::VERSION::STRING < '4.1.0'
+      def bind_values
+        _scope.joins(join_names(@associations)).bind_values
+      end
+    else
+      def bind_values
+        @bind_values ||= begin
+          relation = _scope.joins(join_names(@associations))
+          relation.arel.bind_values + relation.bind_values
+        end
+      end
     end
 
     # Converts an array of BabySqueel::Associations into an array
@@ -14,8 +26,8 @@ module BabySqueel
     # Each association is built individually so that the correct
     # Arel join node will be used for each individual association.
     def _arel
-      if @table._on
-        [@table._join.new(@table._table, @table._on)]
+      if _on
+        [_join.new(_table, _on)]
       else
         @associations.each.with_index.inject([]) do |joins, (assoc, i)|
           inject @associations[0..i], joins, assoc._join
@@ -32,12 +44,7 @@ module BabySqueel
     end
 
     def build(names, join_node)
-      relation = @table._scope.joins(names)
-
-      @bind_values = relation.arel.bind_values
-      @bind_values += relation.bind_values
-
-      relation.join_sources.map do |join|
+      _scope.joins(names).join_sources.map do |join|
         join_node.new(join.left, join.right)
       end
     end
