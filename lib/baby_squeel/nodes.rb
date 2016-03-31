@@ -17,7 +17,7 @@ module BabySqueel
       # ActiveRecord.
       def unwrap(node)
         if node.respond_to? :_arel
-          node._arel
+          unwrap node._arel
         elsif node.is_a? Array
           node.map { |n| unwrap(n) }
         else
@@ -94,7 +94,7 @@ module BabySqueel
       end
 
       def _arel
-        parent_arel = @parent._arel
+        parent_arel = @parent._arel._arel
 
         if parent_arel && parent_arel.last
           parent_arel.last.left[@name]

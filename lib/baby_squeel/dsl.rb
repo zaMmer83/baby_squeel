@@ -4,16 +4,32 @@ require 'baby_squeel/association'
 
 module BabySqueel
   class DSL < Table
-    # Evaluates a block in the context of a new DSL instance.
-    def self.evaluate(scope, &block)
-      new(scope).evaluate(&block)
-    end
+    class << self
+      # Evaluates a block and unwraps the nodes
+      def evaluate(scope, &block)
+        Nodes.unwrap evaluate!(scope, &block)
+      end
 
-    # Evaluates a block in the context of a new DSL instance
-    # and passes all arguments to the block.
-    def self.evaluate_sifter(scope, *args, &block)
-      evaluate scope do |root|
-        root.instance_exec(*args, &block)
+      # Evaluates a block in the context of a DSL instance
+      def evaluate!(scope, &block)
+        new(scope).evaluate(&block)
+      end
+
+      # Evaluates a block specifically for a join. In this
+      # case, we'll return an array of Arel join nodes and
+      # a list of bind parameters.
+      def evaluate_joins(scope, &block)
+        dependency = evaluate!(scope, &block)._arel
+        join_arel = Nodes.unwrap(dependency._arel)
+        [join_arel, dependency.bind_values]
+      end
+
+      # Evaluates a block in the context of a new DSL instance
+      # and passes all arguments to the block.
+      def evaluate_sifter(scope, *args, &block)
+        evaluate scope do |root|
+          root.instance_exec(*args, &block)
+        end
       end
     end
 
@@ -39,16 +55,16 @@ module BabySqueel
 
     # Quotes a string and marks it as SQL
     def quoted(value)
-      sql @scope.connection.quote(value)
+      sql _scope.connection.quote(value)
     end
 
     # Evaluates a DSL block. If arity is given, this method
     # `yield` itself, rather than `instance_eval`.
     def evaluate(&block)
       if block.arity.zero?
-        Nodes.unwrap instance_eval(&block)
+        instance_eval(&block)
       else
-        Nodes.unwrap yield(self)
+        yield(self)
       end
     end
 
