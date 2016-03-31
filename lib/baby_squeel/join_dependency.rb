@@ -30,14 +30,14 @@ module BabySqueel
         [_join.new(_table, _on)]
       else
         @associations.each.with_index.inject([]) do |joins, (assoc, i)|
-          inject @associations[0..i], joins, assoc._join
+          construct @associations[0..i], joins, assoc._join
         end
       end
     end
 
     private
 
-    def inject(associations, theirs, join_node)
+    def construct(associations, theirs, join_node)
       names = join_names associations
       mine = build names, join_node
       theirs + mine[theirs.length..-1]
