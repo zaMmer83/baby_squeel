@@ -37,6 +37,6 @@ Nothing yet!
 - Initial support for selects, orders, wheres, and joins.
 
 [Unreleased]: https://github.com/rzane/baby_squeel/compare/v0.2.2...HEAD
-[0.2.1]: https://github.com/rzane/baby_squeel/compare/v0.2.1...v0.2.2
+[0.2.2]: https://github.com/rzane/baby_squeel/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/rzane/baby_squeel/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/rzane/baby_squeel/compare/v0.1.0...v0.2.0
