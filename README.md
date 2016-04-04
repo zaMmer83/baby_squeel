@@ -220,11 +220,11 @@ authors.first.swag #=> 'Ray Zane-dizzle'
 
 ## Sifters
 
-Sifters are like little snippets of conditions that take parameters.
+Sifters are like little snippets of conditions that can take arguments.
 
 ```ruby
 class Post < ActiveRecord::Base
-  sifter :funny do |str|
+  sifter :funny do
     title == 'rabies'
   end
 end
