@@ -8,9 +8,7 @@
 
 Have you ever used the [squeel](https://github.com/activerecord-hackery/squeel) gem? It's a really nice way to build complex queries. However, squeel monkeypatches ActiveRecord internals, so it has a tendency to break every time a new ActiveRecord version comes out.
 
-For me, that's a deal breaker. BabySqueel provides a query DSL for ActiveRecord without all of the evil. :heart:
-
-It's really just a layer of sugar on top of Arel.
+BabySqueel does not override *any* ActiveRecord internals.
 
 ## Installation
 
