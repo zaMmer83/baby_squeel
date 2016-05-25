@@ -6,9 +6,9 @@
 
 <img align="right" src="http://static.thefrisky.com/uploads/2010/07/01/pig_in_boots_070110_m.jpg" alt="biddy piggy">
 
-Have you ever used the [squeel](https://github.com/activerecord-hackery/squeel) gem? It's a really nice way to build complex queries. However, squeel monkeypatches ActiveRecord internals, so it has a tendency to break every time a new ActiveRecord version comes out.
+Have you ever used the [Squeel](https://github.com/activerecord-hackery/squeel) gem? It's a really nice way to build complex queries. However, Squeel monkeypatches Active Record internals, because it was aimed at enhancing the existing API with the aim of inclusion into Rails. However, that inclusion never happened, and it left Squeel susceptible to breakage from arbitrary changes in Active Record, eventually burning out the maintainer.
 
-For me, that's a deal breaker. BabySqueel provides a query DSL for ActiveRecord without all of the evil. :heart:
+For me, that's a deal breaker. BabySqueel provides a Squeel-like query DSL for Active Record while hopefully avoiding the majority of the version upgrade difficulties via a minimum of monkeypatching. :heart:
 
 It's really just a layer of sugar on top of Arel.
 
@@ -30,7 +30,7 @@ Or install it yourself as:
 
 ## Introduction
 
-With ActiveRecord, you might write something like this:
+With Active Record, you might write something like this:
 
 ```ruby
 Post.where('created_at >= ?', 2.weeks.ago)
@@ -247,18 +247,18 @@ Post.joins(:author).where.has {
 
 The following methods give you access to BabySqueel's DSL:
 
-| BabySqueel    | ActiveRecord Equivalent |
-|---------------|-------------------------|
-| `selecting`   | `select`                |
-| `ordering`    | `order`                 |
-| `joining`     | `joins`                 |
-| `grouping`    | `group`                 |
-| `where.has`   | `where`                 |
-| `when_having` | `having`                |
+| BabySqueel    | Active Record Equivalent |
+|---------------|--------------------------|
+| `selecting`   | `select`                 |
+| `ordering`    | `order`                  |
+| `joining`     | `joins`                  |
+| `grouping`    | `group`                  |
+| `where.has`   | `where`                  |
+| `when_having` | `having`                 |
 
 ## Development
 
-1. Pick an ActiveRecord version to develop against, then export it: `export AR=4.2.6`.
+1. Pick an Active Record version to develop against, then export it: `export AR=4.2.6`.
 2. Run `bin/setup` to install dependencies.
 3. Run `rake` to run the specs.
 
