@@ -11,9 +11,11 @@ env:
     - COVERALLS_REPO_TOKEN=X5ZWSPW8VW2JXNJO0qNjlZCQNW4ju89gb
   matrix:
     - AR=4.0.0
-    - AR=4.1.0
     - AR=4.1.15
-    - AR=4.2.0
     - AR=4.2.6
-    - AR=5.0.0.beta2
     - AR=5.0.0.rc1
+
+    - AR=4.0.0 COMPAT=1
+    - AR=4.1.15 COMPAT=1
+    - AR=4.2.6 COMPAT=1
+    - AR=5.0.0.rc1 COMPAT=1
