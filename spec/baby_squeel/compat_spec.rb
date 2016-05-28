@@ -18,8 +18,8 @@ if ENV['COMPAT'] == '1'
       end
 
       it 'mitigates the problem of Array#select when given arity' do
-        array = Post.select { |post| post.id }
-        expect(array).to be_an(Array)
+        values = Post.select { |post| post.id }
+        expect(values).not_to respond_to(:to_sql)
       end
     end
 

@@ -14,6 +14,14 @@ module BabySqueel
         end
       end
 
+      # Heads up, Array#select conflicts with
+      # ActiveRecord::QueryMethods#select. So, if arity
+      # is given to the block, we'll use Array#select.
+      # Otherwise, you'll be in a DSL block.
+      #
+      #    Model.select { This is DSL }
+      #    Model.select { |m| This is not DSL }
+      #
       def select(*args, &block)
         if block_given? && args.empty? && block.arity.zero?
           selecting(&block)
