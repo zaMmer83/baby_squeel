@@ -13,6 +13,14 @@ module BabySqueel
     BabySqueel::Compat.enable!
   end
 
+  def self.[](thing)
+    if thing.respond_to?(:model_name)
+      Relation.new(thing)
+    else
+      Table.new(Arel::Table.new(thing))
+    end
+  end
+
   class NotFoundError < StandardError
     def initialize(model_name, name)
       super "There is no column or association named '#{name}' for #{model_name}."

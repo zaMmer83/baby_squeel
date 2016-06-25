@@ -130,5 +130,18 @@ describe BabySqueel::ActiveRecord::WhereChain do
         WHERE "authors"."id" IN (SELECT "authors"."id" FROM "authors" LIMIT 3)
       EOSQL
     end
+
+    it 'wheres using a simple table' do
+      simple = BabySqueel[:authors]
+      relation = Post.joins(:author).where.has {
+        simple.name == 'Yo Gotti'
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        WHERE "authors"."name" = 'Yo Gotti'
+      EOSQL
+    end
   end
 end

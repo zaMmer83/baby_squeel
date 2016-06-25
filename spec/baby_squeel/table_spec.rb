@@ -4,7 +4,9 @@ require 'shared_examples/table'
 
 describe BabySqueel::Table do
   subject(:table) {
-    BabySqueel::Relation.new(Post)
+    BabySqueel::Table.new(
+      Arel::Table.new(:posts)
+    )
   }
 
   include_examples 'a table'

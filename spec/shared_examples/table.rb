@@ -15,33 +15,9 @@ shared_examples_for 'a table' do
     end
   end
 
-  describe '#association' do
-    it 'builds a table from the associated class' do
-      expect(table.association(:author)).to be_a(BabySqueel::Table)
-    end
-
-    it 'allows chaining attributes' do
-      assoc = table.association :author
-      expect(assoc.id).to be_a(Arel::Attributes::Attribute)
-    end
-
-    it 'raises an error for non-existant associations' do
-      expect {
-        table.association :non_existent
-      }.to raise_error(
-        BabySqueel::AssociationNotFoundError,
-        /named 'non_existent'(.+)for Post/
-      )
-    end
-  end
-
   describe '#respond_to?' do
     it 'resolves attributes' do
       is_expected.to respond_to(:title)
-    end
-
-    it 'resolves associations' do
-      is_expected.to respond_to(:author)
     end
   end
 
@@ -50,16 +26,8 @@ shared_examples_for 'a table' do
       expect(table.id).to be_an(Arel::Attributes::Attribute)
     end
 
-    it 'resolves associations' do
-      expect(table.author).to be_a(BabySqueel::Table)
-    end
-
     it 'does not resolve when a block is given' do
       expect { table.id { 'block' } }.to raise_error(NameError)
-    end
-
-    it 'raises a custom error for things that look like columns' do
-      expect { table.non_existent_column }.to raise_error(BabySqueel::NotFoundError)
     end
   end
 end
