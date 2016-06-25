@@ -28,7 +28,7 @@ module BabySqueel
     def _arel
       if _on
         [_join.new(_table, _on)]
-      elsif relation?
+      else
         @associations.each.with_index.inject([]) do |joins, (assoc, i)|
           construct @associations[0..i], joins, assoc._join
         end

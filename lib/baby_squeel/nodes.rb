@@ -94,10 +94,12 @@ module BabySqueel
       end
 
       def _arel
-        parent_arel = @parent._arel._arel
+        parent_arel = @parent._arel
+        parent_arel &&= parent_arel._arel
+        parent_arel &&= parent_arel.last
 
-        if parent_arel && parent_arel.last
-          parent_arel.last.left[@name]
+        if parent_arel
+          parent_arel.left[@name]
         else
           super
         end

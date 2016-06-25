@@ -66,6 +66,7 @@ module BabySqueel
     # 2. Resolve the assocition's join clauses using ActiveRecord.
     #
     def _arel(associations = [])
+      return unless _on || associations.any?
       JoinDependency.new(self, associations)
     end
 
