@@ -4,6 +4,14 @@ require 'baby_squeel/version'
 require 'baby_squeel/active_record'
 
 module BabySqueel
+  def self.configure
+    yield self
+  end
+
+  def self.enable_compatibility!
+    require 'baby_squeel/compat'
+    BabySqueel::Compat.enable!
+  end
 end
 
 ::ActiveRecord::Base.extend BabySqueel::ActiveRecord::Sifting

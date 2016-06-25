@@ -254,6 +254,19 @@ The following methods give you access to BabySqueel's DSL:
 | `where.has`   | `where`                  |
 | `when_having` | `having`                 |
 
+## Compatibility Mode
+
+If you want `select`, `order`, `joins`, `group`, and `having` to be able to accept DSL blocks, you can do so by adding the following to an initializer.
+
+```ruby
+# config/initializers/baby_squeel.rb
+BabySqueel.configure do |config|
+  config.enable_compat!
+end
+```
+
+Calling `enable_compat!` will override methods in Active Record, so use caution.
+
 ## Development
 
 1. Pick an Active Record version to develop against, then export it: `export AR=4.2.6`.
@@ -265,7 +278,6 @@ You can also run `bin/console` to open up a prompt where you'll have access to s
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/rzane/baby_squeel.
-
 
 ## License
 
