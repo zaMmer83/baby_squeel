@@ -10,7 +10,7 @@ module BabySqueel
       #
       # ==== Example
       #    BabySqueel::Nodes::Generic.arel_alias :unlike, :does_not_match
-      #    Post.where { title.unlike 'something' }
+      #    Post.where.has { title.unlike 'something' }
       #
       def arel_alias(operator, arel_name)
         define_method operator do |other|
@@ -42,7 +42,7 @@ module BabySqueel
       # * +other+ - The argument to be passed to the SQL operator.
       #
       # ==== Example
-      #    Post.select { title.op('||', quoted('diddly')) }
+      #    Post.selecting { title.op('||', quoted('diddly')) }
       #    #=> SELECT "posts"."title" || 'diddly' FROM "posts"
       #
       def op(operator, other)
