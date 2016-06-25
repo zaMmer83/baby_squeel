@@ -216,6 +216,18 @@ authors = Author.selecting { name.op('||', quoted('-dizzle')).as('swag') }
 authors.first.swag #=> 'Ray Zane-dizzle'
 ```
 
+##### Querying tables without Active Record models
+
+```ruby
+table = BabySqueel[:some_table]
+
+Post.joining {
+  table.on(table.post_id == id)
+}.where.has {
+  table.some_column == 1
+}
+```
+
 ## Sifters
 
 Sifters are like little snippets of conditions that can take arguments.
