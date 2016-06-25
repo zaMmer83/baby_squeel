@@ -5,7 +5,7 @@ require 'baby_squeel/table'
 describe BabySqueel::Nodes::Attribute do
   subject(:attribute) {
     described_class.new(
-      BabySqueel::Table.new(Post),
+      BabySqueel::Relation.new(Post),
       :id
     )
   }

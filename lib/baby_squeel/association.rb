@@ -1,7 +1,7 @@
-require 'baby_squeel/table'
+require 'baby_squeel/relation'
 
 module BabySqueel
-  class Association < Table
+  class Association < Relation
     class AliasingError < StandardError
       MESSAGE =
         'Attempted to alias \'%{association}\' as \'%{alias_name}\', but the ' \

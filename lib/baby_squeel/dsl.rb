@@ -1,9 +1,9 @@
 require 'baby_squeel/nodes'
-require 'baby_squeel/table'
+require 'baby_squeel/relation'
 require 'baby_squeel/association'
 
 module BabySqueel
-  class DSL < Table
+  class DSL < Relation
     class << self
       # Evaluates a block and unwraps the nodes
       def evaluate(scope, &block)

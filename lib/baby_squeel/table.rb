@@ -1,44 +1,21 @@
 require 'baby_squeel/join_dependency'
 
 module BabySqueel
-  class NotFoundError < StandardError
-    def initialize(model_name, name)
-      super "There is no column or association named '#{name}' for #{model_name}."
-    end
-  end
-
-  class AssociationNotFoundError < StandardError
-    def initialize(model_name, name)
-      super "Association named '#{name}' was not found for #{model_name}."
-    end
-  end
-
   class Table
-    attr_accessor :_scope, :_on, :_join, :_table
+    attr_accessor :_on, :_join, :_table
 
-    def initialize(scope)
-      @_scope = scope
-      @_table = scope.arel_table
+    def initialize(arel_table)
+      @_table = arel_table
       @_join = Arel::Nodes::InnerJoin
+    end
+
+    def _table_name
+      arel_table.name
     end
 
     # See Arel::Table#[]
     def [](key)
       Nodes::Attribute.new(self, key)
-    end
-
-    # Constructs a new BabySqueel::Association. Raises
-    # an exception if the association is not found.
-    def association(name)
-      if reflection = _scope.reflect_on_association(name)
-        Association.new(self, reflection)
-      else
-        raise AssociationNotFoundError.new(_scope.model_name, name)
-      end
-    end
-
-    def sift(sifter_name, *args)
-      Nodes.wrap _scope.public_send("sift_#{sifter_name}", *args)
     end
 
     # Alias a table. This is only possible when joining
@@ -95,11 +72,7 @@ module BabySqueel
     private
 
     def resolve(name)
-      if _scope.column_names.include?(name.to_s)
-        self[name]
-      elsif _scope.reflect_on_association(name)
-        association(name)
-      end
+      self[name]
     end
 
     def respond_to_missing?(name, *)
@@ -110,7 +83,7 @@ module BabySqueel
       return super if !args.empty? || block_given?
 
       resolve(name) || begin
-        raise NotFoundError.new(_scope.model_name, name)
+        raise NotFoundError.new(_table_name, name)
       end
     end
   end
