@@ -4,20 +4,22 @@ require 'baby_squeel/version'
 require 'baby_squeel/active_record'
 
 module BabySqueel
-  def self.configure
-    yield self
-  end
+  class << self
+    def configure
+      yield self
+    end
 
-  def self.enable_compatibility!
-    require 'baby_squeel/compat'
-    BabySqueel::Compat.enable!
-  end
+    def enable_compatibility!
+      require 'baby_squeel/compat'
+      BabySqueel::Compat.enable!
+    end
 
-  def self.[](thing)
-    if thing.respond_to?(:model_name)
-      Relation.new(thing)
-    else
-      Table.new(Arel::Table.new(thing))
+    def [](thing)
+      if thing.respond_to?(:model_name)
+        Relation.new(thing)
+      else
+        Table.new(Arel::Table.new(thing))
+      end
     end
   end
 
