@@ -9,11 +9,6 @@ module BabySqueel
       @_scope = scope
     end
 
-    # @override BabySqueel::Table#_table_name
-    def _table_name
-      _scope.model_name
-    end
-
     # Constructs a new BabySqueel::Association. Raises
     # an exception if the association is not found.
     def association(name)
@@ -29,6 +24,11 @@ module BabySqueel
     end
 
     private
+
+    # @override BabySqueel::Table#_table_name
+    def _table_name
+      _scope.model_name
+    end
 
     # @override BabySqueel::Table#resolve
     def resolve(name)

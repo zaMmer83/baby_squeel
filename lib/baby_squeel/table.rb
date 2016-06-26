@@ -9,10 +9,6 @@ module BabySqueel
       @_join = Arel::Nodes::InnerJoin
     end
 
-    def _table_name
-      arel_table.name
-    end
-
     # See Arel::Table#[]
     def [](key)
       Nodes::Attribute.new(self, key)
@@ -71,6 +67,10 @@ module BabySqueel
     end
 
     private
+
+    def _table_name
+      arel_table.name
+    end
 
     def resolve(name)
       self[name]
