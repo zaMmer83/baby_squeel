@@ -9,14 +9,14 @@ module BabySqueel
 
     if ActiveRecord::VERSION::STRING < '4.1.0'
       def bind_values
+        return [] unless relation?
         _scope.joins(join_names(@associations)).bind_values
       end
     else
       def bind_values
-        @bind_values ||= begin
-          relation = _scope.joins(join_names(@associations))
-          relation.arel.bind_values + relation.bind_values
-        end
+        return [] unless relation?
+        relation = _scope.joins(join_names(@associations))
+        relation.arel.bind_values + relation.bind_values
       end
     end
 
@@ -36,6 +36,10 @@ module BabySqueel
     end
 
     private
+
+    def relation?
+      @table.kind_of? BabySqueel::Relation
+    end
 
     def construct(associations, theirs, join_node)
       names = join_names associations

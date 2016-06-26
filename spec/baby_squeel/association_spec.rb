@@ -5,7 +5,7 @@ require 'shared_examples/table'
 describe BabySqueel::Association do
   subject(:table) {
     BabySqueel::Association.new(
-      BabySqueel::Table.new(Author),
+      BabySqueel::Relation.new(Author),
       Author.reflect_on_association(:posts)
     )
   }

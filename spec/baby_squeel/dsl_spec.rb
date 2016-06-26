@@ -1,11 +1,16 @@
 require 'spec_helper'
 require 'shared_examples/table'
+require 'shared_examples/relation'
 require 'baby_squeel/dsl'
 
 describe BabySqueel::DSL do
   subject(:dsl) {
     BabySqueel::DSL.new(Post)
   }
+
+  it_behaves_like 'a relation' do
+    subject(:table) { dsl }
+  end
 
   it_behaves_like 'a table' do
     subject(:table) { dsl }
