@@ -1,6 +1,11 @@
 ## Unreleased
+### Added
+- Added Squeel compatibility mode that allows `select`, `order`, `joins`, `group`, `where`, and `having` to accept DSL blocks.
+- Added the ability to query tables that aren't backed by Active Record models.
+- Added `BabySqueel::[]`, which provides a `BabySqueel::Relation` for models, or a `BabySqueel::Table` for symbols/strings.
 
-Nothing yet!
+### Changed
+- Renamed `BabySqueel::Association::AliasingError` to `BabySqueel::AssociationAliasingError`.
 
 ## [0.2.2] - 2015-03-30
 ### Added
