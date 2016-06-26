@@ -1,6 +1,7 @@
 require 'active_record'
 require 'active_record/relation'
 require 'baby_squeel/version'
+require 'baby_squeel/errors'
 require 'baby_squeel/active_record'
 
 module BabySqueel
@@ -20,18 +21,6 @@ module BabySqueel
       else
         Table.new(Arel::Table.new(thing))
       end
-    end
-  end
-
-  class NotFoundError < StandardError
-    def initialize(model_name, name)
-      super "There is no column or association named '#{name}' for #{model_name}."
-    end
-  end
-
-  class AssociationNotFoundError < StandardError
-    def initialize(model_name, name)
-      super "Association named '#{name}' was not found for #{model_name}."
     end
   end
 end

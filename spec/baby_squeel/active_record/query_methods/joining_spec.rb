@@ -269,13 +269,13 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
     it 'raises an error when attempting to alias an inner join' do
       expect {
         Post.joining { author.alias('a') }.to_sql
-      }.to raise_error(BabySqueel::Association::AliasingError, /'author' as 'a'/)
+      }.to raise_error(BabySqueel::AssociationAliasingError, /'author' as 'a'/)
     end
 
     it 'raises an error when attempting to alias an outer join' do
       expect {
         Post.joining { author.outer.alias('a') }.to_sql
-      }.to raise_error(BabySqueel::Association::AliasingError, /'author' as 'a'/)
+      }.to raise_error(BabySqueel::AssociationAliasingError, /'author' as 'a'/)
     end
   end
 end
