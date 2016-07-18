@@ -228,6 +228,19 @@ Post.joining {
 }
 ```
 
+##### Helpers
+
+```ruby
+# SQL Literals
+Post.select('1 as one').ordering { sql('one').desc }
+
+# Quoting
+Post.selecting { title.op('||', quoted('diddly')) }
+
+# Functions
+Post.select { func('coalesce', id, 1) }
+```
+
 ## Sifters
 
 Sifters are like little snippets of conditions that can take arguments.
