@@ -1,8 +1,25 @@
 module BabySqueel
   module Compat
     def self.enable!
+      BabySqueel::DSL.prepend BabySqueel::Compat::DSL
       ::ActiveRecord::Base.singleton_class.prepend QueryMethods
       ::ActiveRecord::Relation.prepend QueryMethods
+    end
+
+    module DSL
+      def `(str)
+        sql(str)
+      end
+
+      def my(&block)
+        @caller.instance_eval(&block)
+      end
+
+      # Remember the original binding of the block
+      def evaluate(&block)
+        @caller = block.binding.eval('self')
+        super
+      end
     end
 
     module QueryMethods
@@ -56,7 +73,7 @@ module BabySqueel
 
       def where(*args, &block)
         if block_given? && args.empty?
-          super DSL.evaluate(self, &block)
+          where.has(&block)
         else
           super
         end
