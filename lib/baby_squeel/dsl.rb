@@ -50,7 +50,7 @@ module BabySqueel
 
     # See Arel::sql
     def sql(value)
-      ::Arel.sql value
+      Nodes.wrap ::Arel.sql(value)
     end
 
     # Quotes a string and marks it as SQL

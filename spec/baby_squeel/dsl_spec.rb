@@ -20,6 +20,11 @@ describe BabySqueel::DSL do
     it 'converts something to a sql literal' do
       expect(dsl.sql('something')).to be_a(Arel::Nodes::SqlLiteral)
     end
+
+    it 'wraps the node' do
+      expression = dsl.sql('something') == 'test'
+      expect(expression).to produce_sql("something = 'test'")
+    end
   end
 
   describe '#quoted' do
