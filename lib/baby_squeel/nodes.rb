@@ -6,7 +6,12 @@ module BabySqueel
       # Wraps an Arel node in a Proxy so that it can
       # be extended.
       def wrap(arel)
-        if arel.class.parents.include?(Arel)
+        case arel
+        when Arel::Nodes::Grouping
+          Grouping.new(arel)
+        when Arel::Nodes::Function
+          Function.new(arel)
+        when Arel::Nodes::Node, Arel::Nodes::SqlLiteral
           Generic.new(arel)
         else
           arel
@@ -65,17 +70,6 @@ module BabySqueel
       include Operators::Generic
       include Operators::Grouping
       include Operators::Matching
-
-      # Extend the Arel node with some extra modules. For example,
-      # Arel::Nodes::Grouping does not implement Math. InfixOperation doesn't
-      # implement AliasPredication. Without these extensions, the interface
-      # just seems inconsistent.
-      def initialize(node)
-        node.extend Arel::Math
-        node.extend Arel::AliasPredication
-        node.extend Arel::OrderPredications
-        super(node)
-      end
     end
 
     class Attribute < Generic
@@ -103,6 +97,25 @@ module BabySqueel
         else
           super
         end
+      end
+    end
+
+    # See: https://github.com/rails/arel/pull/381
+    class Function < Generic
+      def initialize(node)
+        super
+        node.extend Arel::OrderPredications
+      end
+    end
+
+    # See: https://github.com/rails/arel/pull/435
+    class Grouping < Generic
+      def initialize(node)
+        super
+        node.extend Arel::AliasPredication
+        node.extend Arel::OrderPredications
+        node.extend Arel::Math
+        node.extend Arel::Expressions
       end
     end
   end
