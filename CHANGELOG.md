@@ -2,6 +2,13 @@
 
 Nothing yet.
 
+## [0.3.1] - 2016-08-02
+### Added
+- Ported backticks and #my from Squeel
+
+### Changed
+- DSL#sql now returns a node wrapped in a BabySqueel proxy.
+
 ## [0.3.0] - 2016-06-26
 ### Added
 - Added Squeel compatibility mode that allows `select`, `order`, `joins`, `group`, `where`, and `having` to accept DSL blocks.
@@ -45,7 +52,8 @@ Nothing yet.
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/rzane/baby_squeel/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/rzane/baby_squeel/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/rzane/baby_squeel/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/rzane/baby_squeel/compare/v0.2.0...v0.2.1
