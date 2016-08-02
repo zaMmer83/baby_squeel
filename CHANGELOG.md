@@ -1,6 +1,6 @@
 ## Unreleased
-
-Nothing yet.
+### Changed
+- Arel nodes are only extended with the behaviors they need. Previously, all Arel nodes were being extended with `Arel::AliasPredication`, `Arel::OrderPredications`, and `Arel::Math`.
 
 ## [0.3.1] - 2016-08-02
 ### Added
