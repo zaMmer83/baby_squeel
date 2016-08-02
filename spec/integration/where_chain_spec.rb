@@ -132,7 +132,12 @@ describe BabySqueel::ActiveRecord::WhereChain do
     end
 
     it 'wheres using a simple table' do
-      simple = BabySqueel[:authors]
+      simple = if Arel::VERSION > '7.0.0'
+                 BabySqueel[:authors, type_caster: Author.type_caster]
+               else
+                 BabySqueel[:authors]
+               end
+
       relation = Post.joins(:author).where.has {
         simple.name == 'Yo Gotti'
       }

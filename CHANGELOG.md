@@ -2,6 +2,9 @@
 ### Changed
 - Arel nodes are only extended with the behaviors they need. Previously, all Arel nodes were being extended with `Arel::AliasPredication`, `Arel::OrderPredications`, and `Arel::Math`.
 
+### Fixed
+- Fixed deprecation warnings on Active Record 5 when initializing an Arel::Table without a type caster.
+
 ## [0.3.1] - 2016-08-02
 ### Added
 - Ported backticks and #my from Squeel
