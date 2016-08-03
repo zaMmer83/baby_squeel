@@ -15,11 +15,13 @@ module BabySqueel
       BabySqueel::Compat.enable!
     end
 
-    def [](thing)
+    def [](thing, **kwargs)
       if thing.respond_to?(:model_name)
         Relation.new(thing)
+      elsif thing.kind_of?(Arel::Table)
+        Table.new(thing)
       else
-        Table.new(Arel::Table.new(thing))
+        Table.new(Arel::Table.new(thing, **kwargs))
       end
     end
   end

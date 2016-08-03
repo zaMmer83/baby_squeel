@@ -13,9 +13,9 @@ env:
     - AR=4.0.0
     - AR=4.1.15
     - AR=4.2.6
-    - AR=5.0.0.rc1
+    - AR=5.0.0
 
     - AR=4.0.0 COMPAT=1
     - AR=4.1.15 COMPAT=1
     - AR=4.2.6 COMPAT=1
-    - AR=5.0.0.rc1 COMPAT=1
+    - AR=5.0.0 COMPAT=1
