@@ -51,7 +51,7 @@ module BabySqueel
     end
 
     def on!(node)
-      self._on = Arel::Nodes::On.new(node)
+      self._on = node
       self
     end
 

@@ -19,7 +19,7 @@ describe BabySqueel::Association do
       let(:condition) { association.author_id == association.author.id }
       subject(:arel)  { association.author.on(condition)._arel }
 
-      specify { is_expected.to be_a(BabySqueel::JoinDependency) }
+      specify { is_expected.to be_a(BabySqueel::JoinExpression) }
 
       it 'sets an on clause on the JoinExpression' do
         expect(arel._on).not_to be_nil
@@ -29,7 +29,7 @@ describe BabySqueel::Association do
     context 'when implicitly joining' do
       subject(:arel) { association.author._arel }
 
-      specify { is_expected.to be_a(BabySqueel::JoinDependency) }
+      specify { is_expected.to be_a(BabySqueel::JoinExpression) }
 
       it 'does not set an on clause on the JoinExpression' do
         expect(arel._on).to be_nil

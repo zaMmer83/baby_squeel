@@ -36,7 +36,7 @@ module BabySqueel
     # Arel join node will be used for each individual association.
     def _arel
       if _on
-        [_join.new(_table, _on)]
+        [_join.new(_table, Arel::Nodes::On.new(_on))]
       elsif @associations.all? { |a| inner_join?(a) }
         [join_names(@associations)]
       else
