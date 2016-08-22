@@ -68,8 +68,8 @@ module BabySqueel
 
     private
 
-    def _table_name
-      arel_table.name
+    def not_found_error!
+      raise NotImplementedError, 'BabySqueel::Table will never raise a NotFoundError'
     end
 
     def resolve(name)
@@ -82,10 +82,7 @@ module BabySqueel
 
     def method_missing(name, *args, &block)
       return super if !args.empty? || block_given?
-
-      resolve(name) || begin
-        raise NotFoundError.new(_table_name, name)
-      end
+      resolve(name) || not_found_error!(name)
     end
   end
 end
