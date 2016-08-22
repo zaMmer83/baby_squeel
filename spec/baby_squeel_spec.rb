@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 describe BabySqueel do
+  describe '.configure' do
+    it 'yields itself for mutation' do
+      BabySqueel.configure do |config|
+        expect(config).to eq(BabySqueel)
+      end
+    end
+  end
+
   describe '.[]' do
     it 'accepts a model' do
       expect(BabySqueel[Post]).to be_a(BabySqueel::Relation)
