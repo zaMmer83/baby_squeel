@@ -14,6 +14,10 @@ module BabySqueel
         @_arel = Nodes.unwrap(arel)
       end
 
+      def inspect
+        "BabySqueel{#{super}}"
+      end
+
       def respond_to?(meth, include_private = false)
         meth.to_s == '_arel' || _arel.respond_to?(meth, include_private)
       end
