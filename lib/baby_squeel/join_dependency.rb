@@ -29,8 +29,10 @@ module BabySqueel
       if _on
         [_join.new(_table, _on)]
       else
-        @associations.each.with_index.inject([]) do |joins, (assoc, i)|
-          construct @associations[0..i], joins, assoc._join
+        @associations.each.with_index.inject([]) do |previous, (assoc, i)|
+          names = join_names @associations[0..i]
+          current = build names, assoc._join
+          previous + current[previous.length..-1]
         end
       end
     end
@@ -41,14 +43,8 @@ module BabySqueel
       @table.kind_of? BabySqueel::Relation
     end
 
-    def construct(associations, theirs, join_node)
-      names = join_names associations
-      mine = build names, join_node
-      theirs + mine[theirs.length..-1]
-    end
-
     def build(names, join_node)
-      _scope.joins(names).join_sources.map do |join|
+      _scope.unscoped.joins(names).join_sources.map do |join|
         join_node.new(join.left, join.right)
       end
     end

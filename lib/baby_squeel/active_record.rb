@@ -13,7 +13,7 @@ module BabySqueel
     module QueryMethods
       # Constructs Arel for ActiveRecord::Base#joins using the DSL.
       def joining(&block)
-        arel, binds = DSL.evaluate_joins(unscoped, &block)
+        arel, binds = DSL.evaluate_joins(self, &block)
         joins(arel).tap { |s| s.bind_values += binds }
       end
 
