@@ -11,7 +11,8 @@ module BabySqueel
     end
 
     def find_alias(association)
-      builder = JoinDependency::Builder.new(_scope.where(nil))
+      relation = _scope.joins(join_names(@associations))
+      builder = JoinDependency::Builder.new(relation)
       finder = JoinDependency::Finder.new(builder.to_join_dependency)
       finder.find_alias(association._reflection)
     end
