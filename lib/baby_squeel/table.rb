@@ -1,4 +1,4 @@
-require 'baby_squeel/join_dependency'
+require 'baby_squeel/join_expression'
 
 module BabySqueel
   class Table
@@ -63,7 +63,7 @@ module BabySqueel
     #
     def _arel(associations = [])
       return unless _on || associations.any?
-      JoinDependency.new(self, associations)
+      JoinExpression.new(self, associations)
     end
 
     private

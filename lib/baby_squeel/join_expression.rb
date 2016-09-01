@@ -1,10 +1,19 @@
+require 'baby_squeel/join_dependency/builder'
+require 'baby_squeel/join_dependency/finder'
+
 module BabySqueel
-  class JoinDependency
+  class JoinExpression
     delegate :_scope, :_join, :_on, :_table, to: :@table
 
     def initialize(table, associations = [])
       @table = table
       @associations = associations
+    end
+
+    def find_alias(association)
+      builder = JoinDependency::Builder.new(_scope.where(nil))
+      finder = JoinDependency::Finder.new(builder.to_join_dependency)
+      finder.find_alias(association._reflection)
     end
 
     if ActiveRecord::VERSION::STRING < '4.1.0'
