@@ -38,6 +38,8 @@ module BabySqueel
     def _arel
       if _on
         [_join.new(_table, _on)]
+      elsif @associations.all? { |a| inner_join?(a) }
+        join_names @associations
       else
         @associations.each.with_index.inject([]) do |previous, (assoc, i)|
           names = join_names @associations[0..i]
@@ -48,6 +50,10 @@ module BabySqueel
     end
 
     private
+
+    def inner_join?(association)
+      association._join == Arel::Nodes::InnerJoin
+    end
 
     def relation?
       @table.kind_of? BabySqueel::Relation
