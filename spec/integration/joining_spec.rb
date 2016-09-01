@@ -260,23 +260,46 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
       end
     end
 
-    it 'ensures that the join values are unique' do
-      relation = Post.joining { author }.joining { author }
+    describe 'duplicate prevention' do
+      it 'handles the simplest case' do
+        relation = Post.joining { author }.joining { author }
 
-      expect(relation).to produce_sql(<<-EOSQL)
-        SELECT "posts".* FROM "posts"
-        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-      EOSQL
-    end
+        expect(relation).to produce_sql(<<-EOSQL)
+          SELECT "posts".* FROM "posts"
+          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        EOSQL
+      end
 
-    it 'ensures that the join values are unique, but allow progressive joins' do
-      relation = Post.joining { author }.joining { author.posts }
+      it 'handles a combination of DSL joins with traditional joins' do
+        relation = Post.joining { author }.joins(:author)
 
-      expect(relation).to produce_sql(<<-EOSQL)
-        SELECT "posts".* FROM "posts"
-        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-        INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
-      EOSQL
+        expect(relation).to produce_sql(<<-EOSQL)
+          SELECT "posts".* FROM "posts"
+          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        EOSQL
+      end
+
+      it 'handles incremental joins' do
+        relation = Post.joining { author }.joining { author.posts }
+
+        expect(relation).to produce_sql(<<-EOSQL)
+          SELECT "posts".* FROM "posts"
+          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+          INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+        EOSQL
+      end
+
+      it 'handles incremental outer join mixed with traditional join' do
+        pending 'No way to compare the joins_values for an Arel join w/ traditional join'
+
+        relation = Post.joins(:author).joining { author.comments.outer }
+
+        expect(relation).to produce_sql(<<-EOSQL)
+          SELECT "posts".* FROM "posts"
+          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+          LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+        EOSQL
+      end
     end
 
     it 'raises an error when attempting to alias an inner join' do
