@@ -15,7 +15,7 @@ module BabySqueel
           self.joins_values = JoinsValues.new(joins_values)
         end
 
-        joins! exprs
+        self.joins_values += exprs
         self.bind_values += binds
         self
       end

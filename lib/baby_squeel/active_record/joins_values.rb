@@ -5,12 +5,12 @@ module BabySqueel
     # BabySqueel::Nodes::InnerJoin and deduped.
     class JoinsValues < Array
       def +(additions)
-        values = JoinsValues.new(to_a)
-        values.add!(additions)
+        values = JoinsValues.new(to_a.flatten)
+        values.add!(additions.flatten)
         values
       end
 
-      def add!(additions, &block)
+      def add!(additions)
         additions.each do |addition|
           if index = find_same_index(addition)
             # This addition is a duplicate, replace the existing

@@ -12,7 +12,7 @@ module BabySqueel
       def same_association?(other)
         case other
         when self.class.superclass
-          left == other.left && right == other.right
+          left.eql?(other.left) && right.eql?(other.right)
         when Symbol, String, Array, Hash
           make_tree(@association_names) == make_tree(other)
         else
