@@ -1,9 +1,16 @@
-## Unreleased
+## [1.0.0] - Unreleased
+### Deprecations
+- Removed support for Active Record 4.0.x
+
 ### Changed
+- BabySqueel::JoinDependency was renamed to BabySqueel::JoinExpression.
+- BabySqueel::Nodes::Generic is now BabySqueel::Nodes::Node.
 - Arel nodes are only extended with the behaviors they need. Previously, all Arel nodes were being extended with `Arel::AliasPredication`, `Arel::OrderPredications`, and `Arel::Math`.
 
 ### Fixed
 - Fixed deprecation warnings on Active Record 5 when initializing an Arel::Table without a type caster.
+- No more duplicate joins. Previously, Baby Squeel did a very poor job of ensuring that you didn't join an association twice.
+- Alias detection should now *actually* work. The previous implementation was naive.
 
 ## [0.3.1] - 2016-08-02
 ### Added
