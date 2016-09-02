@@ -87,10 +87,6 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
     end
 
     it 'merges bind values' do
-      if ActiveRecord::VERSION::STRING < '4.1.0'
-        pending 'Not supported'
-      end
-
       relation = Post.joining { ugly_author_comments }
 
       expect(relation).to produce_sql(<<-EOSQL)

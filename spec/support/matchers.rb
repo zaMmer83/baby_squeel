@@ -1,13 +1,9 @@
 module SqlMatcher
-  # ActiveSupport String#squish doesn't exist in 4.0
+  private
+
   def squish(str)
     str = str.to_sql if str.respond_to?(:to_sql)
-
-    str.gsub(/\A[[:space:]]+/, '')
-       .gsub(/[[:space:]]+\z/, '')
-       .gsub(/[[:space:]]+/, ' ')
-       .gsub(/\( /, '(')
-       .gsub(/ \)/, ')')
+    str.squish.gsub(/\( /, '(').gsub(/ \)/, ')')
   end
 end
 

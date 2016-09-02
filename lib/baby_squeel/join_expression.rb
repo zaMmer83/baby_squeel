@@ -23,17 +23,10 @@ module BabySqueel
       finder.find_alias(association._reflection)
     end
 
-    if ActiveRecord::VERSION::STRING < '4.1.0'
-      def bind_values
-        return [] unless relation?
-        _scope.joins(join_names(@associations)).bind_values
-      end
-    else
-      def bind_values
-        return [] unless relation?
-        relation = _scope.joins(join_names(@associations))
-        relation.arel.bind_values + relation.bind_values
-      end
+    def bind_values
+      return [] unless relation?
+      relation = _scope.joins(join_names(@associations))
+      relation.arel.bind_values + relation.bind_values
     end
 
     # Converts an array of BabySqueel::Associations into an array
