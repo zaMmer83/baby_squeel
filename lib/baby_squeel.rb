@@ -2,7 +2,9 @@ require 'active_record'
 require 'active_record/relation'
 require 'baby_squeel/version'
 require 'baby_squeel/errors'
-require 'baby_squeel/active_record'
+require 'baby_squeel/active_record/base'
+require 'baby_squeel/active_record/query_methods'
+require 'baby_squeel/active_record/where_chain'
 
 module BabySqueel
   class << self
