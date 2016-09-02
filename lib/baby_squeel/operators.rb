@@ -9,7 +9,7 @@ module BabySqueel
       # * +arel_name+ - The name of the Arel method you want to alias.
       #
       # ==== Example
-      #    BabySqueel::Nodes::Generic.arel_alias :unlike, :does_not_match
+      #    BabySqueel::Nodes::Node.arel_alias :unlike, :does_not_match
       #    Post.where.has { title.unlike 'something' }
       #
       def arel_alias(operator, arel_name)

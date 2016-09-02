@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'baby_squeel/nodes'
+require 'baby_squeel/nodes/node'
 
-describe BabySqueel::Nodes::Generic do
+describe BabySqueel::Nodes::Node do
   subject(:node) {
     described_class.new(Post.arel_table[:id])
   }
