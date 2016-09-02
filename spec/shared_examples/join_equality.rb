@@ -8,11 +8,21 @@ shared_examples_for 'join equality' do
     )
   }
 
-  describe '#same_association?' do
-    subject {
-      described_class.new(authors, expr, :author)
-    }
+  subject {
+    described_class.new(authors, expr, :author)
+  }
 
+  describe '#eql?' do
+    it 'can be an Arel join' do
+      is_expected.to eql(equivalent_node.new(authors, expr))
+    end
+
+    it 'can be a BabySqueel join' do
+      is_expected.to eql(described_class.new(authors, expr, :author))
+    end
+  end
+
+  describe '#same_association?' do
     it 'can be equal to a symbol' do
       is_expected.to be_same_association(:author)
     end
