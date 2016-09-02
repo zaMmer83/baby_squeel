@@ -140,11 +140,7 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
   context 'when joining implicitly' do
     it 'inner joins' do
       relation = Post.joining { author }
-
-      expect(relation).to produce_sql(<<-EOSQL)
-        SELECT "posts".* FROM "posts"
-        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-      EOSQL
+      expect(relation).to produce_sql(Post.joins(:author))
     end
 
     it 'outer joins' do
@@ -198,13 +194,9 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
       end
 
       it 'joins back with a new alias' do
-        relation = Post.joining { author.posts }
-
-        expect(relation).to produce_sql(<<-EOSQL)
-          SELECT "posts".* FROM "posts"
-          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-          INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
-        EOSQL
+        baby_squeel = Post.joining { author.posts }
+        active_record = Post.joins(author: :posts)
+        expect(baby_squeel).to produce_sql(active_record)
       end
 
       it 'prevents mutation of the original instance' do
@@ -213,22 +205,13 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
           author
         }
 
-        expect(relation).to produce_sql(<<-EOSQL)
-          SELECT "posts".* FROM "posts"
-          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-        EOSQL
+        expect(relation).to produce_sql(Post.joins(:author))
       end
 
       it 'joins a through association' do
-        relation = Post.joining { author.posts.author_comments }
-
-        expect(relation).to produce_sql(<<-EOSQL)
-          SELECT "posts".* FROM "posts"
-          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-          INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
-          INNER JOIN "authors" "authors_posts_join" ON "authors_posts_join"."id" = "posts_authors"."author_id"
-          INNER JOIN "comments" ON "comments"."author_id" = "authors_posts_join"."id"
-        EOSQL
+        baby_squeel = Post.joining { author.posts.author_comments }
+        active_record = Post.joins(author: { posts: :author_comments})
+        expect(baby_squeel).to produce_sql(active_record)
       end
 
       it 'joins a through association and then back again' do
@@ -248,44 +231,78 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
     end
 
     describe 'duplicate prevention' do
-      it 'handles the simplest case' do
-        relation = Post.joining { author }.joining { author }
+      context 'when given two DSL joins' do
+        it 'dedupes' do
+          relation = Post.joining { author }.joining { author }
+          expect(relation).to produce_sql(Post.joins(:author))
+        end
 
-        expect(relation).to produce_sql(<<-EOSQL)
-          SELECT "posts".* FROM "posts"
-          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-        EOSQL
+        it 'dedupes incremental joins' do
+          relation = Post.joining { author }.joining { author.posts }
+
+          expect(relation).to produce_sql(<<-EOSQL)
+            SELECT "posts".* FROM "posts"
+            INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+            INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+          EOSQL
+        end
       end
 
-      it 'handles a combination of DSL joins with traditional joins' do
-        relation = Post.joining { author }.joins(:author)
+      context 'when given a DSL join with an Active Record join' do
+        it 'dedupes' do
+          relation = Post.joining { author }.joins(:author)
+          expect(relation).to produce_sql(Post.joins(:author))
+        end
 
-        expect(relation).to produce_sql(<<-EOSQL)
-          SELECT "posts".* FROM "posts"
-          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-        EOSQL
+        it 'dedupes (in any order)' do
+          relation = Post.joins(:author).joining { author }
+          expect(relation).to produce_sql(Post.joins(:author))
+        end
+
+        it 'dedupes incremental outer joins' do
+          relation = Post.joins(:author).joining { author.comments.outer }
+
+          expect(relation).to produce_sql(<<-EOSQL)
+            SELECT "posts".* FROM "posts"
+            INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+            LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+          EOSQL
+        end
+
+        it 'dedupes incremental outer joins (in any order)' do
+          relation = Post.joining { author.comments.outer }.joins(:author)
+
+          expect(relation).to produce_sql(<<-EOSQL)
+            SELECT "posts".* FROM "posts"
+            INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+            LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+          EOSQL
+        end
       end
 
-      it 'handles incremental joins' do
-        relation = Post.joining { author }.joining { author.posts }
+      context 'when given a DSL join with an Arel join' do
+        let(:arel_join) {
+          Arel::Nodes::InnerJoin.new(
+            Author.arel_table,
+            Arel::Nodes::On.new(
+              Post.arel_table[:author_id].eq(
+                Author.arel_table[:id]
+              )
+            )
+          )
+        }
 
-        expect(relation).to produce_sql(<<-EOSQL)
-          SELECT "posts".* FROM "posts"
-          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-          INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
-        EOSQL
-      end
+        it 'does what Active Record would do' do
+          baby_squeel = Post.joining { author }.joins(arel_join)
+          active_record = Post.joins(:author).joins(arel_join)
+          expect(baby_squeel).to produce_sql(active_record)
+        end
 
-      it 'handles incremental outer join mixed with traditional join' do
-        pending 'No way to compare the joins_values for an Arel join w/ traditional join'
-
-        relation = Post.joins(:author).joining { author.comments.outer }
-
-        expect(relation).to produce_sql(<<-EOSQL)
-          SELECT "posts".* FROM "posts"
-          INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-          LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id"
-        EOSQL
+        it 'does what Active Record would do (in any order)' do
+          baby_squeel = Post.joins(arel_join).joining { author }
+          active_record = Post.joins(arel_join).joins(:author)
+          expect(baby_squeel).to produce_sql(active_record.to_sql)
+        end
       end
     end
 

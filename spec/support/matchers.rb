@@ -1,6 +1,8 @@
 module SqlMatcher
   # ActiveSupport String#squish doesn't exist in 4.0
   def squish(str)
+    str = str.to_sql if str.respond_to?(:to_sql)
+
     str.gsub(/\A[[:space:]]+/, '')
        .gsub(/[[:space:]]+\z/, '')
        .gsub(/[[:space:]]+/, ' ')
@@ -13,7 +15,7 @@ RSpec::Matchers.define :produce_sql do
   include SqlMatcher
 
   match do |actual|
-    squish(actual.to_sql) == squish(expected)
+    squish(actual) == squish(expected)
   end
 
   failure_message do |actual|
@@ -25,7 +27,7 @@ RSpec::Matchers.define :match_sql do
   include SqlMatcher
 
   match do |actual|
-    squish(actual.to_sql) =~ expected
+    squish(actual) =~ expected
   end
 
   failure_message do |actual|

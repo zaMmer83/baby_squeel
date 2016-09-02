@@ -3,6 +3,11 @@ require 'baby_squeel/join_dependency/finder'
 
 module BabySqueel
   class JoinExpression
+    JOIN_NODES = {
+      Arel::Nodes::InnerJoin => BabySqueel::Nodes::InnerJoin,
+      Arel::Nodes::OuterJoin => BabySqueel::Nodes::OuterJoin
+    }
+
     delegate :_scope, :_join, :_on, :_table, to: :@table
 
     def initialize(table, associations = [])
@@ -11,8 +16,9 @@ module BabySqueel
     end
 
     def find_alias(association)
-      relation = _scope.joins(join_names(@associations))
-      builder = JoinDependency::Builder.new(relation)
+      builder = JoinDependency::Builder.new(_scope.all)
+      builder.add_associations join_names(@associations)
+
       finder = JoinDependency::Finder.new(builder.to_join_dependency)
       finder.find_alias(association._reflection)
     end
@@ -39,7 +45,7 @@ module BabySqueel
       if _on
         [_join.new(_table, _on)]
       elsif @associations.all? { |a| inner_join?(a) }
-        join_names @associations
+        [join_names(@associations)]
       else
         @associations.each.with_index.inject([]) do |previous, (assoc, i)|
           names = join_names @associations[0..i]
@@ -60,8 +66,8 @@ module BabySqueel
     end
 
     def build(names, join_node)
-      _scope.unscoped.joins(names).join_sources.map do |join|
-        join_node.new(join.left, join.right)
+      _scope.joins(names).join_sources.map do |join|
+        JOIN_NODES[join_node].new(join.left, join.right, names)
       end
     end
 

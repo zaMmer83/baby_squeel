@@ -7,6 +7,13 @@ module BabySqueel
         @relation = relation
       end
 
+      def add_associations(*names)
+        buckets[:association_join] ||= []
+        buckets[:association_join] += names.reject { |name|
+          already_joined?(name)
+        }
+      end
+
       def to_join_dependency
         ::ActiveRecord::Associations::JoinDependency.new(
           relation.model,
@@ -16,6 +23,13 @@ module BabySqueel
       end
 
       private
+
+      def already_joined?(name)
+        join_nodes.any? do |node|
+          node.respond_to?(:same_association?) &&
+            node.same_association?(name)
+        end
+      end
 
       def join_list
         join_nodes + join_strings_as_ast
