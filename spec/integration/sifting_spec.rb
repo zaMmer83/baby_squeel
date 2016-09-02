@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::Sifting, '#sifter' do
+describe BabySqueel::ActiveRecord::Base, '#sifter' do
   before do
     Post.sifter(:crap) { |num| id == num }
     Author.sifter(:boogers) { name =~ 'boogies%' }

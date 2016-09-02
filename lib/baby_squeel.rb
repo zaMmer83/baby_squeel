@@ -28,8 +28,7 @@ module BabySqueel
 end
 
 ActiveSupport.on_load :active_record do
-  ::ActiveRecord::Base.extend BabySqueel::ActiveRecord::Sifting
-  ::ActiveRecord::Base.extend BabySqueel::ActiveRecord::QueryMethods
+  ::ActiveRecord::Base.extend BabySqueel::ActiveRecord::Base
   ::ActiveRecord::Relation.prepend BabySqueel::ActiveRecord::QueryMethods
   ::ActiveRecord::QueryMethods::WhereChain.prepend BabySqueel::ActiveRecord::WhereChain
 end
