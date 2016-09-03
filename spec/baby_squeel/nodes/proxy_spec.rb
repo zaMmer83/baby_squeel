@@ -2,9 +2,8 @@ require 'spec_helper'
 require 'baby_squeel/nodes'
 
 describe BabySqueel::Nodes::Proxy do
-  subject(:proxy) {
-    described_class.new('meatloaf')
-  }
+  let(:fake_node) { 'FakeNode' }
+  subject(:proxy) { described_class.new(fake_node) }
 
   describe '#initialize' do
     it 'unwraps other proxy instances' do
@@ -13,9 +12,15 @@ describe BabySqueel::Nodes::Proxy do
     end
   end
 
+  describe '#inspect' do
+    it 'includes BabySqueel' do
+      expect(proxy.inspect).to match(%r(BabySqueel{"FakeNode"}))
+    end
+  end
+
   describe '#arel' do
     it 'returns the original object' do
-      expect(proxy._arel).to eq('meatloaf')
+      expect(proxy._arel).to eq(fake_node)
     end
   end
 

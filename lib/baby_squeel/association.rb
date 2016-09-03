@@ -15,13 +15,20 @@ module BabySqueel
     # 1. The user explicitly constructed their join using #on.
     #    See BabySqueel::Table#_arel.
     #
+    #        Post.joining { author.on(author_id == author.id) }
+    #
     # 2. The user aliased an implicitly joined association. ActiveRecord's
     #    join dependency gives us no way of handling this, so we have to
     #    throw an error.
     #
+    #        Post.joining { author.as('some_alias') }
+    #
     # 3. The user implicitly joined this association, so we pass this
     #    association up the tree until it hits the top-level BabySqueel::Table.
     #    Once it gets there, Arel join nodes will be constructed.
+    #
+    #        Post.joining { author }
+    #
     def _arel(associations = [])
       if _on
         super

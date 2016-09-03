@@ -6,12 +6,12 @@ describe 'BabySqueel::Compat', :compat do
 
     it 'allows the use of the DSL' do
       relation = Post.select { id }
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
 
     it 'does not break default behavior' do
       relation = Post.select :id
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
 
     it 'mitigates the problem of Array#select when given arity' do
@@ -27,12 +27,12 @@ describe 'BabySqueel::Compat', :compat do
 
     it 'allows the use of the DSL' do
       relation = Post.joins { author }
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
 
     it 'does not break default behavior' do
       relation = Post.joins :author
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
   end
 
@@ -41,12 +41,12 @@ describe 'BabySqueel::Compat', :compat do
 
     it 'allows the use of the DSL' do
       relation = Post.order { id.asc }
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
 
     it 'does not break default behavior' do
       relation = Post.order :id
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
   end
 
@@ -55,12 +55,12 @@ describe 'BabySqueel::Compat', :compat do
 
     it 'allows the use of the DSL' do
       relation = Post.select('COUNT("posts"."id")').group { author_id }
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
 
     it 'does not break default behavior' do
       relation = Post.select('COUNT("posts"."id")').group(:author_id)
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
   end
 
@@ -72,7 +72,7 @@ describe 'BabySqueel::Compat', :compat do
                      .group(:author_id)
                      .having { id.count > 5 }
 
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
 
     it 'does not break default behavior' do
@@ -80,7 +80,7 @@ describe 'BabySqueel::Compat', :compat do
                      .group(:author_id)
                      .having('COUNT("posts"."id") > 5')
 
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
   end
 
@@ -89,12 +89,12 @@ describe 'BabySqueel::Compat', :compat do
 
     it 'allows the use of the DSL' do
       relation = Post.where { title == 'test' }
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
 
     it 'does not break default behavior' do
       relation = Post.where(title: 'test')
-      expect(relation).to match_sql(sql)
+      expect(relation).to produce_sql(sql)
     end
   end
 end

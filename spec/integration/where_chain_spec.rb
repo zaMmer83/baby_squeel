@@ -106,6 +106,32 @@ describe BabySqueel::ActiveRecord::WhereChain do
       EOSQL
     end
 
+    it 'wheres and correctly aliases' do
+      relation = Post.joining { author.comments }
+                     .where.has { author.comments.id.in [1, 2] }
+                     .where.has { author.name == 'Joe' }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+        WHERE "comments"."id" IN (1, 2) AND "authors"."name" = 'Joe'
+      EOSQL
+    end
+
+    it 'wheres on an alias with outer join' do
+      relation = Post.joining { author.comments.outer }
+                     .where.has { author.comments.id.in [1, 2] }
+                     .where.has { author.name == 'Joe' }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+        LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+        WHERE "comments"."id" IN (1, 2) AND "authors"."name" = 'Joe'
+      EOSQL
+    end
+
     it 'wheres on an alias with a function' do
       relation = Post.joins(author: :posts).where.has {
         coalesce(author.posts.id, 1) > 0

@@ -1,4 +1,4 @@
-require 'baby_squeel/join_dependency'
+require 'baby_squeel/join_expression'
 
 module BabySqueel
   class Table
@@ -51,7 +51,7 @@ module BabySqueel
     end
 
     def on!(node)
-      self._on = Arel::Nodes::On.new(node)
+      self._on = node
       self
     end
 
@@ -63,13 +63,13 @@ module BabySqueel
     #
     def _arel(associations = [])
       return unless _on || associations.any?
-      JoinDependency.new(self, associations)
+      JoinExpression.new(self, associations)
     end
 
     private
 
-    def _table_name
-      arel_table.name
+    def not_found_error!
+      raise NotImplementedError, 'BabySqueel::Table will never raise a NotFoundError'
     end
 
     def resolve(name)
@@ -82,10 +82,7 @@ module BabySqueel
 
     def method_missing(name, *args, &block)
       return super if !args.empty? || block_given?
-
-      resolve(name) || begin
-        raise NotFoundError.new(_table_name, name)
-      end
+      resolve(name) || not_found_error!(name)
     end
   end
 end

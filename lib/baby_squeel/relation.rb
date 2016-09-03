@@ -15,7 +15,7 @@ module BabySqueel
       if reflection = _scope.reflect_on_association(name)
         Association.new(self, reflection)
       else
-        raise AssociationNotFoundError.new(_table_name, name)
+        not_found_error! name, type: AssociationNotFoundError
       end
     end
 
@@ -25,9 +25,9 @@ module BabySqueel
 
     private
 
-    # @override BabySqueel::Table#_table_name
-    def _table_name
-      _scope.model_name
+    # @override BabySqueel::Table#not_found_error!
+    def not_found_error!(name, type: NotFoundError)
+      raise type.new(_scope.model_name, name)
     end
 
     # @override BabySqueel::Table#resolve
