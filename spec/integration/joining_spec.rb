@@ -255,6 +255,24 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
           expect(relation).to produce_sql(Post.joins(:author))
         end
 
+        it 'dedupes through joins' do
+          relation = Post.joins(author: { posts: :author_comments })
+                         .joining { author.posts.author_comments.outer }
+
+          # There are duplicate inner joins in here, but that'll have to do...
+          expect(relation).to produce_sql(<<-EOSQL)
+            SELECT "posts".* FROM "posts"
+            INNER JOIN "authors" "authors_posts" ON "authors_posts"."id" = "posts"."author_id"
+            INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors_posts"."id"
+            INNER JOIN "authors" "authors_posts_join" ON "authors_posts_join"."id" = "posts_authors"."author_id"
+            INNER JOIN "comments" "author_comments_posts" ON "author_comments_posts"."author_id" = "authors_posts_join"."id"
+            INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+            INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+            LEFT OUTER JOIN "authors" "authors_posts_join" ON "authors_posts_join"."id" = "posts_authors"."author_id"
+            LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors_posts_join"."id"
+          EOSQL
+        end
+
         it 'dedupes incremental outer joins' do
           relation = Post.joins(:author).joining { author.comments.outer }
 

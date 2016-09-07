@@ -59,7 +59,7 @@ module BabySqueel
     end
 
     def build(names, join_node)
-      _scope.joins(names).join_sources.map do |join|
+      _scope.unscoped.joins(names).join_sources.map do |join|
         JOIN_NODES[join_node].new(join.left, join.right, names)
       end
     end
