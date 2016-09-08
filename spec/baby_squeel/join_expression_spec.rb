@@ -1,13 +1,8 @@
 require 'spec_helper'
 
 describe BabySqueel::JoinExpression do
-  let(:relation)     { BabySqueel::Relation.new(Author) }
-
-  let(:reflection1)  { Author.reflect_on_association(:posts) }
-  let(:association1) { BabySqueel::Association.new(relation, reflection1) }
-
-  let(:reflection2)  { Post.reflect_on_association(:comments) }
-  let(:association2) { BabySqueel::Association.new(association1, reflection2) }
+  let(:association1) { create_association Author, :posts }
+  let(:association2) { create_association Post, :comments }
 
   subject(:join_path) { described_class.new([association1, association2]) }
 

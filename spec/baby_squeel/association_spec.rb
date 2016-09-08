@@ -3,12 +3,7 @@ require 'baby_squeel/association'
 require 'shared_examples/table'
 
 describe BabySqueel::Association do
-  let(:relation)   { BabySqueel::Relation.new(Author) }
-  let(:reflection) { Author.reflect_on_association(:posts) }
-
-  subject(:association) {
-    BabySqueel::Association.new(relation, reflection)
-  }
+  subject(:association) { create_association Author, :posts }
 
   it_behaves_like 'a table' do
     let(:table) { association }

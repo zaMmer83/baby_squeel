@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'BabySqueel::Compat::DSL', :compat do
-  subject(:dsl) { BabySqueel::DSL.new(Post) }
+  subject(:dsl) { create_dsl Post }
 
   describe '#`' do
     it 'creates a SQL literal' do
