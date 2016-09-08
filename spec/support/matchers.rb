@@ -1,4 +1,18 @@
-require 'anbt-sql-formatter/formatter'
+module SqlFormatter
+  KEYWORDS = %w(
+    WHERE
+    ORDER\ BY
+    GROUP\ BY
+    HAVING
+    INNER\ JOIN
+    LEFT\ OUTER\ JOIN
+    LIMIT
+  )
+
+  def self.call(value, &block)
+    value.gsub(/#{KEYWORDS.join('|')}/, &block)
+  end
+end
 
 RSpec::Matchers.define :produce_sql do
   match do |actual|
@@ -20,13 +34,9 @@ RSpec::Matchers.define :produce_sql do
   private
 
   def sql_format(value)
-    rule = AnbtSql::Rule.new
-    rule.keyword = AnbtSql::Rule::KEYWORD_UPPER_CASE
-    rule.indent_string = '  '
-    rule.kw_minus1_indent_nl_x_plus1_indent += ['INNER JOIN', 'LEFT OUTER JOIN']
-    rule.kw_multi_words += ['INNER JOIN', 'LEFT OUTER JOIN']
-    formatter = AnbtSql::Formatter.new(rule)
-    formatter.format squish(value)
+    SqlFormatter.call squish(value) do |match|
+      "\n  #{match}"
+    end
   end
 
   def squish(value)
