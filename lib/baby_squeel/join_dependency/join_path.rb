@@ -2,28 +2,21 @@ require 'active_support/core_ext/hash/indifferent_access'
 
 module BabySqueel
   module JoinDependency
-    # Pretends to be a hash to trick Active Record in
-    # ActiveRecord::QueryMethods#build_joins. Instances
-    # of this class will be passed into JoinDependency
-    # as associations. This sort of inheritance is gross,
-    # but in this case, it's way better than duplicating.
-    class JoinPath < Hash
+    # This is the thing that gets added to Active Record's joins_values.
+    # By including Polyamorous::TreeNode, when this instance is found when
+    # traversing joins in ActiveRecord::Associations::JoinDependency::walk_tree,
+    # JoinPath#add_to_tree will be called.
+    class JoinPath
       include Polyamorous::TreeNode
 
       def initialize(associations)
-        super()
         @associations = associations
       end
 
       def add_to_tree(hash)
-        walk_through_path(@associations.dup, hash)
-      end
-
-      private
-
-      def walk_through_path(path, hash)
-        cache = path.shift.add_to_tree(hash)
-        path.empty? ? cache : walk_through_path(path, cache)
+        @associations.inject(hash) do |acc, assoc|
+          assoc.add_to_tree(acc)
+        end
       end
     end
   end

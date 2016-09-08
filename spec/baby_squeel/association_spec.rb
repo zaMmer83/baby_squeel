@@ -14,6 +14,26 @@ describe BabySqueel::Association do
     let(:table) { association }
   end
 
+  describe '#add_to_tree' do
+    def make_tree(tree_node)
+      hash = {}
+      tree_node.add_to_tree(hash)
+      hash.keys.first
+    end
+
+    it 'builds a Polyamorous::Join' do
+      join = make_tree(association)
+      expect(join.name).to eq(:posts)
+      expect(join.type).to eq(Arel::Nodes::InnerJoin)
+    end
+
+    it 'builds a Polyamorous::Join (for outer)' do
+      join = make_tree(association.outer)
+      expect(join.name).to eq(:posts)
+      expect(join.type).to eq(Arel::Nodes::OuterJoin)
+    end
+  end
+
   describe '#_arel' do
     context 'when explicitly joining' do
       let(:condition) { association.author_id == association.author.id }

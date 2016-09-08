@@ -1,3 +1,5 @@
+require 'baby_squeel/join_dependency/injector'
+
 module BabySqueel
   module JoinDependency
     # Unfortunately, this is mostly all duplication of
@@ -7,11 +9,11 @@ module BabySqueel
 
       def initialize(relation)
         @relation = relation
+        @joins_values = relation.joins_values.dup
       end
 
-      def ensure_associated(*names)
-        buckets[:association_join] ||= []
-        buckets[:association_join] += names
+      def ensure_associated(*values)
+        @joins_values += values
       end
 
       def to_join_dependency
@@ -57,7 +59,7 @@ module BabySqueel
       end
 
       def buckets
-        @buckets ||= relation.joins_values.flatten.group_by do |join|
+        @buckets ||= Injector.new(@joins_values).group_by do |join|
           case join
           when String
             :string_join
