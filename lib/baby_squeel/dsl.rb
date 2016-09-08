@@ -15,15 +15,6 @@ module BabySqueel
         new(scope).evaluate(&block)
       end
 
-      # Evaluates a block specifically for a join. In this
-      # case, we'll return an array of Arel join nodes and
-      # a list of bind parameters.
-      def evaluate_joins(scope, &block)
-        dependency = evaluate!(scope, &block)._arel
-        join_arel = Nodes.unwrap(dependency._arel)
-        [join_arel, dependency.bind_values]
-      end
-
       # Evaluates a block in the context of a new DSL instance
       # and passes all arguments to the block.
       def evaluate_sifter(scope, *args, &block)

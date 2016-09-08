@@ -1,9 +1,12 @@
 ## [1.0.0] - Unreleased
+### Added
+- Polyamorous. Unfortunately, this *does* monkey-patch Active Record internals, but there just isn't any other reliable way to generate outer joins. Baby Squeel, itself, will still keep monkey patching to an absolute minimum.
+
 ### Deprecations
 - Removed support for Active Record 4.0.x
 
 ### Changed
-- BabySqueel::JoinDependency was renamed to BabySqueel::JoinExpression.
+- BabySqueel::JoinDependency is no longer a class responsible for creating Arel joins. It is now a namespace for utilities used when working with the ActiveRecord::Association::JoinDependency class.
 - BabySqueel::Nodes::Generic is now BabySqueel::Nodes::Node.
 - Arel nodes are only extended with the behaviors they need. Previously, all Arel nodes were being extended with `Arel::AliasPredication`, `Arel::OrderPredications`, and `Arel::Math`.
 

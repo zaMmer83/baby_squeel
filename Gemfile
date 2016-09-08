@@ -13,5 +13,4 @@ group :test do
   gem 'pry'
   gem 'coveralls'
   gem 'simplecov'
-  gem 'anbt-sql-formatter'
 end

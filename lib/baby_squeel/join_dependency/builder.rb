@@ -1,17 +1,19 @@
+require 'baby_squeel/join_dependency/injector'
+
 module BabySqueel
   module JoinDependency
+    # Unfortunately, this is mostly all duplication of
+    # ActiveRecord::QueryMethods#build_joins
     class Builder # :nodoc:
       attr_reader :relation
 
       def initialize(relation)
         @relation = relation
+        @joins_values = relation.joins_values.dup
       end
 
-      def add_associations(*names)
-        buckets[:association_join] ||= []
-        buckets[:association_join] += names.reject { |name|
-          already_joined?(name)
-        }
+      def ensure_associated(*values)
+        @joins_values += values
       end
 
       def to_join_dependency
@@ -23,13 +25,6 @@ module BabySqueel
       end
 
       private
-
-      def already_joined?(name)
-        join_nodes.any? do |node|
-          node.respond_to?(:same_association?) &&
-            node.same_association?(name)
-        end
-      end
 
       def join_list
         join_nodes + join_strings_as_ast
@@ -64,7 +59,7 @@ module BabySqueel
       end
 
       def buckets
-        @buckets ||= relation.joins_values.flatten.group_by do |join|
+        @buckets ||= Injector.new(@joins_values).group_by do |join|
           case join
           when String
             :string_join

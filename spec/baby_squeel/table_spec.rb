@@ -3,18 +3,20 @@ require 'baby_squeel/table'
 require 'shared_examples/table'
 
 describe BabySqueel::Table do
-  subject(:table) {
-    BabySqueel::Table.new(
-      Arel::Table.new(:posts)
-    )
-  }
+  subject(:table) { create_table :posts }
 
   include_examples 'a table'
 
   describe '#_arel' do
-    context 'when joining' do
-      let(:association) { instance_double BabySqueel::Association }
-      subject { table._arel([association]) }
+    subject { table._arel([association]) }
+
+    context 'when inner joining' do
+      let(:association) { create_association(Author, :posts) }
+      specify { is_expected.to eq(posts: {}) }
+    end
+
+    context 'when outer joining' do
+      let(:association) { create_association(Author, :posts).outer }
       specify { is_expected.to be_a(BabySqueel::JoinExpression) }
     end
 

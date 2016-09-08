@@ -1,23 +1,12 @@
 require 'baby_squeel/dsl'
-require 'baby_squeel/active_record/joins_values'
+require 'baby_squeel/join_dependency/injector'
 
 module BabySqueel
   module ActiveRecord
     module QueryMethods
       # Constructs Arel for ActiveRecord::Base#joins using the DSL.
       def joining(&block)
-        exprs, binds = DSL.evaluate_joins(self, &block)
-        spawn.joining! exprs, binds
-      end
-
-      def joining!(exprs, binds = [])
-        unless joins_values.kind_of? JoinsValues
-          self.joins_values = JoinsValues.new(joins_values)
-        end
-
-        self.joins_values += exprs
-        self.bind_values += binds
-        self
+        joins DSL.evaluate(self, &block)
       end
 
       # Constructs Arel for ActiveRecord::Base#select using the DSL.
@@ -38,6 +27,16 @@ module BabySqueel
       # Constructs Arel for ActiveRecord::Base#having using the DSL.
       def when_having(&block)
         having DSL.evaluate(self, &block)
+      end
+
+      private
+
+      # This is a monkey patch, and I'm not happy about it.
+      # Active Record will call `group_by` on the `joins`. The
+      # Injector has a custom `group_by` method that handles
+      # BabySqueel::JoinExpression nodes.
+      def build_joins(manager, joins)
+        super manager, BabySqueel::JoinDependency::Injector.new(joins)
       end
     end
   end

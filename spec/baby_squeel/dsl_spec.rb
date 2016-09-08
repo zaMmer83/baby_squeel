@@ -4,9 +4,7 @@ require 'shared_examples/relation'
 require 'baby_squeel/dsl'
 
 describe BabySqueel::DSL do
-  subject(:dsl) {
-    BabySqueel::DSL.new(Post)
-  }
+  subject(:dsl) { create_dsl Post }
 
   it_behaves_like 'a relation' do
     subject(:table) { dsl }

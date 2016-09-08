@@ -10,6 +10,19 @@ module BabySqueel
       super(@_reflection.klass)
     end
 
+    def add_to_tree(hash)
+      polyamorous = Polyamorous::Join.new(
+        _reflection.name,
+        _join
+      )
+
+      hash[polyamorous] ||= {}
+    end
+
+    def find_alias(association, associations = [])
+      @parent.find_alias(association, [self, *associations])
+    end
+
     # Intelligently constructs Arel nodes. There are three outcomes:
     #
     # 1. The user explicitly constructed their join using #on.

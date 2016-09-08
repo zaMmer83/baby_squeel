@@ -16,8 +16,10 @@ require 'baby_squeel'
 require 'support/schema'
 require 'support/models'
 require 'support/matchers'
+require 'support/factories'
 
 RSpec.configure do |config|
+  config.include Factories
   config.filter_run focus: true
   config.run_all_when_everything_filtered = true
   config.example_status_persistence_file_path = 'tmp/spec-results.log'

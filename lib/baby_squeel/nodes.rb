@@ -2,8 +2,6 @@ require 'baby_squeel/nodes/node'
 require 'baby_squeel/nodes/attribute'
 require 'baby_squeel/nodes/function'
 require 'baby_squeel/nodes/grouping'
-require 'baby_squeel/nodes/inner_join'
-require 'baby_squeel/nodes/outer_join'
 
 module BabySqueel
   module Nodes
