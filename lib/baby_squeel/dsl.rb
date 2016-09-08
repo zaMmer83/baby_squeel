@@ -39,6 +39,14 @@ module BabySqueel
       Nodes.wrap Arel::Nodes::NamedFunction.new(name.to_s, args)
     end
 
+    def exists(rel)
+      func 'EXISTS', sql(rel.to_sql)
+    end
+
+    def not_exists(rel)
+      func 'NOT EXISTS', sql(rel.to_sql)
+    end
+
     # See Arel::sql
     def sql(value)
       Nodes.wrap ::Arel.sql(value)
