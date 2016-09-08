@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::JoinDependency::JoinPath do
+describe BabySqueel::JoinExpression do
   let(:relation)     { BabySqueel::Relation.new(Author) }
 
   let(:reflection1)  { Author.reflect_on_association(:posts) }

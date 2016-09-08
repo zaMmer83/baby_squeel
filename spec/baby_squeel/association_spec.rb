@@ -37,28 +37,44 @@ describe BabySqueel::Association do
   describe '#_arel' do
     context 'when explicitly joining' do
       let(:condition) { association.author_id == association.author.id }
-      subject(:arel)  { association.author.on(condition)._arel }
+      let(:assoc)     { association.author.on(condition) }
 
-      specify { is_expected.to be_a(BabySqueel::JoinExpression) }
+      it 'resolves to an Arel join node' do
+        expect(assoc._arel).to be_an(Arel::Nodes::InnerJoin)
+      end
 
       it 'sets an on clause on the JoinExpression' do
-        expect(arel._on).not_to be_nil
+        expect(assoc._on).not_to be_nil
+      end
+
+      it 'lets you alias' do
+        expect(assoc.alias('fun')._arel.left).to be_an(Arel::Nodes::TableAlias)
       end
     end
 
     context 'when implicitly joining' do
-      subject(:arel) { association.author._arel }
+      context 'when inner joining' do
+        it 'resolves to a hash' do
+          expect(association._arel).to eq(posts: {})
+        end
 
-      specify { is_expected.to be_a(BabySqueel::JoinExpression) }
-
-      it 'does not set an on clause on the JoinExpression' do
-        expect(arel._on).to be_nil
+        it 'throws a fit when an alias is attempted' do
+          expect {
+            association.alias('naughty')._arel
+          }.to raise_error(BabySqueel::AssociationAliasingError)
+        end
       end
 
-      it 'throws a fit when an alias is attempted' do
-        expect {
-          association.author.alias('naughty')._arel
-        }.to raise_error(BabySqueel::AssociationAliasingError)
+      context 'when outer joining' do
+        it 'resolves to a JoinExpression' do
+          expect(association.outer._arel).to be_a(BabySqueel::JoinExpression)
+        end
+
+        it 'throws a fit when an alias is attempted' do
+          expect {
+            association.alias('naughty')._arel
+          }.to raise_error(BabySqueel::AssociationAliasingError)
+        end
       end
     end
   end

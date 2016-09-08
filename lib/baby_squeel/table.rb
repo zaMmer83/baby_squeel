@@ -55,18 +55,42 @@ module BabySqueel
       self
     end
 
+    def find_alias(association, associations = [])
+      builder = JoinDependency::Builder.new(_scope.all)
+      builder.ensure_associated(_arel(associations))
+
+      finder = JoinDependency::Finder.new(builder.to_join_dependency)
+      finder.find_alias(association._reflection)
+    end
+
     # This method will be invoked by BabySqueel::Nodes::unwrap. When called,
-    # there are two possible outcomes:
+    # there are three possible outcomes:
     #
-    # 1. Join explicitly using an on clause.
-    # 2. Resolve the assocition's join clauses using ActiveRecord.
+    # 1. Join explicitly using an on clause. Just return Arel.
+    # 2. Implicit join without using an outer join. In this case, we'll just
+    #    give a hash to Active Record, and join the normal way.
+    # 3. Implicit join using an outer join. In this case, we need to use
+    #    Polyamorous to build the join. We'll return a JoinExpression.
     #
     def _arel(associations = [])
-      return unless _on || associations.any?
-      JoinExpression.new(self, associations)
+      if _on
+        _join.new(_table, Arel::Nodes::On.new(_on))
+      elsif any_outer_joins?(associations)
+        JoinExpression.new(associations)
+      elsif associations.any?
+        associations.reverse.inject({}) do |names, assoc|
+          { assoc._reflection.name => names }
+        end
+      end
     end
 
     private
+
+    def any_outer_joins?(associations)
+      associations.any? do |assoc|
+        assoc._join == Arel::Nodes::OuterJoin
+      end
+    end
 
     def not_found_error!
       raise NotImplementedError, 'BabySqueel::Table will never raise a NotFoundError'

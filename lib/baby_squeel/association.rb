@@ -19,6 +19,10 @@ module BabySqueel
       hash[polyamorous] ||= {}
     end
 
+    def find_alias(association, associations = [])
+      @parent.find_alias(association, [self, *associations])
+    end
+
     # Intelligently constructs Arel nodes. There are three outcomes:
     #
     # 1. The user explicitly constructed their join using #on.

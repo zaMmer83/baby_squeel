@@ -12,8 +12,17 @@ describe BabySqueel::Table do
   include_examples 'a table'
 
   describe '#_arel' do
-    context 'when joining' do
-      let(:association) { instance_double BabySqueel::Association }
+    let(:relation)    { BabySqueel::Relation.new(Author) }
+    let(:reflection)  { Author.reflect_on_association(:posts) }
+
+    context 'when inner joining' do
+      let(:association) { BabySqueel::Association.new(relation, reflection) }
+      subject { table._arel([association]) }
+      specify { is_expected.to be_a(Hash) }
+    end
+
+    context 'when outer joining' do
+      let(:association) { BabySqueel::Association.new(relation, reflection).outer }
       subject { table._arel([association]) }
       specify { is_expected.to be_a(BabySqueel::JoinExpression) }
     end
