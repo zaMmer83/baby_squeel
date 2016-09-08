@@ -174,5 +174,37 @@ describe BabySqueel::ActiveRecord::WhereChain do
         WHERE "authors"."name" = 'Yo Gotti'
       EOSQL
     end
+
+    it 'builds an exists query' do
+      relation = Post.where.has {
+        exists Post.where.has { author_id == 1 }
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        WHERE (
+          EXISTS(
+            SELECT "posts".* FROM "posts"
+            WHERE "posts"."author_id" = 1
+          )
+        )
+      EOSQL
+    end
+
+    it 'builds a not exists query' do
+      relation = Post.where.has {
+        not_exists Post.where.has { author_id == 1 }
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        WHERE (
+          NOT EXISTS(
+            SELECT "posts".* FROM "posts"
+            WHERE "posts"."author_id" = 1
+          )
+        )
+      EOSQL
+    end
   end
 end
