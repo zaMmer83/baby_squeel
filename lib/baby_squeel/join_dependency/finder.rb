@@ -14,14 +14,8 @@ module BabySqueel
 
       private
 
-      if ActiveRecord::VERSION::STRING >= '4.1.0'
-        def find(&block)
-          deeply_find(join_dependency.join_root, &block)
-        end
-      else
-        def find(&block)
-          join_dependency.join_associations.find(&block)
-        end
+      def find(&block)
+        deeply_find(join_dependency.join_root, &block)
       end
 
       def find_association(reflection)
