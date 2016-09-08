@@ -1,13 +1,10 @@
 require 'baby_squeel/join_dependency/builder'
 require 'baby_squeel/join_dependency/finder'
+require 'baby_squeel/join_dependency/join_path'
 
 module BabySqueel
   class JoinExpression
-    JOIN_NODES = {
-      Arel::Nodes::InnerJoin => BabySqueel::Nodes::InnerJoin,
-      Arel::Nodes::OuterJoin => BabySqueel::Nodes::OuterJoin
-    }
-
+    attr_reader :associations
     delegate :_scope, :_join, :_on, :_table, to: :@table
 
     def initialize(table, associations = [])
@@ -17,16 +14,10 @@ module BabySqueel
 
     def find_alias(association)
       builder = JoinDependency::Builder.new(_scope.all)
-      builder.add_associations join_names(@associations)
+      builder.ensure_associated(all_join_names)
 
       finder = JoinDependency::Finder.new(builder.to_join_dependency)
       finder.find_alias(association._reflection)
-    end
-
-    def bind_values
-      return [] unless relation?
-      relation = _scope.joins(join_names(@associations))
-      relation.arel.bind_values + relation.bind_values
     end
 
     # Converts an array of BabySqueel::Associations into an array
@@ -37,34 +28,22 @@ module BabySqueel
     def _arel
       if _on
         [_join.new(_table, Arel::Nodes::On.new(_on))]
-      elsif @associations.all? { |a| inner_join?(a) }
-        [join_names(@associations)]
+      elsif all_inner_joins?
+        [all_join_names]
       else
-        @associations.each.with_index.inject([]) do |previous, (assoc, i)|
-          names = join_names @associations[0..i]
-          current = build names, assoc._join
-          previous + current[previous.length..-1]
-        end
+        [JoinDependency::JoinPath.new(associations)]
       end
     end
 
     private
 
-    def inner_join?(association)
-      association._join == Arel::Nodes::InnerJoin
-    end
-
-    def relation?
-      @table.kind_of? BabySqueel::Relation
-    end
-
-    def build(names, join_node)
-      _scope.unscoped.joins(names).join_sources.map do |join|
-        JOIN_NODES[join_node].new(join.left, join.right, names)
+    def all_inner_joins?
+      associations.all? do |assoc|
+        assoc._join == Arel::Nodes::InnerJoin
       end
     end
 
-    def join_names(associations = [])
+    def all_join_names
       associations.reverse.inject({}) do |names, assoc|
         { assoc._reflection.name => names }
       end

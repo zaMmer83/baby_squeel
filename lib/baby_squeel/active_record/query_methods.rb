@@ -1,23 +1,11 @@
 require 'baby_squeel/dsl'
-require 'baby_squeel/active_record/joins_values'
 
 module BabySqueel
   module ActiveRecord
     module QueryMethods
       # Constructs Arel for ActiveRecord::Base#joins using the DSL.
       def joining(&block)
-        exprs, binds = DSL.evaluate_joins(self, &block)
-        spawn.joining! exprs, binds
-      end
-
-      def joining!(exprs, binds = [])
-        unless joins_values.kind_of? JoinsValues
-          self.joins_values = JoinsValues.new(joins_values)
-        end
-
-        self.joins_values += exprs
-        self.bind_values += binds
-        self
+        joins DSL.evaluate(self, &block)
       end
 
       # Constructs Arel for ActiveRecord::Base#select using the DSL.
