@@ -4,9 +4,32 @@ require 'shared_examples/table'
 
 describe BabySqueel::Association do
   subject(:association) { create_association Author, :posts }
+  let(:polymorph) { create_association Picture, :imageable }
 
   it_behaves_like 'a table' do
     let(:table) { association }
+  end
+
+  describe '#of' do
+    specify { expect(polymorph._scope).to be_nil }
+    specify { expect(polymorph._table).to be_nil }
+    specify { expect(polymorph._polymorphic_klass).to be_nil }
+
+    it 'assigns the _scope' do
+      expect(polymorph.of(Post)._scope).to eq(Post)
+    end
+
+    it 'assigns the _table' do
+      expect(polymorph.of(Post)._table).to eq(Post.arel_table)
+    end
+
+    it 'assigns the _polymorphic_klass' do
+      expect(polymorph.of(Post)._polymorphic_klass).to eq(Post)
+    end
+
+    it 'throws a fit when the reflection is not polymorphic' do
+      expect{ association.of(Post) }.to raise_error(BabySqueel::PolymorphicSpecificationError)
+    end
   end
 
   describe '#add_to_tree' do
@@ -20,12 +43,26 @@ describe BabySqueel::Association do
       join = make_tree(association)
       expect(join.name).to eq(:posts)
       expect(join.type).to eq(Arel::Nodes::InnerJoin)
+      expect(join.klass).to be_nil
     end
 
     it 'builds a Polyamorous::Join (for outer)' do
       join = make_tree(association.outer)
       expect(join.name).to eq(:posts)
       expect(join.type).to eq(Arel::Nodes::OuterJoin)
+      expect(join.klass).to be_nil
+    end
+
+    it 'includes the _polymorphic_klass for polymorphic associations' do
+      join = make_tree(polymorph.of(Post))
+      expect(join.name).to eq(:imageable)
+      expect(join.klass).not_to be_nil
+    end
+  end
+
+  describe '#method_missing' do
+    it 'raises a NoMethodError when the wrong number of args are given' do
+      expect { association.author(1) }.to raise_error(NoMethodError)
     end
   end
 
@@ -69,6 +106,12 @@ describe BabySqueel::Association do
           expect {
             association.alias('naughty')._arel
           }.to raise_error(BabySqueel::AssociationAliasingError)
+        end
+      end
+
+      context 'when joining polymorphic associations' do
+        it 'throws an error if the _polymorphic_klass has not been set' do
+          expect { polymorph._arel }.to raise_error(BabySqueel::PolymorphicNotSpecifiedError)
         end
       end
     end

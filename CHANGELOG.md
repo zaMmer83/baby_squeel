@@ -2,6 +2,7 @@
 ### Added
 - Polyamorous. Unfortunately, this *does* monkey-patch Active Record internals, but there just isn't any other reliable way to generate outer joins. Baby Squeel, itself, will still keep monkey patching to an absolute minimum.
 - Within DSL blocks, you can use `exists` and `not_exists` with Active Record relations. For example: `Post.where.has { exists Post.where(title: 'Fun') }`.`
+- Support for polymorphic associations.
 
 ### Deprecations
 - Removed support for Active Record 4.0.x
