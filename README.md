@@ -175,6 +175,14 @@ Post.joining { author.outer.posts }
 Post.joining { author.alias('a').on((author.id == author_id) | (author.name == title)) }
 # SELECT "posts".* FROM "posts"
 # INNER JOIN "authors" "a" ON ("authors"."id" = "posts"."author_id" OR "authors"."name" = "posts"."title")
+
+Picture.joining { imageable.of(Post) }
+# SELECT "pictures".* FROM "pictures"
+# INNER JOIN "posts" ON "posts"."id" = "pictures"."imageable_id" AND "pictures"."imageable_type" = 'Post'
+
+Picture.joining { imageable.of(Post).outer }
+# SELECT "pictures".* FROM "pictures"
+# LEFT OUTER JOIN "posts" ON "posts"."id" = "pictures"."imageable_id" AND "pictures"."imageable_type" = 'Post'
 ```
 
 ##### Grouping
