@@ -79,7 +79,7 @@ module BabySqueel
     def _arel(associations = [])
       if _on
         _join.new(_table, Arel::Nodes::On.new(_on))
-      elsif any_outer_joins?(associations)
+      elsif associations.any?(&:needs_polyamorous?)
         JoinExpression.new(associations)
       elsif associations.any?
         associations.reverse.inject({}) do |names, assoc|
@@ -89,12 +89,6 @@ module BabySqueel
     end
 
     private
-
-    def any_outer_joins?(associations)
-      associations.any? do |assoc|
-        assoc._join == Arel::Nodes::OuterJoin
-      end
-    end
 
     def not_found_error!
       raise NotImplementedError, 'BabySqueel::Table will never raise a NotFoundError'

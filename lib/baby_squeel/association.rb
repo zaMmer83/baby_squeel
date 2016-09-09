@@ -11,6 +11,10 @@ module BabySqueel
       super(@_reflection.klass)
     end
 
+    def needs_polyamorous?
+      _join == Arel::Nodes::OuterJoin
+    end
+
     # See JoinExpression#add_to_tree.
     def add_to_tree(hash)
       polyamorous = Polyamorous::Join.new(
