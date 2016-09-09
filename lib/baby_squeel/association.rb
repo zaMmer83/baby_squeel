@@ -2,6 +2,7 @@ require 'baby_squeel/relation'
 
 module BabySqueel
   class Association < Relation
+    # An Active Record association reflection
     attr_reader :_reflection
 
     def initialize(parent, reflection)
@@ -10,6 +11,7 @@ module BabySqueel
       super(@_reflection.klass)
     end
 
+    # See JoinExpression#add_to_tree.
     def add_to_tree(hash)
       polyamorous = Polyamorous::Join.new(
         _reflection.name,
@@ -19,6 +21,7 @@ module BabySqueel
       hash[polyamorous] ||= {}
     end
 
+    # See BabySqueel::Table#find_alias.
     def find_alias(association, associations = [])
       @parent.find_alias(association, [self, *associations])
     end

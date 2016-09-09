@@ -1,17 +1,17 @@
 module BabySqueel
-  class NotFoundError < StandardError
+  class NotFoundError < StandardError # :nodoc:
     def initialize(model_name, name)
       super "There is no column or association named '#{name}' for #{model_name}."
     end
   end
 
-  class AssociationNotFoundError < StandardError
+  class AssociationNotFoundError < StandardError  # :nodoc:
     def initialize(model_name, name)
       super "Association named '#{name}' was not found for #{model_name}."
     end
   end
 
-  class AssociationAliasingError < StandardError
+  class AssociationAliasingError < StandardError  # :nodoc:
     MESSAGE =
       'Attempted to alias \'%{association}\' as \'%{alias_name}\', but the ' \
       'association was implicitly joined. Either join the association ' \

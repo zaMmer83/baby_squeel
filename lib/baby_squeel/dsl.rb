@@ -39,10 +39,28 @@ module BabySqueel
       Nodes.wrap Arel::Nodes::NamedFunction.new(name.to_s, args)
     end
 
-    def exists(rel)
-      func 'EXISTS', sql(rel.to_sql)
+    # Generate an EXISTS subselect from an ActiveRecord::Relation
+    #
+    # ==== Arguments
+    #
+    # * +relation+ - An ActiveRecord::Relation
+    #
+    # ==== Example
+    #     Post.where.has { exists Post.where(id: 1) }
+    #
+    def exists(relation)
+      func 'EXISTS', sql(relation.to_sql)
     end
 
+    # Generate a NOT EXISTS subselect from an ActiveRecord::Relation
+    #
+    # ==== Arguments
+    #
+    # * +relation+ - An ActiveRecord::Relation
+    #
+    # ==== Example
+    #     Post.where.has { not_exists Post.where(id: 1) }
+    #
     def not_exists(rel)
       func 'NOT EXISTS', sql(rel.to_sql)
     end

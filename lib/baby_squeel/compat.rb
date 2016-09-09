@@ -1,5 +1,7 @@
 module BabySqueel
   module Compat
+    # Monkey-patches BabySqueel and ActiveRecord
+    # in order to behave more like Squeel
     def self.enable!
       BabySqueel::DSL.prepend BabySqueel::Compat::DSL
       ::ActiveRecord::Base.singleton_class.prepend QueryMethods
@@ -7,10 +9,12 @@ module BabySqueel
     end
 
     module DSL
+      # An alias for BabySqueel::DSL#sql
       def `(str)
         sql(str)
       end
 
+      # Allows you to call out of an instance_eval'd block.
       def my(&block)
         @caller.instance_eval(&block)
       end
@@ -23,6 +27,7 @@ module BabySqueel
     end
 
     module QueryMethods
+      # Overrides ActiveRecord::QueryMethods#joins
       def joins(*args, &block)
         if block_given? && args.empty?
           joining(&block)
@@ -47,6 +52,7 @@ module BabySqueel
         end
       end
 
+      # Overrides ActiveRecord::QueryMethods#order
       def order(*args, &block)
         if block_given? && args.empty?
           ordering(&block)
@@ -55,6 +61,7 @@ module BabySqueel
         end
       end
 
+      # Overrides ActiveRecord::QueryMethods#group
       def group(*args, &block)
         if block_given? && args.empty?
           grouping(&block)
@@ -63,6 +70,7 @@ module BabySqueel
         end
       end
 
+      # Overrides ActiveRecord::QueryMethods#having
       def having(*args, &block)
         if block_given? && args.empty?
           when_having(&block)
@@ -71,6 +79,7 @@ module BabySqueel
         end
       end
 
+      # Overrides ActiveRecord::QueryMethods#where
       def where(*args, &block)
         if block_given? && args.empty?
           where.has(&block)

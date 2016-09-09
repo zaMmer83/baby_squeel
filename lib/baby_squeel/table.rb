@@ -20,17 +20,17 @@ module BabySqueel
       clone.alias! alias_name
     end
 
-    def alias!(alias_name)
+    def alias!(alias_name) # :nodoc:
       self._table = _table.alias(alias_name)
       self
     end
 
-    # Instruct the table to be joined with an INNER JOIN.
+    # Instruct the table to be joined with a LEFT OUTER JOIN.
     def outer
       clone.outer!
     end
 
-    def outer!
+    def outer! # :nodoc:
       self._join = Arel::Nodes::OuterJoin
       self
     end
@@ -40,7 +40,7 @@ module BabySqueel
       clone.inner!
     end
 
-    def inner!
+    def inner! # :nodoc:
       self._join = Arel::Nodes::InnerJoin
       self
     end
@@ -50,11 +50,15 @@ module BabySqueel
       clone.on! node
     end
 
-    def on!(node)
+    def on!(node) # :nodoc:
       self._on = node
       self
     end
 
+    # When referencing a joined table, the tables that
+    # attributes reference can change (due to aliasing).
+    # This method allows BabySqueel::Nodes::Attribute
+    # instances to find what their alias will be.
     def find_alias(association, associations = [])
       builder = JoinDependency::Builder.new(_scope.all)
       builder.ensure_associated(_arel(associations))

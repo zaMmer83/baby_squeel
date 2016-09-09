@@ -9,12 +9,13 @@ module BabySqueel
   class JoinExpression
     include Polyamorous::TreeNode
 
-    attr_reader :associations
-
     def initialize(associations)
       @associations = associations
     end
 
+    # Each individual association object knows how
+    # to build a Polyamorous::Join. Those joins
+    # will be added to the hash incrementally.
     def add_to_tree(hash)
       @associations.inject(hash) do |acc, assoc|
         assoc.add_to_tree(acc)

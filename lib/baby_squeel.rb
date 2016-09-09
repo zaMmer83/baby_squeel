@@ -9,15 +9,25 @@ require 'baby_squeel/active_record/where_chain'
 
 module BabySqueel
   class << self
+    # Configures BabySqueel using the given block
     def configure
       yield self
     end
 
+    # Turn on BabySqueel's compatibility mode. This will
+    # make BabySqueel act more like Squeel.
     def enable_compatibility!
       require 'baby_squeel/compat'
       BabySqueel::Compat.enable!
     end
 
+    # Get a BabySqueel table instance.
+    #
+    # ==== Examples
+    #     BabySqueel[Post]
+    #     BabySqueel[:posts]
+    #     BabySqueel[Post.arel_table]
+    #
     def [](thing, **kwargs)
       if thing.respond_to?(:model_name)
         Relation.new(thing)
