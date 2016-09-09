@@ -8,4 +8,10 @@ describe BabySqueel::Relation do
 
   include_examples 'a table'
   include_examples 'a relation'
+
+  describe '#method_missing' do
+    it 'raises a NoMethodError when the wrong number of args are given' do
+      expect { table.author(1) }.to raise_error(NoMethodError)
+    end
+  end
 end

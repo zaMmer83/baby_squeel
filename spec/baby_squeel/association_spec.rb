@@ -29,6 +29,12 @@ describe BabySqueel::Association do
     end
   end
 
+  describe '#method_missing' do
+    it 'raises a NoMethodError when the wrong number of args are given' do
+      expect { association.author(1) }.to raise_error(NoMethodError)
+    end
+  end
+
   describe '#_arel' do
     context 'when explicitly joining' do
       let(:condition) { association.author_id == association.author.id }
