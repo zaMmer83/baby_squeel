@@ -2,16 +2,20 @@ require 'baby_squeel/join_expression'
 
 module BabySqueel
   class Table
-    attr_accessor :_on, :_join, :_table
+    attr_accessor :_on, :_table
+    attr_writer :_join
 
     def initialize(arel_table)
       @_table = arel_table
-      @_join = Arel::Nodes::InnerJoin
     end
 
     # See Arel::Table#[]
     def [](key)
       Nodes::Attribute.new(self, key)
+    end
+
+    def _join
+      @_join ||= Arel::Nodes::InnerJoin
     end
 
     # Alias a table. This is only possible when joining
