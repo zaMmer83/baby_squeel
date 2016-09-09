@@ -27,7 +27,9 @@ describe BabySqueel::Association do
       expect(polymorph.of(Post)._polymorphic_klass).to eq(Post)
     end
 
-    it 'throws a fit when the reflection is not polymorphic'
+    it 'throws a fit when the reflection is not polymorphic' do
+      expect{ association.of(Post) }.to raise_error(BabySqueel::PolymorphicSpecificationError)
+    end
   end
 
   describe '#add_to_tree' do
@@ -108,7 +110,9 @@ describe BabySqueel::Association do
       end
 
       context 'when joining polymorphic associations' do
-        it 'throws an error if the _polymorphic_klass has not been set'
+        it 'throws an error if the _polymorphic_klass has not been set' do
+          expect { polymorph._arel }.to raise_error(BabySqueel::PolymorphicNotSpecifiedError)
+        end
       end
     end
   end

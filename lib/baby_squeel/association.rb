@@ -21,7 +21,10 @@ module BabySqueel
     end
 
     def of(klass)
-      # TODO: what if this isn't a polymorphic reflection?
+      unless _reflection.polymorphic?
+        raise PolymorphicSpecificationError.new(_reflection.name, klass)
+      end
+
       clone.of! klass
     end
 
@@ -77,7 +80,7 @@ module BabySqueel
       elsif _table.is_a? Arel::Nodes::TableAlias
         raise AssociationAliasingError.new(_reflection.name, _table.right)
       elsif _reflection.polymorphic? && _polymorphic_klass.nil?
-        # TODO: custom exception needed here
+        raise PolymorphicNotSpecifiedError.new(_reflection.name)
       else
         @parent._arel([self, *associations])
       end
