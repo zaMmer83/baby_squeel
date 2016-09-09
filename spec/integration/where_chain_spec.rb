@@ -106,6 +106,30 @@ describe BabySqueel::ActiveRecord::WhereChain do
       EOSQL
     end
 
+    it 'wheres on polymorphic associations' do
+      relation = Picture.joining { imageable.of(Post) }.where.has {
+        imageable.of(Post).title =~ 'meatloaf'
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "pictures".* FROM "pictures"
+        INNER JOIN "posts" ON "posts"."id" = "pictures"."imageable_id" AND "pictures"."imageable_type" = 'Post'
+        WHERE ("posts"."title" LIKE 'meatloaf')
+      EOSQL
+    end
+
+    it 'wheres on polymorphic associations outer join' do
+      relation = Picture.joining { imageable.of(Post).outer }.where.has {
+        imageable.of(Post).title =~ 'meatloaf'
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "pictures".* FROM "pictures"
+        LEFT OUTER JOIN "posts" ON "posts"."id" = "pictures"."imageable_id" AND "pictures"."imageable_type" = 'Post'
+        WHERE ("posts"."title" LIKE 'meatloaf')
+      EOSQL
+    end
+
     it 'wheres and correctly aliases' do
       relation = Post.joining { author.comments }
                      .where.has { author.comments.id.in [1, 2] }

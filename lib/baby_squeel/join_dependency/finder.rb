@@ -19,7 +19,7 @@ module BabySqueel
       end
 
       def find_association(reflection)
-        find { |assoc| reflections_equal?(assoc.reflection, reflection) }
+        find { |assoc| assoc.reflection == reflection }
       end
 
       def deeply_find(root, &block)
@@ -30,10 +30,6 @@ module BabySqueel
         end
 
         nil
-      end
-
-      def reflections_equal?(a, b)
-        a.name == b.name && a.klass == b.klass
       end
     end
   end
