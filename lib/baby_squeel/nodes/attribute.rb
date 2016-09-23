@@ -5,8 +5,8 @@ module BabySqueel
     class Attribute < Node
       def initialize(parent, name)
         @parent = parent
-        @name = name
-        super(parent._table[name])
+        @name = name.to_s
+        super(parent._table[@name])
       end
 
       def in(rel)
