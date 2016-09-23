@@ -231,4 +231,12 @@ describe BabySqueel::ActiveRecord::WhereChain do
       EOSQL
     end
   end
+
+  describe '#where_values_hash' do
+    it 'returns the same hash that Rails normally would' do
+      squeel = Author.where.has{id == 123}
+      rails = Author.where(id: 123)
+      expect(squeel.where_values_hash).to eq(rails.where_values_hash)
+    end
+  end
 end
