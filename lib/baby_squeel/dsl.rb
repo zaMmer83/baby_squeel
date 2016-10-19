@@ -24,6 +24,24 @@ module BabySqueel
       end
     end
 
+    # Create a Grouping node. This allows you to set balanced
+    # pairs of parentheses around your SQL.
+    #
+    # ==== Arguments
+    #
+    # * +expr+ - The expression to group.
+    #
+    # ==== Example
+    #     Post.where.has{_([summary, description]).in(...)}
+    #     #=> SELECT "posts".* FROM "posts" WHERE ("posts"."summary", "posts"."description") IN (...)"
+    #     Post.select{[id, _(Comment.where.has{post_id == posts.id}.selecting{COUNT(id)})]}.as('comment_count')}
+    #     #=> SELECT "posts"."id", (SELECT COUNT("comments"."id") FROM "comments" WHERE "comments.post_id" = "posts"."id") AS "comment_count" FROM "posts"
+    #
+    def _(expr)
+      expr = Arel.sql(expr.to_sql) if expr.is_a? ::ActiveRecord::Relation
+      Nodes.wrap Arel::Nodes::Grouping.new(expr)
+    end
+
     # Create a SQL function. See Arel::Nodes::NamedFunction.
     #
     # ==== Arguments
@@ -32,7 +50,7 @@ module BabySqueel
     # * +args+ - The arguments to be passed to the SQL function.
     #
     # ==== Example
-    #     Post.select { func('coalesce', id, 1) }
+    #     Post.selecting { func('coalesce', id, 1) }
     #     #=> SELECT COALESCE("posts"."id", 1) FROM "posts"
     #
     def func(name, *args)
