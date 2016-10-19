@@ -246,7 +246,7 @@ Post.select('1 as one').ordering { sql('one').desc }
 Post.selecting { title.op('||', quoted('diddly')) }
 
 # Functions
-Post.select { func('coalesce', id, 1) }
+Post.selecting { func('coalesce', id, 1) }
 ```
 
 ## Sifters
