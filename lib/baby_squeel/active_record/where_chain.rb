@@ -5,7 +5,8 @@ module BabySqueel
     module WhereChain
       # Constructs Arel for ActiveRecord::Base#where using the DSL.
       def has(&block)
-        @scope.where! DSL.evaluate(@scope, &block)
+        arel = DSL.evaluate(@scope, &block)
+        @scope.where!(arel) unless arel.nil?
         @scope
       end
     end
