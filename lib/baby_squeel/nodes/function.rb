@@ -6,6 +6,7 @@ module BabySqueel
     class Function < Node
       def initialize(node)
         super
+        node.extend Arel::Math
         node.extend Arel::OrderPredications
       end
     end
