@@ -13,6 +13,14 @@ describe BabySqueel::ActiveRecord::WhereChain do
       EOSQL
     end
 
+    it 'accepts nil' do
+      relation = Post.where.has { nil }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+      EOSQL
+    end
+
     it 'wheres on associations' do
       relation = Post.joins(:author).where.has {
         author.name == 'Yo Gotti'
