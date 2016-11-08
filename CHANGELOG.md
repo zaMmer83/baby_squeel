@@ -1,4 +1,18 @@
-## [1.0.0] - 2016-9-9
+## [Unreleased]
+
+*Nothing yet.*
+
+## [1.0.1] - 2016-11-07
+### Added
+- Add DSL#_ for wrapping expressions in Arel::Node::Grouping. Thanks to [@odedniv].
+
+### Fixed
+- Use strings for attribute names like Rails does. Symbols were preventing things like `unscope` from working. Thanks to [@chewi].
+- `where.has {}` will now accept `nil`.
+- Arel::Nodes::Function did not previously include Arel::Math, so now you can do math operations on the result of SQL functions.
+- Arel::Nodes::Binary did not previously include Arel::AliasPredication. Binary nodes can now be aliased using `as`.
+
+## [1.0.0] - 2016-09-09
 ### Added
 - Polyamorous. Unfortunately, this *does* monkey-patch Active Record internals, but there just isn't any other reliable way to generate outer joins. Baby Squeel, itself, will still keep monkey patching to an absolute minimum.
 - Within DSL blocks, you can use `exists` and `not_exists` with Active Record relations. For example: `Post.where.has { exists Post.where(title: 'Fun') }`.`
@@ -67,9 +81,14 @@
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/rzane/baby_squeel/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/rzane/baby_squeel/compare/v0.3.1...v1.0.0
 [0.3.1]: https://github.com/rzane/baby_squeel/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/rzane/baby_squeel/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/rzane/baby_squeel/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/rzane/baby_squeel/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/rzane/baby_squeel/compare/v0.1.0...v0.2.0
+
+[@chewi]: https://github.com/chewi
+[@odedniv]: https://github.com/odedniv
