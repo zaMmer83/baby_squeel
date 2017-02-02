@@ -51,8 +51,8 @@ module BabySqueel
     end
 
     # See BabySqueel::Table#find_alias.
-    def find_alias(association, associations = [])
-      @parent.find_alias(association, [self, *associations])
+    def find_alias(associations = [])
+      @parent.find_alias([self, *associations])
     end
 
     # Intelligently constructs Arel nodes. There are three outcomes:

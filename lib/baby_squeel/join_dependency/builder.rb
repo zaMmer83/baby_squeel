@@ -16,7 +16,15 @@ module BabySqueel
         @joins_values += values
       end
 
-      def to_join_dependency
+      def find_alias(associations)
+        join_assoc = associations.inject(join_dependency.join_root) do |parent, assoc|
+          parent.children.find { |c| c.reflection == assoc._reflection } if parent
+        end
+
+        join_assoc.tables.first if join_assoc
+      end
+
+      def join_dependency
         ::ActiveRecord::Associations::JoinDependency.new(
           relation.model,
           association_joins,
