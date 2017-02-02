@@ -19,8 +19,7 @@ module BabySqueel
 
       def _arel
         if @parent.kind_of? BabySqueel::Association
-          table = @parent.find_alias
-          table ? table[@name] : super
+          @parent.find_alias[@name]
         else
           super
         end
