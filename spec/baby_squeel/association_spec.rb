@@ -32,6 +32,44 @@ describe BabySqueel::Association do
     end
   end
 
+  describe '#==' do
+    before do
+      if ActiveRecord::VERSION::MAJOR < 5
+        skip "This isn't supported in ActiveRecord 4"
+      end
+    end
+
+    it 'returns an wrapped Arel::Nodes::And' do
+      node = association == Author.new(id: 42)
+      expect(node._arel.left).to be_an(Arel::Nodes::Equality)
+    end
+
+    it 'throws for an invalid comparison' do
+      expect {
+        association == 'foo'
+      }.to raise_error(BabySqueel::Association::InvalidComparisonError)
+    end
+  end
+
+  describe '#!=' do
+    before do
+      if ActiveRecord::VERSION::MAJOR < 5
+        skip "This isn't supported in ActiveRecord 4"
+      end
+    end
+
+    it 'returns some wrapped arel' do
+      node = association != Author.new(id: 42)
+      expect(node._arel.left.expr).to be_an(Arel::Nodes::NotEqual)
+    end
+
+    it 'throws for an invalid comparison' do
+      expect {
+        association != 'foo'
+      }.to raise_error(BabySqueel::Association::InvalidComparisonError)
+    end
+  end
+
   describe '#add_to_tree' do
     def make_tree(tree_node)
       hash = {}

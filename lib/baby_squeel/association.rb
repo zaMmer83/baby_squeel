@@ -2,6 +2,9 @@ require 'baby_squeel/relation'
 
 module BabySqueel
   class Association < Relation
+    class InvalidComparisonError < StandardError
+    end
+
     # An Active Record association reflection
     attr_reader :_reflection
 
@@ -18,6 +21,14 @@ module BabySqueel
       unless @_reflection.polymorphic?
         super @_reflection.klass
       end
+    end
+
+    def ==(other)
+      Nodes.wrap build_where_clause(other).ast
+    end
+
+    def !=(other)
+      Nodes.wrap build_where_clause(other).invert.ast
     end
 
     def of(klass)
@@ -83,6 +94,38 @@ module BabySqueel
         raise PolymorphicNotSpecifiedError.new(_reflection.name)
       else
         @parent._arel([self, *associations])
+      end
+    end
+
+    private
+
+    if ActiveRecord::VERSION::MAJOR >= 5
+      def build_where_clause(other)
+        if valid_where_clause?(other)
+          relation = @parent._scope.where(nil)
+          factory = relation.send(:where_clause_factory)
+          factory.build({ _reflection.name => other }, [])
+        else
+          raise InvalidComparisonError, <<-EOMSG.squish
+            You can't compare association '#{_reflection.name}'
+            to #{other.class}.
+          EOMSG
+        end
+      end
+    else
+      def build_where_clause(_)
+        raise NotImplementedError, <<-EOMSG.squish
+          Querying association '#{_reflection.name}' with '==' and '!='
+          is only supported for ActiveRecord 5.
+        EOMSG
+      end
+    end
+
+    def valid_where_clause?(other)
+      if other.respond_to? :all?
+        other.all? { |o| valid_where_clause? o }
+      else
+        other.nil? || other.respond_to?(:model_name)
       end
     end
   end
