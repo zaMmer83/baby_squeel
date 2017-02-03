@@ -238,6 +238,30 @@ describe BabySqueel::ActiveRecord::WhereChain do
         )
       EOSQL
     end
+
+    it 'wheres an association using #==' do
+      author = Author.new(id: 42)
+      relation = Post.where.has do |post|
+        post.author == author
+      end
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        WHERE ("posts"."author_id" = 42)
+      EOSQL
+    end
+
+    it 'wheres an association using #!=' do
+      author = Author.new(id: 42)
+      relation = Post.where.has do |post|
+        post.author != author
+      end
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        WHERE (("posts"."author_id" != 42))
+      EOSQL
+    end
   end
 
   describe '#where_values_hash' do

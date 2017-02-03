@@ -15,7 +15,7 @@ shared_examples_for 'a table' do
     end
 
     it 'does not mutate the original instance' do
-      expect(table.on(expr)).not_to eq(table)
+      expect(table.on(expr).object_id).not_to eq(table.object_id)
     end
   end
 
@@ -25,7 +25,7 @@ shared_examples_for 'a table' do
     end
 
     it 'does not mutate the original instance' do
-      expect(table.inner).not_to eq(table)
+      expect(table.inner.object_id).not_to eq(table.object_id)
     end
   end
 
@@ -35,7 +35,7 @@ shared_examples_for 'a table' do
     end
 
     it 'does not mutate the original instance' do
-      expect(table.outer).not_to eq(table)
+      expect(table.outer.object_id).not_to eq(table.object_id)
     end
   end
 

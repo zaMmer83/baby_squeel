@@ -20,6 +20,14 @@ module BabySqueel
       end
     end
 
+    def ==(other)
+      Nodes.wrap build_where_clause(other).ast
+    end
+
+    def !=(other)
+      Nodes.wrap build_where_clause(other).invert.ast
+    end
+
     def of(klass)
       unless _reflection.polymorphic?
         raise PolymorphicSpecificationError.new(_reflection.name, klass)
@@ -84,6 +92,14 @@ module BabySqueel
       else
         @parent._arel([self, *associations])
       end
+    end
+
+    private
+
+    def build_where_clause(other)
+      relation = @parent._scope.where(nil)
+      factory = relation.send(:where_clause_factory)
+      factory.build({ _reflection.name => other }, [])
     end
   end
 end
