@@ -17,6 +17,8 @@ class Post < ActiveRecord::Base
   has_many :ugly_author_comments, through: :ugly_author, source: :comments
 
   has_many :pictures, as: :imageable
+
+  belongs_to :parent, class_name: 'Post'
 end
 
 class Comment < ActiveRecord::Base

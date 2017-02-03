@@ -1,6 +1,3 @@
-require 'baby_squeel/join_dependency/builder'
-require 'baby_squeel/join_dependency/finder'
-
 module BabySqueel
   # This is the thing that gets added to Active Record's joins_values.
   # By including Polyamorous::TreeNode, when this instance is found when

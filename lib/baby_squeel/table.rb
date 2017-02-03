@@ -1,4 +1,5 @@
 require 'baby_squeel/join_expression'
+require 'baby_squeel/join_dependency/builder'
 
 module BabySqueel
   class Table
@@ -63,12 +64,10 @@ module BabySqueel
     # attributes reference can change (due to aliasing).
     # This method allows BabySqueel::Nodes::Attribute
     # instances to find what their alias will be.
-    def find_alias(association, associations = [])
+    def find_alias(associations = [])
       builder = JoinDependency::Builder.new(_scope.all)
-      builder.ensure_associated(_arel(associations))
-
-      finder = JoinDependency::Finder.new(builder.to_join_dependency)
-      finder.find_alias(association._reflection)
+      builder.ensure_associated _arel(associations)
+      builder.find_alias(associations)
     end
 
     # This method will be invoked by BabySqueel::Nodes::unwrap. When called,

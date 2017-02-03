@@ -16,12 +16,28 @@ module BabySqueel
         @joins_values += values
       end
 
-      def to_join_dependency
+      def join_dependency
         ::ActiveRecord::Associations::JoinDependency.new(
           relation.model,
           association_joins,
           join_list
         )
+      end
+      delegate :join_root, to: :join_dependency
+
+      def find_join_association(associations)
+        associations.inject(join_root) do |parent, assoc|
+          parent.children.find do |join_association|
+            join_association.reflection == assoc._reflection
+          end
+        end
+      end
+
+      # Find the alias of a BabySqueel::Association, by passing
+      # a list (in order of chaining) of associations and finding
+      # the respective JoinAssociation at each level.
+      def find_alias(associations)
+        find_join_association(associations).table
       end
 
       private
