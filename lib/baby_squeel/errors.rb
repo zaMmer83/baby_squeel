@@ -45,4 +45,20 @@ module BabySqueel
       super format(MESSAGE, association: association)
     end
   end
+
+  class AssociationComparisonError < StandardError # :nodoc:
+    def initialize(name, other)
+      super "You can't compare association '#{name}' to #{other}."
+    end
+  end
+
+  class AssociationComparisonNotSupportedError < StandardError # :nodoc:
+    MESSAGE =
+      "Querying association '%{name}' with '==' and '!=' " \
+      "is only supported for ActiveRecord >=5."
+
+    def initialize(name)
+      super format(MESSAGE, name: name)
+    end
+  end
 end

@@ -2,9 +2,6 @@ require 'baby_squeel/relation'
 
 module BabySqueel
   class Association < Relation
-    class InvalidComparisonError < StandardError
-    end
-
     # An Active Record association reflection
     attr_reader :_reflection
 
@@ -106,18 +103,12 @@ module BabySqueel
           factory = relation.send(:where_clause_factory)
           factory.build({ _reflection.name => other }, [])
         else
-          raise InvalidComparisonError, <<-EOMSG.squish
-            You can't compare association '#{_reflection.name}'
-            to #{other.class}.
-          EOMSG
+          raise AssociationComparisonError.new(_reflection.name, other)
         end
       end
     else
       def build_where_clause(_)
-        raise NotImplementedError, <<-EOMSG.squish
-          Querying association '#{_reflection.name}' with '==' and '!='
-          is only supported for ActiveRecord 5.
-        EOMSG
+        raise AssociationComparisonNotSupportedError.new(_reflection.name)
       end
     end
 

@@ -33,40 +33,44 @@ describe BabySqueel::Association do
   end
 
   describe '#==' do
-    before do
-      if ActiveRecord::VERSION::MAJOR < 5
-        skip "This isn't supported in ActiveRecord 4"
+    if ActiveRecord::VERSION::MAJOR >= 5
+      it 'returns an wrapped Arel::Nodes::And' do
+        node = association == Author.new(id: 42)
+        expect(node._arel.left).to be_an(Arel::Nodes::Equality)
       end
-    end
 
-    it 'returns an wrapped Arel::Nodes::And' do
-      node = association == Author.new(id: 42)
-      expect(node._arel.left).to be_an(Arel::Nodes::Equality)
-    end
-
-    it 'throws for an invalid comparison' do
-      expect {
-        association == 'foo'
-      }.to raise_error(BabySqueel::Association::InvalidComparisonError)
+      it 'throws for an invalid comparison' do
+        expect {
+          association == 'foo'
+        }.to raise_error(BabySqueel::AssociationComparisonError)
+      end
+    else
+      it 'throws not supported' do
+        expect {
+          association == 'foo'
+        }.to raise_error(BabySqueel::AssociationComparisonNotSupportedError)
+      end
     end
   end
 
   describe '#!=' do
-    before do
-      if ActiveRecord::VERSION::MAJOR < 5
-        skip "This isn't supported in ActiveRecord 4"
+    if ActiveRecord::VERSION::MAJOR >= 5
+      it 'returns some wrapped arel' do
+        node = association != Author.new(id: 42)
+        expect(node._arel.left.expr).to be_an(Arel::Nodes::NotEqual)
       end
-    end
 
-    it 'returns some wrapped arel' do
-      node = association != Author.new(id: 42)
-      expect(node._arel.left.expr).to be_an(Arel::Nodes::NotEqual)
-    end
-
-    it 'throws for an invalid comparison' do
-      expect {
-        association != 'foo'
-      }.to raise_error(BabySqueel::Association::InvalidComparisonError)
+      it 'throws for an invalid comparison' do
+        expect {
+          association != 'foo'
+        }.to raise_error(BabySqueel::AssociationComparisonError)
+      end
+    else
+      it 'throws not supported' do
+        expect {
+          association != 'foo'
+        }.to raise_error(BabySqueel::AssociationComparisonNotSupportedError)
+      end
     end
   end
 
