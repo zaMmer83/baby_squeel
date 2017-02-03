@@ -240,6 +240,10 @@ describe BabySqueel::ActiveRecord::WhereChain do
     end
 
     it 'wheres an association using #==' do
+      if ActiveRecord::VERSION::MAJOR < 5
+        skip "This isn't supported in ActiveRecord 4"
+      end
+
       author = Author.new(id: 42)
       relation = Post.where.has do |post|
         post.author == author
@@ -252,6 +256,10 @@ describe BabySqueel::ActiveRecord::WhereChain do
     end
 
     it 'wheres an association using #!=' do
+      if ActiveRecord::VERSION::MAJOR < 5
+        skip "This isn't supported in ActiveRecord 4"
+      end
+
       author = Author.new(id: 42)
       relation = Post.where.has do |post|
         post.author != author
