@@ -16,6 +16,7 @@ ActiveRecord::Schema.define do
     t.string :title
     t.belongs_to :author
     t.datetime :published_at
+    t.integer :parent_id
     t.timestamps null: false
   end
 
