@@ -2,6 +2,13 @@
 
 *Nothing yet.*
 
+## [1.0.2] - 2017-02-07
+### Added
+- `BabySqueel::Association` now has `#==` and `#!=`. This is only supported for Rails 5+. Example: `Post.where { author: Author.last }`.
+
+### Fixed
+- Incorrect alias detection caused by not tracking the full path to a join (#37).
+
 ## [1.0.1] - 2016-11-07
 ### Added
 - Add DSL#_ for wrapping expressions in Arel::Node::Grouping. Thanks to [@odedniv].
