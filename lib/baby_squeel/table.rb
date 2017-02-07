@@ -52,13 +52,27 @@ module BabySqueel
     end
 
     # Specify an explicit join.
-    def on(node)
-      clone.on! node
+    def on(node = nil, &block)
+      clone.on!(node, &block)
     end
 
-    def on!(node) # :nodoc:
-      self._on = node
+    def on!(node = nil, &block) # :nodoc:
+      if node.nil? && !block_given?
+        raise 'FIXME: A proper error should be risen here!'
+      end
+
+      self._on = node || evaluate(&block)
       self
+    end
+
+    # Evaluates a DSL block. If arity is given, this method
+    # `yield` itself, rather than `instance_eval`.
+    def evaluate(&block)
+      if block.arity.zero?
+        instance_eval(&block)
+      else
+        yield(self)
+      end
     end
 
     # When referencing a joined table, the tables that
@@ -95,7 +109,7 @@ module BabySqueel
     private
 
     def resolver
-      @resolver ||= Resolver.new(self, [:attribute])
+      @resolver ||= Resolver.new(self, [:subquery, :attribute])
     end
 
     def respond_to_missing?(name, *)

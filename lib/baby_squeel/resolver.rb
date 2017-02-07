@@ -55,6 +55,8 @@ module BabySqueel
         @table.func(name, *args)
       when :association
         @table.association(name)
+      when :subquery
+        @table
       when :column, :attribute
         @table[name]
       end
@@ -71,6 +73,9 @@ module BabySqueel
         @table._scope.column_names.include?(name.to_s)
       when :association
         !@table._scope.reflect_on_association(name).nil?
+      when :subquery
+        @table._table.name == name.to_s &&
+          @table._table.kind_of?(Arel::Nodes::TableAlias)
       when :function, :attribute
         true
       end
@@ -82,7 +87,7 @@ module BabySqueel
       case strategy
       when :function
         !args.empty?
-      when :column, :attribute, :association
+      when :column, :attribute, :association, :subquery
         args.empty?
       end
     end
