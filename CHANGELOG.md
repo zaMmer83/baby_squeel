@@ -88,7 +88,8 @@
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/rzane/baby_squeel/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/rzane/baby_squeel/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/rzane/baby_squeel/compare/v0.3.1...v1.0.0
 [0.3.1]: https://github.com/rzane/baby_squeel/compare/v0.3.0...v0.3.1
