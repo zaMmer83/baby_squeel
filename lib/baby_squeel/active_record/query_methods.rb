@@ -29,17 +29,37 @@ module BabySqueel
         having DSL.evaluate(self, &block)
       end
 
-
       if ::ActiveRecord::VERSION::MAJOR >= 5
         def plucking(&block)
-          pluck DSL.evalulate(self, &block)
+          pluck DSL.evaluate(self, &block)
+        end
+      elsif ::ActiveRecord::VERSION::STRING >= '4.2.0'
+        def plucking(&block)
+          relation = selecting(&block)
+          binds = relation.arel.bind_values + bind_values
+          result = klass.connection.select_all(relation.arel, nil, binds)
+          result.cast_values(klass.column_types)
         end
       else
         def plucking(&block)
           relation = selecting(&block)
           binds = relation.arel.bind_values + bind_values
           result = klass.connection.select_all(relation.arel, nil, binds)
-          result.cast_values(klass.column_types)
+          columns = result.columns.map do |key|
+            klass.column_types.fetch(key) {
+              result.column_types.fetch(key) { result.identity_type }
+            }
+          end
+
+          result = result.rows.map do |values|
+            values = result.columns.zip(values).map do |column_name, value|
+              single_attr_hash = { column_name => value }
+              klass.initialize_attributes(single_attr_hash).values.first
+            end
+
+            columns.zip(values).map { |column, value| column.type_cast value }
+          end
+          columns.one? ? result.map!(&:first) : result
         end
       end
 
