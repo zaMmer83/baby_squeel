@@ -29,6 +29,10 @@ module BabySqueel
         having DSL.evaluate(self, &block)
       end
 
+      def plucking(&block)
+        pluck DSL.evaluate(self, &block)
+      end
+
       private
 
       # This is a monkey patch, and I'm not happy about it.

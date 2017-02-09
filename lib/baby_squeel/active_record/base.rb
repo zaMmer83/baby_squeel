@@ -4,7 +4,7 @@ module BabySqueel
   module ActiveRecord
     module Base
       delegate :joining, :joining!, :selecting, :ordering,
-               :grouping, :when_having, to: :all
+               :grouping, :when_having, :plucking, to: :all
 
       # Define a sifter that can be used within DSL blocks.
       #

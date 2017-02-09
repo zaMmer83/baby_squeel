@@ -1,0 +1,31 @@
+require 'spec_helper'
+
+describe BabySqueel::ActiveRecord::QueryMethods, '#plucking' do
+  before do
+    [Author, Post].each(&:delete_all)
+    a1 = Author.create! name: 'Rick'
+    a2 = Author.create! name: 'Flair'
+    Post.create! title: 'one', author: a1
+    Post.create! title: 'two', author: a2
+  end
+
+  it 'plucks' do
+    result = Post.plucking { title }
+    expect(result).to match_array(['one', 'two'])
+  end
+
+  it 'plucks with function' do
+    result = Post.plucking { upper(title) }
+    expect(result).to match_array(['ONE', 'TWO'])
+  end
+
+  it 'plucks with expression' do
+    result = Post.plucking { title == 'one' }
+    expect(result).to match_array([0, 1])
+  end
+
+  it 'plucks association' do
+    result = Post.joining { author }.plucking { author.name }
+    expect(result).to match_array(['Rick', 'Flair'])
+  end
+end
