@@ -29,8 +29,18 @@ module BabySqueel
         having DSL.evaluate(self, &block)
       end
 
-      def plucking(&block)
-        pluck DSL.evaluate(self, &block)
+
+      if ::ActiveRecord::VERSION::MAJOR >= 5
+        def plucking(&block)
+          pluck DSL.evalulate(self, &block)
+        end
+      else
+        def plucking(&block)
+          relation = selecting(&block)
+          binds = relation.arel.bind_values + bind_values
+          result = klass.connection.select_all(relation.arel, nil, binds)
+          result.cast_values(klass.column_types)
+        end
       end
 
       private
