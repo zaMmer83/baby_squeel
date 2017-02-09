@@ -2,6 +2,11 @@
 
 *Nothing yet.*
 
+## [1.0.3] - 2017-02-09
+### Added
+- Support for `pluck`.
+- Support for `not_in`.
+
 ## [1.0.2] - 2017-02-07
 ### Added
 - `BabySqueel::Association` now has `#==` and `#!=`. This is only supported for Rails 5+. Example: `Post.where { author: Author.last }`.
@@ -88,7 +93,8 @@
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/rzane/baby_squeel/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/rzane/baby_squeel/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/rzane/baby_squeel/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/rzane/baby_squeel/compare/v0.3.1...v1.0.0
