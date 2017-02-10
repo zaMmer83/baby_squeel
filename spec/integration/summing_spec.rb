@@ -1,10 +1,11 @@
 require 'spec_helper'
 
 describe BabySqueel::ActiveRecord::Calculations, '#summing' do
+  let(:a1) { Author.create! age: 12 }
+  let(:a2) { Author.create! age: 23 }
+
   before do
     [Post, Author].each(&:delete_all)
-    a1 = Author.create! age: 12
-    a2 = Author.create! age: 23
     Post.create! view_count: 1, author: a1
     Post.create! view_count: 2, author: a2
   end
@@ -19,5 +20,12 @@ describe BabySqueel::ActiveRecord::Calculations, '#summing' do
 
   it 'sums associations' do
     expect(Post.joins(:author).summing { author.age }).to eq(35)
+  end
+
+  it 'sums group' do
+    expect(Post.group(:author_id).summing { view_count }).to eq(
+      a1.id => 1,
+      a2.id => 2
+    )
   end
 end

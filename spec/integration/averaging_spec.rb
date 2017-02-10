@@ -1,10 +1,11 @@
 require 'spec_helper'
 
 describe BabySqueel::ActiveRecord::Calculations, '#averaging' do
+  let(:a1) { Author.create! age: 5 }
+  let(:a2) { Author.create! age: 5 }
+
   before do
     [Post, Author].each(&:delete_all)
-    a1 = Author.create! age: 5
-    a2 = Author.create! age: 5
     Post.create! view_count: 2, author: a1
     Post.create! view_count: 4, author: a1
     Post.create! view_count: 6, author: a2
@@ -20,5 +21,12 @@ describe BabySqueel::ActiveRecord::Calculations, '#averaging' do
 
   it 'averages associations' do
     expect(Post.joins(:author).averaging { author.age }).to eq(5)
+  end
+
+  it 'averages with group' do
+    expect(Post.group(:author_id).averaging { view_count }).to eq(
+      a1.id => 3.0,
+      a2.id => 6.0
+    )
   end
 end
