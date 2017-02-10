@@ -21,6 +21,7 @@ require 'support/factories'
 RSpec.configure do |config|
   config.include Factories
   config.filter_run focus: true
+  config.default_formatter = config.files_to_run.one? ? :doc : :progress
   config.run_all_when_everything_filtered = true
   config.example_status_persistence_file_path = 'tmp/spec-results.log'
   config.filter_run_excluding compat: !ENV['COMPAT']
