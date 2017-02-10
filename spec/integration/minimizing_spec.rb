@@ -34,10 +34,8 @@ describe BabySqueel::ActiveRecord::Calculations, '#minimizing' do
       Post.group(:author_id).minimizing { view_count }
     end
 
-    expect(queries.last).to produce_sql(<<-EOSQL)
-      SELECT MIN("posts"."view_count") AS minimum_posts_view_count, author_id AS author_id
-      FROM "posts"
-      GROUP BY author_id
-    EOSQL
+    expect(queries.last).to produce_sql(
+      /MIN\("posts"."view_count"\) AS minimum_posts_view_count/
+    )
   end
 end

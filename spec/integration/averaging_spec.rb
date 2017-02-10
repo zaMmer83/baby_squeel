@@ -35,10 +35,8 @@ describe BabySqueel::ActiveRecord::Calculations, '#averaging' do
       Post.group(:author_id).averaging { view_count }
     end
 
-    expect(queries.last).to produce_sql(<<-EOSQL)
-      SELECT AVG("posts"."view_count") AS average_posts_view_count, author_id AS author_id
-      FROM "posts"
-      GROUP BY author_id
-    EOSQL
+    expect(queries.last).to produce_sql(
+      /AVG\("posts"."view_count"\) AS average_posts_view_count/
+    )
   end
 end

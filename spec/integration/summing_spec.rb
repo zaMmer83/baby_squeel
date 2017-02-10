@@ -34,10 +34,8 @@ describe BabySqueel::ActiveRecord::Calculations, '#summing' do
       Post.group(:author_id).summing { view_count }
     end
 
-    expect(queries.last).to produce_sql(<<-EOSQL)
-      SELECT SUM("posts"."view_count") AS sum_posts_view_count, author_id AS author_id
-      FROM "posts"
-      GROUP BY author_id
-    EOSQL
+    expect(queries.last).to produce_sql(
+      /SUM\("posts"."view_count"\) AS sum_posts_view_count/
+    )
   end
 end

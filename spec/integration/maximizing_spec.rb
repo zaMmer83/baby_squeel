@@ -34,10 +34,8 @@ describe BabySqueel::ActiveRecord::Calculations, '#maximizing' do
       Post.group(:author_id).maximizing { view_count }
     end
 
-    expect(queries.last).to produce_sql(<<-EOSQL)
-      SELECT MAX("posts"."view_count") AS maximum_posts_view_count, author_id AS author_id
-      FROM "posts"
-      GROUP BY author_id
-    EOSQL
+    expect(queries.last).to produce_sql(
+      /MAX\("posts"."view_count"\) AS maximum_posts_view_count/
+    )
   end
 end
