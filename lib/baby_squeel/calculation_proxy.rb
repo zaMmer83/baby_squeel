@@ -2,17 +2,11 @@ module BabySqueel
   class CalculationProxy # :nodoc:
     # This is what is commonly referred to as a hack!
     #
-    # In Active Record 4, the calculations methods don't
-    # technically accept arel. Active Record will call #to_s on
-    # whatever you pass it. Luckily, we can get around that by
-    # having #to_s just return the node.
+    # In Active Record 4, the calculations methods don't technically
+    # accept Arel nodes. This is a proxy around Arel to make it work!
     #
-    # Active Record 5 happily accepts arel, though. So in that case,
-    # CalculationProxy.wrap will just return the node.
-    #
-    # See:
-    #   - ActiveRecord::Relation::Calculations#pluck
-    #   - ActiveRecord::Relation::Calculations#aggregate_column
+    # Active Record 5 happily accepts Arel nodes, though. So in that case,
+    # CalculationProxy.wrap will just return the Arel node.
 
     if ActiveRecord::VERSION::MAJOR < 5
       def self.wrap(node); new(node); end
@@ -24,8 +18,16 @@ module BabySqueel
       @node = node
     end
 
-    def to_s
+    def type_cast_from_database(value)
+      value
+    end
+
+    def unwrap
       @node
     end
+
+    # Plucking will call #to_s on this object.
+    # See: ActiveRecord::Relation::Calculations#pluck
+    alias to_s unwrap
   end
 end
