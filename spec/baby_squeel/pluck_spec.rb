@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::CalculationProxy do
+RSpec.describe BabySqueel::Pluck do
   describe '.wrap' do
     if ActiveRecord::VERSION::MAJOR >= 5
       it 'always returns identity' do
@@ -8,7 +8,7 @@ describe BabySqueel::CalculationProxy do
       end
     else
       it 'returns a CalculationProxy' do
-        expect(described_class.new(1)).to be_a(BabySqueel::CalculationProxy)
+        expect(described_class.new(1)).to be_a(described_class)
       end
     end
   end

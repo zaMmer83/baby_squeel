@@ -1,7 +1,6 @@
 require 'baby_squeel/nodes'
 require 'baby_squeel/relation'
 require 'baby_squeel/association'
-require 'baby_squeel/calculation_proxy'
 
 module BabySqueel
   class DSL < Relation
@@ -14,10 +13,6 @@ module BabySqueel
         evaluate scope do |root|
           root.instance_exec(*args, &block)
         end
-      end
-
-      def evaluate_calculation(scope, &block) # :nodoc:
-        CalculationProxy.wrap evaluate(scope, &block)
       end
     end
 

@@ -28,4 +28,14 @@ describe BabySqueel::ActiveRecord::Calculations, '#minimizing' do
       a2.id => 6
     )
   end
+
+  it 'minimizes with a sane alias' do
+    queries = track_queries do
+      Post.group(:author_id).minimizing { view_count }
+    end
+
+    expect(queries.last).to produce_sql(
+      /MIN\("posts"."view_count"\) AS minimum_posts_view_count/
+    )
+  end
 end

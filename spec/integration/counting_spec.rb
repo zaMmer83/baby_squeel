@@ -34,4 +34,14 @@ describe BabySqueel::ActiveRecord::Calculations, '#counting' do
       nil => 1
     )
   end
+
+  it 'counts with a sane alias' do
+    queries = track_queries do
+      Post.group(:author_id).counting { id }
+    end
+
+    expect(queries.last).to produce_sql(
+      /COUNT\("posts"."id"\) AS count_posts_id/
+    )
+  end
 end

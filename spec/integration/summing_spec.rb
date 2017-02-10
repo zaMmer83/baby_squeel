@@ -22,10 +22,20 @@ describe BabySqueel::ActiveRecord::Calculations, '#summing' do
     expect(Post.joins(:author).summing { author.age }).to eq(35)
   end
 
-  it 'sums group' do
+  it 'sums with group' do
     expect(Post.group(:author_id).summing { view_count }).to eq(
       a1.id => 1,
       a2.id => 2
+    )
+  end
+
+  it 'sums with a sane alias' do
+    queries = track_queries do
+      Post.group(:author_id).summing { view_count }
+    end
+
+    expect(queries.last).to produce_sql(
+      /SUM\("posts"."view_count"\) AS sum_posts_view_count/
     )
   end
 end

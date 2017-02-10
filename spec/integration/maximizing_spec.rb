@@ -28,4 +28,14 @@ describe BabySqueel::ActiveRecord::Calculations, '#maximizing' do
       a2.id => 6
     )
   end
+
+  it 'maximizes with a sane alias' do
+    queries = track_queries do
+      Post.group(:author_id).maximizing { view_count }
+    end
+
+    expect(queries.last).to produce_sql(
+      /MAX\("posts"."view_count"\) AS maximum_posts_view_count/
+    )
+  end
 end

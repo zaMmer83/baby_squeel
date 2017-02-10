@@ -29,4 +29,14 @@ describe BabySqueel::ActiveRecord::Calculations, '#averaging' do
       a2.id => 6.0
     )
   end
+
+  it 'averages with a sane alias' do
+    queries = track_queries do
+      Post.group(:author_id).averaging { view_count }
+    end
+
+    expect(queries.last).to produce_sql(
+      /AVG\("posts"."view_count"\) AS average_posts_view_count/
+    )
+  end
 end
