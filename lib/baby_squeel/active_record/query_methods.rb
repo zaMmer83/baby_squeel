@@ -29,19 +29,6 @@ module BabySqueel
         having DSL.evaluate(self, &block)
       end
 
-      if ::ActiveRecord::VERSION::MAJOR >= 5
-        def plucking(&block)
-          pluck DSL.evaluate(self, &block)
-        end
-      else
-        def plucking(&block)
-          relation = selecting(&block)
-          binds = relation.arel.bind_values + bind_values
-          result = klass.connection.select_all(relation.arel, nil, binds)
-          result.cast_values(klass.column_types)
-        end
-      end
-
       private
 
       # This is a monkey patch, and I'm not happy about it.
