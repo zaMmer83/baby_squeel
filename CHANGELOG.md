@@ -1,6 +1,6 @@
 ## [Unreleased]
 
-*Nothing yet.*
+> This version drops support for Active Record 4.1
 
 ## [1.0.3] - 2017-02-09
 ### Added
