@@ -6,7 +6,7 @@ Nothing to see yet!
 > This version drops support for Active Record 4.1. If you're stil on 4.1, you should seriously consider upgrading to at least 4.2.
 
 ### Added
-- DSLs for ActiveRecord::Relation::Calculations. You can not use `plucking`, `counting`, `summing`, `averaging`, `minimizing`, and `maximizing`.
+- DSLs for ActiveRecord::Relation::Calculations. You can now use `plucking`, `counting`, `summing`, `averaging`, `minimizing`, and `maximizing`.
 
 ## [1.0.3] - 2017-02-09
 ### Added
