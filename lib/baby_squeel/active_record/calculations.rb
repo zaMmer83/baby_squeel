@@ -28,6 +28,8 @@ module BabySqueel
         maximum Calculation.new(DSL.evaluate(self, &block))
       end
 
+      private
+
       # @override
       def aggregate_column(column_name)
         if column_name.kind_of? Calculation
