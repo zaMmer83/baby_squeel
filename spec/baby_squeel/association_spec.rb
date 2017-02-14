@@ -158,4 +158,16 @@ describe BabySqueel::Association do
       end
     end
   end
+
+  describe '#find_alias' do
+    it 'finds the alias' do
+      expect(association.find_alias.name).to eq('posts')
+    end
+
+    # Without `reconstruct_with_type_caster`, this would fail in Active Record 5.
+    # See: https://github.com/rails/rails/pull/27994
+    it 'uses the correct type_caster' do
+      expect(association.find_alias.type_cast_for_database(:view_count, '5')).to eq(5)
+    end
+  end
 end
