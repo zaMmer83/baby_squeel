@@ -1,6 +1,6 @@
-## [Unreleased]
-
-Nothing to see yet!
+## [1.1.1] - 2017-02-14
+### Fixed
+- There is a bug in Active Record where the `AliasTracker` initializes `Arel::Table`s use the wrong `type_caster`. To address this, BabySqueel must re-initialize the `Arel::Table` with the correct `type_caster` (#54).
 
 ## [1.1.0] - 2017-02-10
 > This version drops support for Active Record 4.1. If you're stil on 4.1, you should seriously consider upgrading to at least 4.2.
@@ -99,7 +99,8 @@ Nothing to see yet!
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/rzane/baby_squeel/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/rzane/baby_squeel/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/rzane/baby_squeel/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/rzane/baby_squeel/compare/v1.0.1...v1.0.2
