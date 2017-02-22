@@ -1,3 +1,4 @@
+require 'baby_squeel/resolver'
 require 'baby_squeel/join_expression'
 require 'baby_squeel/join_dependency/builder'
 
@@ -93,21 +94,16 @@ module BabySqueel
 
     private
 
-    def not_found_error!
-      raise NotImplementedError, 'BabySqueel::Table will never raise a NotFoundError'
-    end
-
-    def resolve(name)
-      self[name]
+    def resolver
+      @resolver ||= Resolver.new(self, [:attribute])
     end
 
     def respond_to_missing?(name, *)
-      resolve(name).present? || super
+      resolver.resolves?(name) || super
     end
 
     def method_missing(name, *args, &block)
-      return super if !args.empty? || block_given?
-      resolve(name) || not_found_error!(name)
+      resolver.resolve!(name, *args, &block)
     end
   end
 end
