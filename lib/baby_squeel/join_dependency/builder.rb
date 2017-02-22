@@ -48,7 +48,14 @@ module BabySqueel
 
       # Compare two reflections and see if they're the same.
       def reflections_equal?(a, b)
-        (a.parent_reflection || a) == (b.parent_reflection || b)
+        comparable_reflection(a) == comparable_reflection(b)
+      end
+
+      # Get the parent of the reflection if it has one.
+      # In AR4, #parent_reflection returns [name, reflection]
+      # In AR5, #parent_reflection returns just a reflection
+      def comparable_reflection(reflection)
+        [*reflection.parent_reflection].last || reflection
       end
 
       # Active Record 5's AliasTracker initializes Arel tables
