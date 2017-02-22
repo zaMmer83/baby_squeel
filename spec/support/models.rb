@@ -30,3 +30,7 @@ class Picture < ActiveRecord::Base
   belongs_to :comment
   belongs_to :imageable, polymorphic: true
 end
+
+class ResearchPaper < ActiveRecord::Base
+  has_and_belongs_to_many :authors, join_table: :author_research_papers
+end

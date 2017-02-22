@@ -28,7 +28,10 @@ module BabySqueel
       def find_join_association(associations)
         associations.inject(join_root) do |parent, assoc|
           parent.children.find do |join_association|
-            join_association.reflection == assoc._reflection
+            reflections_equal?(
+              assoc._reflection,
+              join_association.reflection
+            )
           end
         end
       end
@@ -42,6 +45,18 @@ module BabySqueel
       end
 
       private
+
+      # Compare two reflections and see if they're the same.
+      def reflections_equal?(a, b)
+        comparable_reflection(a) == comparable_reflection(b)
+      end
+
+      # Get the parent of the reflection if it has one.
+      # In AR4, #parent_reflection returns [name, reflection]
+      # In AR5, #parent_reflection returns just a reflection
+      def comparable_reflection(reflection)
+        [*reflection.parent_reflection].last || reflection
+      end
 
       # Active Record 5's AliasTracker initializes Arel tables
       # with the type_caster belonging to the wrong model.
