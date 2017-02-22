@@ -183,6 +183,19 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
       end
     end
 
+    describe 'habtm' do
+      it 'inner joins' do
+        relation = ResearchPaper.joins(:authors).where.has { authors.name == "Alex" }
+
+        expect(relation).to produce_sql(<<-EOSQL)
+          SELECT "research_papers".* FROM "research_papers"
+          INNER JOIN "author_research_papers" ON "author_research_papers"."research_paper_id" = "research_papers"."id"
+          INNER JOIN "authors" ON "authors"."id" = "author_research_papers"."author_id"
+          WHERE "authors"."name" = 'Alex'
+        EOSQL
+      end
+    end
+
     describe 'nested joins' do
       it 'inner joins' do
         relation = Post.joining { author.comments }

@@ -28,7 +28,10 @@ module BabySqueel
       def find_join_association(associations)
         associations.inject(join_root) do |parent, assoc|
           parent.children.find do |join_association|
-            join_association.reflection == assoc._reflection
+            reflections_equal?(
+              assoc._reflection,
+              join_association.reflection
+            )
           end
         end
       end
@@ -42,6 +45,11 @@ module BabySqueel
       end
 
       private
+
+      # Compare two reflections and see if they're the same.
+      def reflections_equal?(a, b)
+        (a.parent_reflection || a) == (b.parent_reflection || b)
+      end
 
       # Active Record 5's AliasTracker initializes Arel tables
       # with the type_caster belonging to the wrong model.

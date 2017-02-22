@@ -34,4 +34,13 @@ ActiveRecord::Schema.define do
     t.references :imageable, polymorphic: true
     t.timestamps null: false
   end
+
+  create_table :research_papers, force: true do |t|
+    t.string :title
+  end
+
+  create_table :author_research_papers, force: true do |t|
+    t.integer :author_id
+    t.integer :research_paper_id
+  end
 end
