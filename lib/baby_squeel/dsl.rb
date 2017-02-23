@@ -97,12 +97,8 @@ module BabySqueel
 
     private
 
-    def method_missing(meth, *args, &block)
-      if !args.empty? && !block_given?
-        func(meth, args)
-      else
-        super
-      end
+    def resolver
+      @resolver ||= Resolver.new(self, [:function, :column, :association])
     end
   end
 end
