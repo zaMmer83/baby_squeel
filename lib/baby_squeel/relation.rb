@@ -15,7 +15,7 @@ module BabySqueel
       if reflection = _scope.reflect_on_association(name)
         Association.new(self, reflection)
       else
-        resolver.not_found! name, type: AssociationNotFoundError
+        raise AssociationNotFoundError.new(_scope.model_name, name)
       end
     end
 

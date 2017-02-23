@@ -102,8 +102,8 @@ module BabySqueel
       resolver.resolves?(name) || super
     end
 
-    def method_missing(name, *args, &block)
-      resolver.resolve!(name, *args, &block)
+    def method_missing(*args, &block)
+      resolver.resolve!(*args, &block) || super
     end
   end
 end

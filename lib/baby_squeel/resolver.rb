@@ -1,72 +1,96 @@
 module BabySqueel
   class Resolver
-    def initialize(table, strategies, arity_limit: 0)
+    def initialize(table, strategies)
       @table       = table
       @strategies  = strategies
-      @arity_limit = arity_limit
     end
 
+    # Attempt to determine the intent of the method_missing. If this method
+    # returns nil, that means one of two things:
+    #
+    # 1. The argument signature is invalid.
+    # 2. The name of the method called is not valid (ex. invalid column name)
     def resolve(name, *args, &block)
-      result = nil
-
-      @strategies.each do |strategy|
-        result = send(strategy, name, *args, &block)
-        break if result
+      strategy = @strategies.find do |strategy|
+        valid?(strategy, name, *args, &block)
       end
 
-      result
+      build(strategy, name, *args, &block)
     end
 
+    # Try to resolve the method_missing. If we fail to resolve, there are
+    # two outcomes:
+    #
+    # If any of the configured strategies accept argument signature provided,
+    # raise an error. This means we failed to resolve the name. (ex. invalid
+    # column name)
+    #
+    # Otherwise, a nil return valid indicates that argument signature was not
+    # valid for any of the configured strategies. This case should be treated
+    # as a NoMethodError.
     def resolve!(name, *args, &block)
-      resolve(name, *args, &block) || not_found!(name)
+      if resolution = resolve(name, *args, &block)
+        return resolution
+      end
+
+      if compatible_arguments?(*args, &block)
+        raise NotFoundError.new(@table._scope.model_name, name, @strategies)
+      end
+
+      return nil
     end
 
+    # Used to determine if a table can respond_to? a method.
     def resolves?(name)
       @strategies.any? do |strategy|
-        send "#{strategy}?", name
+        valid_name? strategy, name
       end
     end
 
-    def association_not_found!(name)
-      raise AssociationNotFoundError.new(@table._scope.model_name, name)
-    end
+    private
 
-    def not_found!(name)
-      raise NotFoundError.new(@table._scope.model_name, name, @strategies)
-    end
-
-    def association?(name)
-      !@table._scope.reflect_on_association(name).nil?
-    end
-
-    def association(name, *args)
-      if args.empty? && !block_given? && association?(name)
+    def build(strategy, name, *args)
+      case strategy
+      when :function
+        @table.func(name, *args)
+      when :association
         @table.association(name)
+      when :column, :attribute
+        @table[name]
       end
     end
 
-    def function?(_name)
-      true
+    def valid?(strategy, name, *args, &block)
+      valid_arguments?(strategy, *args, &block) &&
+        valid_name?(strategy, name)
     end
 
-    def function(name, *args)
-      @table.func(name, *args) if !args.empty? && !block_given?
+    def valid_name?(strategy, name)
+      case strategy
+      when :column
+        @table._scope.column_names.include?(name.to_s)
+      when :association
+        !@table._scope.reflect_on_association(name).nil?
+      when :function, :attribute
+        true
+      end
     end
 
-    def column?(name)
-      @table._scope.column_names.include?(name.to_s)
+    def valid_arguments?(strategy, *args)
+      return false if block_given?
+
+      case strategy
+      when :function
+        !args.empty?
+      when :column, :attribute, :association
+        args.empty?
+      end
     end
 
-    def column(name, *args)
-      @table[name] if args.empty? && !block_given? && column?(name)
-    end
-
-    def attribute?(_name)
-      true
-    end
-
-    def attribute(name, *args)
-      @table[name] if args.empty?
+    def compatible_arguments?(*args, &block)
+      @strategies.any? do |strategy|
+        valid_arguments?(strategy, *args, &block)
+      end
     end
   end
 end
