@@ -9,6 +9,8 @@ else
   gem 'activerecord', github: 'rails/rails'
 end
 
+gem 'bump'
+
 group :test do
   gem 'pry'
   gem 'coveralls'

@@ -4,6 +4,7 @@ require 'filewatcher'
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'coveralls/rake/task'
+require 'bump/tasks'
 
 Coveralls::RakeTask.new
 
@@ -34,6 +35,7 @@ def version_passes?(env)
   $?.success?
 end
 
+desc 'Switch ActiveRecord version'
 task :switch, [:version] do |_, args|
   abort 'No version specified.' unless args[:version]
   bundle_install 'AR' => args[:version]
@@ -65,6 +67,11 @@ task 'spec:watch' do
       system 'bundle exec rspec'
     end
   end
+end
+
+Bump::Bump::BUMPS.each do |bump|
+  desc "Increment #{bump} and release"
+  task "release:#{bump}" => ["bump:#{bump}", :release]
 end
 
 task default: :spec
