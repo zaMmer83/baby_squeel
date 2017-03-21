@@ -1,3 +1,14 @@
+## [Unreleased]
+
+Nothing to see here.
+
+## [1.1.2] - 2017-03-21
+### Fixed
+- Check if a reflection has a parent reflection before comparing them. This fixes #56.
+
+### Refactored
+- The logic encapsulated in `#method_missing` and `#respond_to_missing?` was difficult to follow, because it was falling back to `super`, sometimes going up the inheritance tree multiple levels. The addition of `BabySqueel::Resolver` now handles this a little more gracefully.
+
 ## [1.1.1] - 2017-02-14
 ### Fixed
 - There is a bug in Active Record where the `AliasTracker` initializes `Arel::Table`s use the wrong `type_caster`. To address this, BabySqueel must re-initialize the `Arel::Table` with the correct `type_caster` (#54).
@@ -99,7 +110,8 @@
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/rzane/baby_squeel/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/rzane/baby_squeel/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/rzane/baby_squeel/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/rzane/baby_squeel/compare/v1.0.2...v1.0.3
