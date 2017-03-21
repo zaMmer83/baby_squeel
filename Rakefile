@@ -71,7 +71,11 @@ end
 
 Bump::Bump::BUMPS.each do |bump|
   desc "Increment #{bump} and release"
-  task "release:#{bump}" => ["bump:#{bump}", :release]
+  task "release:#{bump}" => "bump:#{bump}" do
+    # we can't just run this as a prereq, because gem_tasks
+    # loads the version when rake loads
+    sh 'rake release'
+  end
 end
 
 task default: :spec
