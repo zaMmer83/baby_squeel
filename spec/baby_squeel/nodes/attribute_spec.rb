@@ -34,6 +34,11 @@ describe BabySqueel::Nodes::Attribute do
         "posts"."id" IN (SELECT "posts"."id" FROM "posts" LIMIT 3)
       EOSQL
     end
+
+    it 'returns a BabySqueel node' do
+      relation = Post.select(:id)
+      expect(attribute.in(relation)).to respond_to(:_arel)
+    end
   end
 
   describe '#not_in' do
