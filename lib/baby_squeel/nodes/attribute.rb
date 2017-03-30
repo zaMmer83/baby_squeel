@@ -11,7 +11,8 @@ module BabySqueel
 
       def in(rel)
         if rel.is_a? ::ActiveRecord::Relation
-          ::Arel::Nodes::In.new(self, Arel.sql(rel.to_sql))
+          expr = ::Arel.sql(rel.to_sql)
+          Nodes.wrap ::Arel::Nodes::In.new(self, expr)
         else
           super
         end
