@@ -2,6 +2,10 @@
 
 Nothing to see here.
 
+## [1.1.3] - 2017-03-31
+### Fixed
+- Nodes::Attribute#in was not returning BabySqueel node. As a result, you couldn't chain on it. This fixes #61.
+
 ## [1.1.2] - 2017-03-21
 ### Fixed
 - Check if a reflection has a parent reflection before comparing them. This fixes #56.
@@ -111,6 +115,7 @@ Nothing to see here.
 - Initial support for selects, orders, wheres, and joins.
 
 [Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.1.2...HEAD
+[1.1.3]: https://github.com/rzane/baby_squeel/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/rzane/baby_squeel/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/rzane/baby_squeel/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/rzane/baby_squeel/compare/v1.0.3...v1.1.0
