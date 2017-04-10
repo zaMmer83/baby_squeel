@@ -11,8 +11,7 @@ module BabySqueel
 
       def in(rel)
         if rel.is_a? ::ActiveRecord::Relation
-          expr = ::Arel.sql(rel.to_sql)
-          Nodes.wrap ::Arel::Nodes::In.new(self, expr)
+          Nodes.wrap ::Arel::Nodes::In.new(self, sanitize_relation(rel))
         else
           super
         end
@@ -20,7 +19,7 @@ module BabySqueel
 
       def not_in(rel)
         if rel.is_a? ::ActiveRecord::Relation
-          ::Arel::Nodes::NotIn.new(self, Arel.sql(rel.to_sql))
+          Nodes.wrap ::Arel::Nodes::NotIn.new(self, sanitize_relation(rel))
         else
           super
         end
@@ -31,6 +30,23 @@ module BabySqueel
           @parent.find_alias[@name]
         else
           super
+        end
+      end
+
+      private
+
+      # NullRelation must be treated as a special case, because
+      # NullRelation#to_sql returns an empty string. As such,
+      # we need to convert the NullRelation to regular relation.
+      # Conveniently, this approach automatically adds a 1=0.
+      # I have literally no idea why, but I'll take it.
+      def sanitize_relation(rel)
+        if rel.kind_of? ::ActiveRecord::NullRelation
+          other = rel.spawn
+          other.extending_values -= [::ActiveRecord::NullRelation]
+          sanitize_relation rel.unscoped.merge(other)
+        else
+          Arel.sql rel.to_sql
         end
       end
     end

@@ -181,6 +181,53 @@ describe BabySqueel::ActiveRecord::WhereChain do
       EOSQL
     end
 
+    it 'wheres with an empty subquery' do
+      relation = Post.where.has {
+        author_id.in Author.none.select(:id)
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        WHERE "posts"."author_id" IN (
+          SELECT "authors"."id" FROM "authors" WHERE (1=0)
+        )
+      EOSQL
+    end
+
+    it 'wheres with an empty subquery and keeps values' do
+      other = Author.joins(:posts)
+                    .group(:id)
+                    .select(:id)
+                    .order(:id)
+                    .none
+
+      relation = Post.where.has { author_id.in other }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        WHERE "posts"."author_id" IN (
+          SELECT "authors"."id" FROM "authors"
+          INNER JOIN "posts" ON "posts"."author_id" = "authors"."id"
+          WHERE (1=0)
+          GROUP BY "authors"."id"
+          ORDER BY "authors"."id" ASC
+        )
+      EOSQL
+    end
+
+    it 'wheres with a not in subquery' do
+      relation = Post.where.has {
+        author_id.not_in Author.none.select(:id)
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        WHERE ("posts"."author_id" NOT IN (
+          SELECT "authors"."id" FROM "authors" WHERE (1=0)
+        ))
+      EOSQL
+    end
+
     it 'wheres using a simple table' do
       simple = if Arel::VERSION > '7.0.0'
                  BabySqueel[:authors, type_caster: Author.type_caster]
