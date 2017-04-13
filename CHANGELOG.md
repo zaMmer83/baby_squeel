@@ -2,6 +2,10 @@
 
 Nothing to see here.
 
+## [1.1.4] - 2017-04-13
+### Fixed
+- Nodes::Attribute#in and #not_in generate valid SQL when given ActiveRecord::NullRelations.
+
 ## [1.1.3] - 2017-03-31
 ### Fixed
 - Nodes::Attribute#in was not returning BabySqueel node. As a result, you couldn't chain on it. This fixes #61.
@@ -114,7 +118,8 @@ Nothing to see here.
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.1.4...HEAD
+[1.1.3]: https://github.com/rzane/baby_squeel/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/rzane/baby_squeel/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/rzane/baby_squeel/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/rzane/baby_squeel/compare/v1.1.0...v1.1.1
