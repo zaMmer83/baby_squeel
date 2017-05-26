@@ -309,13 +309,27 @@ describe BabySqueel::ActiveRecord::WhereChain do
         WHERE (("posts"."author_id" != 42))
       EOSQL
     end
+
+    it 'handles a hash' do
+      bs = Post.where.has { { id: 1 } }
+      ar = Post.where(id: 1)
+
+      expect(bs.to_sql).to eq(ar.to_sql)
+    end
+
+    it 'handles an empty hash' do
+      bs = Post.where.has { {} }
+      ar = Post.where({})
+
+      expect(bs.to_sql).to eq(ar.to_sql)
+    end
   end
 
   describe '#where_values_hash' do
     it 'returns the same hash that Rails normally would' do
-      squeel = Author.where.has{id == 123}
-      rails = Author.where(id: 123)
-      expect(squeel.where_values_hash).to eq(rails.where_values_hash)
+      bs = Author.where.has{id == 123}
+      ar = Author.where(id: 123)
+      expect(bs.where_values_hash).to eq(ar.where_values_hash)
     end
   end
 end
