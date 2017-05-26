@@ -2,6 +2,10 @@
 
 Nothing to see here.
 
+## [1.1.5] - 2017-05-26
+### Fixed
+- Returning an empty hash from a `where.has {}` block would generate invalid SQL (#69).
+
 ## [1.1.4] - 2017-04-13
 ### Fixed
 - Nodes::Attribute#in and #not_in generate valid SQL when given ActiveRecord::NullRelations.
@@ -118,8 +122,9 @@ Nothing to see here.
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.1.4...HEAD
-[1.1.3]: https://github.com/rzane/baby_squeel/compare/v1.1.3...v1.1.4
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.1.5...HEAD
+[1.1.5]: https://github.com/rzane/baby_squeel/compare/v1.1.4...v1.1.5
+[1.1.4]: https://github.com/rzane/baby_squeel/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/rzane/baby_squeel/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/rzane/baby_squeel/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/rzane/baby_squeel/compare/v1.1.0...v1.1.1
