@@ -6,7 +6,7 @@ gemspec
 if ar_version = ENV['AR']
   gem 'activerecord', ar_version
 else
-  gem 'activerecord', github: 'rails/rails'
+  gem 'activerecord'
 end
 
 gem 'bump'
