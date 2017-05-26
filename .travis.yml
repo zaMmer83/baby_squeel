@@ -13,6 +13,8 @@ env:
     - AR=4.2.6
     - AR=5.0.1
     - AR=5.1.1
+    - AR=latest
     - AR=4.2.6 COMPAT=1
     - AR=5.0.1 COMPAT=1
     - AR=5.1.1 COMPAT=1
+    - AR=latest COMPAT=1

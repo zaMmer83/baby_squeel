@@ -3,10 +3,13 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in baby_squeel.gemspec
 gemspec
 
-if ar_version = ENV['AR']
-  gem 'activerecord', ar_version
-else
+case ENV.fetch('AR', 'latest')
+when 'latest'
   gem 'activerecord'
+when 'master'
+  gem 'activerecord', github: 'rails/rails'
+else
+  gem 'activerecord', ENV['AR']
 end
 
 gem 'bump'
