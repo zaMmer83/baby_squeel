@@ -8,6 +8,46 @@ module BabySqueel
       ::ActiveRecord::Relation.prepend QueryMethods
     end
 
+    class KeyPath
+      def self.evaluate(&block)
+        if block.arity.zero?
+          unwrap new.instance_eval(&block)
+        else
+          unwrap yield(new)
+        end
+      end
+
+      def self.unwrap(path)
+        if path.kind_of? self
+          path.value
+        elsif path.respond_to? :map
+          path.map(&method(:unwrap))
+        else
+          []
+        end
+      end
+
+      def initialize(*path)
+        @path = path
+      end
+
+      def value
+        @path.reverse.reduce({}) do |acc, name|
+          { name => acc }
+        end
+      end
+
+      private
+
+      def respond_to_missing?(*)
+        true
+      end
+
+      def method_missing(name, *)
+        self.class.new(*@path, name)
+      end
+    end
+
     module DSL
       # An alias for BabySqueel::DSL#sql
       def `(str)
@@ -31,6 +71,33 @@ module BabySqueel
       def joins(*args, &block)
         if block_given? && args.empty?
           joining(&block)
+        else
+          super
+        end
+      end
+
+      # Overrides ActiveRecord::QueryMethods#includes
+      def includes(*args, &block)
+        if block_given? && args.empty?
+          super KeyPath.evaluate(&block)
+        else
+          super
+        end
+      end
+
+      # Overrides ActiveRecord::QueryMethods#eager_load
+      def eager_load(*args, &block)
+        if block_given? && args.empty?
+          super KeyPath.evaluate(&block)
+        else
+          super
+        end
+      end
+
+      # Overrides ActiveRecord::QueryMethods#preload
+      def preload(*args, &block)
+        if block_given? && args.empty?
+          super KeyPath.evaluate(&block)
         else
           super
         end
