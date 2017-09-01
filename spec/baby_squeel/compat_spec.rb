@@ -23,3 +23,36 @@ describe 'BabySqueel::Compat::DSL', :compat do
     end
   end
 end
+
+describe 'BabySqueel::Compat::QueryMethods', :compat do
+  describe '#includes' do
+    it 'accepts a block' do
+      posts = Post.includes { author.posts }
+      expect(posts.includes_values).to eq([ author: { posts: {} } ])
+    end
+
+    it 'handles arrays' do
+      posts = Post.includes { [comments, author.posts] }
+      expect(posts.includes_values).to eq([ { comments: {} }, author: { posts: {} } ])
+    end
+
+    it 'handles nil' do
+      posts = Post.includes { nil }
+      expect(posts.includes_values).to eq([])
+    end
+  end
+
+  describe '#eager_load' do
+    it 'accepts a block' do
+      posts = Post.eager_load { author.posts }
+      expect(posts.eager_load_values).to eq([ author: { posts: {} } ])
+    end
+  end
+
+  describe '#preload' do
+    it 'accepts a block' do
+      posts = Post.preload { author.posts }
+      expect(posts.preload_values).to eq([ author: { posts: {} } ])
+    end
+  end
+end
