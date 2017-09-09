@@ -49,6 +49,17 @@ describe '#joining' do
       EOSQL
     end
 
+    it 'inner joins explicitly with alias' do
+      relation = Post.joining { |post|
+        post.author.as('a').on { a.id == post.author_id }
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" "a" ON "a"."id" = "posts"."author_id"
+      EOSQL
+    end
+
     it 'outer joins' do
       relation = Post.joining {
         author.outer.on(author.id == author_id)

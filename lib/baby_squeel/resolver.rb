@@ -74,8 +74,7 @@ module BabySqueel
       when :association
         !@table._scope.reflect_on_association(name).nil?
       when :subquery
-        @table._table.kind_of?(Arel::Nodes::TableAlias) &&
-          @table._table.name == name.to_s
+        @table.alias? && @table._table.name == name.to_s
       when :function, :attribute
         true
       end
