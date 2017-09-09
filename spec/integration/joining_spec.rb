@@ -9,7 +9,7 @@ describe '#joining' do
       # invalid SQL. If you actually run the query though,
       # the binds end up in the right places.
       relation = Post.joining do |post|
-        authors.as('a').on do
+        post.joining(authors.as('a')).on do
           a.id == post.author_id
         end
       end
