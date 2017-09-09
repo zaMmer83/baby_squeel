@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::QueryMethods, '#selecting' do
+describe '#selecting' do
   it 'selects using arel' do
     relation = Post.selecting { [id, title] }
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::Calculations, '#counting' do
+describe '#counting' do
   let(:a1) { Author.create! }
   let(:a2) { Author.create! }
 

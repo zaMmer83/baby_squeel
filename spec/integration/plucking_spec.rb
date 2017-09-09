@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::Calculations, '#plucking' do
+describe '#plucking' do
   before do
     [Post, Author].each(&:delete_all)
     a1 = Author.create! name: 'Rick'

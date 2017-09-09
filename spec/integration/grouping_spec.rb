@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::QueryMethods, '#grouping' do
+describe '#grouping' do
   it 'groups on a column' do
     relation = Post.selecting { id.count }.grouping { author_id }
 

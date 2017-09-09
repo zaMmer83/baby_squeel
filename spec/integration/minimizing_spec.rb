@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::Calculations, '#minimizing' do
+describe '#minimizing' do
   let(:a1) { Author.create! age: 1 }
   let(:a2) { Author.create! age: 5 }
 
