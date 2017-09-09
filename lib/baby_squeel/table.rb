@@ -65,10 +65,6 @@ module BabySqueel
     end
 
     def on!(node = nil, &block) # :nodoc:
-      if node.nil? && !block_given?
-        raise 'FIXME: A proper error should be risen here!'
-      end
-
       self._on = node || evaluate(&block)
       self
     end
