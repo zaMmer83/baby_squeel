@@ -10,7 +10,7 @@ describe '#joining' do
       # the binds end up in the right places.
       relation = Post.joining do |post|
         post.joining(authors.as('a')).on do
-          a.id == post.author_id
+          id == post.author_id
         end
       end
 
@@ -51,7 +51,7 @@ describe '#joining' do
 
     it 'inner joins explicitly with alias' do
       relation = Post.joining { |post|
-        post.author.as('a').on { a.id == post.author_id }
+        post.author.as('a').on { id == post.author_id }
       }
 
       expect(relation).to produce_sql(<<-EOSQL)

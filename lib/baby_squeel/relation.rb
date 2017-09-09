@@ -31,7 +31,7 @@ module BabySqueel
     private
 
     def resolver
-      @resolver ||= Resolver.new(self, [:subquery, :column, :association])
+      @resolver ||= Resolver.new(self, [:column, :association])
     end
   end
 end
