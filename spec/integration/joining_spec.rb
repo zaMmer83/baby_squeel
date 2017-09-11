@@ -3,26 +3,25 @@ require 'spec_helper'
 describe '#joining' do
   context 'joining relations' do
     it 'allows on to accept a block' do
-      authors = Author.where(id: 2)
+      author = Author.create! name: 'Ray'
+      author.posts.create! title: 'Blah'
 
-      # Note: Calling `#to_sql` on this relation will return
-      # invalid SQL. If you actually run the query though,
-      # the binds end up in the right places.
+      authors = Author.where(name: 'Ray')
       relation = Post.joining do |post|
         post.joining(authors.as('a')).on do
           id == post.author_id
         end
       end
 
-      queries = track_queries { relation.load }
-
-      expect(queries.last).to produce_sql(<<-EOSQL)
+      expect(relation).to produce_sql(<<-EOSQL)
         SELECT "posts".* FROM "posts"
         INNER JOIN (
           SELECT "authors".* FROM "authors"
-          WHERE "authors"."id" = ?
+          WHERE "authors"."name" = 'Ray'
         ) a ON a."id" = "posts"."author_id"
       EOSQL
+
+      expect(relation.count).to eq(1)
     end
   end
 
