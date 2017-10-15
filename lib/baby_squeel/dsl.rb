@@ -85,10 +85,6 @@ module BabySqueel
       sql _scope.connection.quote(value)
     end
 
-    def joining(arel_table)
-      BabySqueel::Table.new(arel_table)
-    end
-
     private
 
     def resolver

@@ -1,30 +1,6 @@
 require 'spec_helper'
 
 describe '#joining' do
-  context 'joining relations' do
-    it 'allows on to accept a block' do
-      author = Author.create! name: 'Ray'
-      author.posts.create! title: 'Blah'
-
-      authors = Author.where(name: 'Ray')
-      relation = Post.joining do |post|
-        post.joining(authors.as('a')).on do
-          id == post.author_id
-        end
-      end
-
-      expect(relation).to produce_sql(<<-EOSQL)
-        SELECT "posts".* FROM "posts"
-        INNER JOIN (
-          SELECT "authors".* FROM "authors"
-          WHERE "authors"."name" = 'Ray'
-        ) a ON a."id" = "posts"."author_id"
-      EOSQL
-
-      expect(relation.count).to eq(1)
-    end
-  end
-
   context 'when joining explicitly' do
     it 'inner joins' do
       relation = Post.joining {
