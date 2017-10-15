@@ -3,10 +3,19 @@ require 'baby_squeel/dsl'
 module BabySqueel
   module ActiveRecord
     module Base
-      delegate :joining, :joining!, :selecting, :ordering,
-               :grouping, :when_having, :plucking,
-               :averaging, :counting, :maximizing,
-               :minimizing, :summing, to: :all
+      delegate :joining,
+               :selecting,
+               :ordering,
+               :reordering,
+               :grouping,
+               :when_having,
+               :plucking,
+               :averaging,
+               :counting,
+               :maximizing,
+               :minimizing,
+               :summing,
+               to: :all
 
       # Define a sifter that can be used within DSL blocks.
       #

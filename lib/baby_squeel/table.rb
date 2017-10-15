@@ -20,6 +20,10 @@ module BabySqueel
       @_join ||= Arel::Nodes::InnerJoin
     end
 
+    def as(alias_name)
+      self.alias(alias_name)
+    end
+
     # Alias a table. This is only possible when joining
     # an association explicitly.
     def alias(alias_name)
@@ -29,6 +33,10 @@ module BabySqueel
     def alias!(alias_name) # :nodoc:
       self._table = _table.alias(alias_name)
       self
+    end
+
+    def alias?
+      _table.kind_of? Arel::Nodes::TableAlias
     end
 
     # Instruct the table to be joined with a LEFT OUTER JOIN.
@@ -52,13 +60,23 @@ module BabySqueel
     end
 
     # Specify an explicit join.
-    def on(node)
-      clone.on! node
+    def on(node = nil, &block)
+      clone.on!(node, &block)
     end
 
-    def on!(node) # :nodoc:
-      self._on = node
+    def on!(node = nil, &block) # :nodoc:
+      self._on = node || evaluate(&block)
       self
+    end
+
+    # Evaluates a DSL block. If arity is given, this method
+    # `yield` itself, rather than `instance_eval`.
+    def evaluate(&block)
+      if block.arity.zero?
+        instance_eval(&block)
+      else
+        yield(self)
+      end
     end
 
     # When referencing a joined table, the tables that

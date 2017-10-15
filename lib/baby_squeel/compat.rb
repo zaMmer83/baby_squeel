@@ -128,6 +128,14 @@ module BabySqueel
         end
       end
 
+      def reorder(*args, &block)
+        if block_given? && args.empty?
+          reordering(&block)
+        else
+          super
+        end
+      end
+
       # Overrides ActiveRecord::QueryMethods#group
       def group(*args, &block)
         if block_given? && args.empty?

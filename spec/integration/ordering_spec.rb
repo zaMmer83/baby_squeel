@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::QueryMethods, '#ordering' do
+describe '#ordering' do
   it 'orders using arel' do
     relation = Post.ordering { title.desc }
 

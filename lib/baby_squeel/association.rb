@@ -85,7 +85,7 @@ module BabySqueel
     def _arel(associations = [])
       if _on
         super
-      elsif _table.is_a? Arel::Nodes::TableAlias
+      elsif alias?
         raise AssociationAliasingError.new(_reflection.name, _table.right)
       elsif _reflection.polymorphic? && _polymorphic_klass.nil?
         raise PolymorphicNotSpecifiedError.new(_reflection.name)

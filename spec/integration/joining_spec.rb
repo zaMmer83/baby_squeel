@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
+describe '#joining' do
   context 'when joining explicitly' do
     it 'inner joins' do
       relation = Post.joining {
@@ -21,6 +21,17 @@ describe BabySqueel::ActiveRecord::QueryMethods, '#joining' do
       expect(relation).to produce_sql(<<-EOSQL)
         SELECT "posts".* FROM "posts"
         INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+      EOSQL
+    end
+
+    it 'inner joins explicitly with alias' do
+      relation = Post.joining { |post|
+        post.author.as('a').on { id == post.author_id }
+      }
+
+      expect(relation).to produce_sql(<<-EOSQL)
+        SELECT "posts".* FROM "posts"
+        INNER JOIN "authors" "a" ON "a"."id" = "posts"."author_id"
       EOSQL
     end
 

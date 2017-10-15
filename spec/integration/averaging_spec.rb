@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::Calculations, '#averaging' do
+describe '#averaging' do
   let(:a1) { Author.create! age: 5 }
   let(:a2) { Author.create! age: 5 }
 
