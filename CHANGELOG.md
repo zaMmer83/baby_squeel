@@ -2,6 +2,11 @@
 
 Nothing to see here.
 
+## [1.2.0] - 2017-10-20
+### Added
+- `reordering`, which is just a BabySqueel version of Active Record's `reorder`.
+- `on` expressions can now be given a block that will yield the current node (#77).
+
 ## [1.1.5] - 2017-05-26
 ### Fixed
 - Returning an empty hash from a `where.has {}` block would generate invalid SQL (#69).
@@ -122,7 +127,8 @@ Nothing to see here.
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.1.5...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/rzane/baby_squeel/compare/v1.1.5...v1.2.0
 [1.1.5]: https://github.com/rzane/baby_squeel/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/rzane/baby_squeel/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/rzane/baby_squeel/compare/v1.1.2...v1.1.3

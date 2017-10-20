@@ -172,9 +172,13 @@ Post.joining { author.outer.posts }
 # LEFT OUTER JOIN "authors" ON "authors"."id" = "posts"."author_id"
 # INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
 
-Post.joining { author.alias('a').on((author.id == author_id) | (author.name == title)) }
+Post.joining { author.on((author.id == author_id) | (author.name == title)) }
 # SELECT "posts".* FROM "posts"
-# INNER JOIN "authors" "a" ON ("authors"."id" = "posts"."author_id" OR "authors"."name" = "posts"."title")
+# INNER JOIN "authors" ON ("authors"."id" = "posts"."author_id" OR "authors"."name" = "posts"."title")
+
+Post.joining { |post| post.author.as('a').on { (id == post.author_id) | (name == post.title) } }
+# SELECT "posts".* FROM "posts"
+# INNER JOIN "authors" "a" ON ("a"."id" = "posts"."author_id" OR "a"."name" = "posts"."title")
 
 Picture.joining { imageable.of(Post) }
 # SELECT "pictures".* FROM "pictures"
