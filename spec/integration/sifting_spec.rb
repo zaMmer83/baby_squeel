@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::ActiveRecord::Base, '#sifter' do
+describe BabySqueel::ActiveRecord::Base, '#sifter', snapshot: :sifting do
   before do
     Post.sifter(:crap) { |num| id == num }
     Author.sifter(:boogers) { name =~ 'boogies%' }
@@ -26,10 +26,7 @@ describe BabySqueel::ActiveRecord::Base, '#sifter' do
   it 'allows the use of the sifter' do
     relation = Post.where.has { sift :crap, 5 }
 
-    expect(relation).to produce_sql(<<-EOSQL)
-      SELECT "posts".* FROM "posts"
-      WHERE "posts"."id" = 5
-    EOSQL
+    expect(relation).to match_sql_snapshot
   end
 
   it 'allows the use of a sifter on an association' do
@@ -37,11 +34,7 @@ describe BabySqueel::ActiveRecord::Base, '#sifter' do
       author.sift :boogers
     }
 
-    expect(relation).to produce_sql(<<-EOSQL)
-      SELECT "posts".* FROM "posts"
-      INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-      WHERE ("authors"."name" LIKE 'boogies%')
-    EOSQL
+    expect(relation).to match_sql_snapshot
   end
 
   it 'yield the root table to the block when arity is given' do
@@ -49,12 +42,6 @@ describe BabySqueel::ActiveRecord::Base, '#sifter' do
       sift :author_comments_id, 1
     }
 
-    expect(relation).to produce_sql(<<-EOSQL)
-      SELECT "posts".* FROM "posts"
-      INNER JOIN "comments" ON "comments"."post_id" = "posts"."id"
-      INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-      INNER JOIN "comments" "author_comments_posts" ON "author_comments_posts"."author_id" = "authors"."id"
-      WHERE ("author_comments_posts"."id" > 1)
-    EOSQL
+    expect(relation).to match_sql_snapshot
   end
 end

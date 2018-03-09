@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#summing' do
+describe '#summing', snapshot: :summing do
   let(:a1) { Author.create! age: 12 }
   let(:a2) { Author.create! age: 23 }
 

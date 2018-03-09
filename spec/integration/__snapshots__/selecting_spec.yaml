@@ -1,0 +1,12 @@
+---
+selects using arel 1: SELECT "posts"."id", "posts"."title" FROM "posts"
+selects associations 1: SELECT "posts"."id", "authors"."id" FROM "posts" INNER JOIN
+  "authors" ON "authors"."id" = "posts"."author_id"
+selects aggregates 1: SELECT COUNT("posts"."id") FROM "posts"
+selects using functions 1: SELECT coalesce("posts"."id", "authors"."id") FROM "posts"
+  INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+selects using operations 1: SELECT ("authors"."id" - "posts"."id") FROM "posts" INNER
+  JOIN "authors" ON "authors"."id" = "posts"."author_id"
+selects on an aliased table 1: SELECT "posts_authors"."id" FROM "posts" INNER JOIN
+  "authors" ON "authors"."id" = "posts"."author_id" INNER JOIN "posts" "posts_authors"
+  ON "posts_authors"."author_id" = "authors"."id"

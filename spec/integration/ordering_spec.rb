@@ -1,13 +1,9 @@
 require 'spec_helper'
 
-describe '#ordering' do
+describe '#ordering', snapshot: :ordering do
   it 'orders using arel' do
     relation = Post.ordering { title.desc }
-
-    expect(relation).to produce_sql(<<-EOSQL)
-      SELECT "posts".* FROM "posts"
-      ORDER BY "posts"."title" DESC
-    EOSQL
+    expect(relation).to match_sql_snapshot
   end
 
   it 'orders using multiple arel columns' do
@@ -15,10 +11,7 @@ describe '#ordering' do
       [title.desc, published_at.asc]
     }
 
-    expect(relation).to produce_sql(<<-EOSQL)
-      SELECT "posts".* FROM "posts"
-      ORDER BY "posts"."title" DESC, "posts"."published_at" ASC
-    EOSQL
+    expect(relation).to match_sql_snapshot
   end
 
   it 'orders on an aggregates' do
@@ -26,11 +19,7 @@ describe '#ordering' do
       id.count.desc
     }
 
-    expect(relation).to produce_sql(<<-EOSQL)
-      SELECT "posts".* FROM "posts"
-      GROUP BY "posts"."id"
-      ORDER BY COUNT("posts"."id") DESC
-    EOSQL
+    expect(relation).to match_sql_snapshot
   end
 
   it 'orders using functions' do
@@ -38,12 +27,7 @@ describe '#ordering' do
       coalesce(id, author.id).desc
     }
 
-    expect(relation).to produce_sql(<<-EOSQL)
-      SELECT "posts".*
-      FROM "posts"
-      INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-      ORDER BY coalesce("posts"."id", "authors"."id") DESC
-    EOSQL
+    expect(relation).to match_sql_snapshot
   end
 
   it 'orders using operations' do
@@ -51,12 +35,7 @@ describe '#ordering' do
       (author.id - id).desc
     }
 
-    expect(relation).to produce_sql(<<-EOSQL)
-      SELECT "posts".*
-      FROM "posts"
-      INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-      ORDER BY ("authors"."id" - "posts"."id") DESC
-    EOSQL
+    expect(relation).to match_sql_snapshot
   end
 
   it 'orders on an aliased table' do
@@ -64,11 +43,6 @@ describe '#ordering' do
       author.posts.id
     }
 
-    expect(relation).to produce_sql(<<-EOSQL)
-      SELECT "posts".* FROM "posts"
-      INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-      INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
-      ORDER BY "posts_authors"."id"
-    EOSQL
+    expect(relation).to match_sql_snapshot
   end
 end
