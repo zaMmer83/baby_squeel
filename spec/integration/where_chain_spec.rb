@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#where.has', snapshot: :where_has do
+describe '#where.has' do
   it 'wheres on an attribute' do
     relation = Post.where.has {
       title == 'OJ Simpson'
@@ -45,7 +45,7 @@ describe '#where.has', snapshot: :where_has do
     expect(relation).to match_sql_snapshot
   end
 
-  it 'wheres on associations' do
+  it 'wheres on deep associations' do
     relation = Post.joins(author: :comments).where.has {
       author.comments.id > 0
     }

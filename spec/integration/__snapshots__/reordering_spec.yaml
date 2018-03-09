@@ -1,2 +1,3 @@
 ---
-orders using arel 1: SELECT "posts".* FROM "posts" ORDER BY "posts"."title" ASC
+"#reordering orders using arel 1": SELECT "posts".* FROM "posts" ORDER BY "posts"."title"
+  ASC

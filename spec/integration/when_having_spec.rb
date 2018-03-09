@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#when_having', snapshot: :when_having do
+describe '#when_having' do
   def having_sql(expr)
     if ActiveRecord::VERSION::MAJOR > 4
       "HAVING (#{expr})" # AR5 wraps with parenthesis

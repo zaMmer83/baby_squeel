@@ -61,7 +61,7 @@ class Snapshot
   end
 
   def name
-    "#{meta[:description]} #{index}"
+    "#{meta[:full_description]} #{index}"
   end
 
   def path
@@ -71,15 +71,13 @@ class Snapshot
     File.expand_path(relative, spec)
   end
 
-  def key
-    "#{path}/#{metadata[:description]}"
-  end
-
   def read
     data[name]
   end
 
   def write(value)
+    puts "Writing #{name}"
+
     data[name] = value
 
     File.open path, 'w' do |f|
@@ -111,7 +109,7 @@ class SnapshotMatcher < RSpec::Matchers::BuiltIn::Eq
   def matches?(actual)
     actual = actual.to_sql if actual.respond_to?(:to_sql)
 
-    if @snapshot.read
+    if @snapshot.read && !ENV['UPDATE_SNAPSHOTS']
       super(actual)
     else
       @snapshot.write(actual)

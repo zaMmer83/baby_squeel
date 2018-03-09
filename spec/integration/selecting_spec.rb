@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#selecting', snapshot: :selecting do
+describe '#selecting' do
   it 'selects using arel' do
     relation = Post.selecting { [id, title] }
     expect(relation).to match_sql_snapshot

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#ordering', snapshot: :ordering do
+describe '#ordering' do
   it 'orders using arel' do
     relation = Post.ordering { title.desc }
     expect(relation).to match_sql_snapshot

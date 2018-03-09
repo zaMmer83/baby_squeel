@@ -1,13 +1,16 @@
 ---
-orders using arel 1: SELECT "posts".* FROM "posts" ORDER BY "posts"."title" DESC
-orders using multiple arel columns 1: SELECT "posts".* FROM "posts" ORDER BY "posts"."title"
-  DESC, "posts"."published_at" ASC
-orders on an aggregates 1: SELECT "posts".* FROM "posts" GROUP BY "posts"."id" ORDER
-  BY COUNT("posts"."id") DESC
-orders using functions 1: SELECT "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id"
-  = "posts"."author_id" ORDER BY coalesce("posts"."id", "authors"."id") DESC
-orders using operations 1: SELECT "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id"
-  = "posts"."author_id" ORDER BY ("authors"."id" - "posts"."id") DESC
-orders on an aliased table 1: SELECT "posts".* FROM "posts" INNER JOIN "authors" ON
-  "authors"."id" = "posts"."author_id" INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id"
-  = "authors"."id" ORDER BY "posts_authors"."id"
+"#ordering orders using arel 1": SELECT "posts".* FROM "posts" ORDER BY "posts"."title"
+  DESC
+"#ordering orders using multiple arel columns 1": SELECT "posts".* FROM "posts" ORDER
+  BY "posts"."title" DESC, "posts"."published_at" ASC
+"#ordering orders on an aggregates 1": SELECT "posts".* FROM "posts" GROUP BY "posts"."id"
+  ORDER BY COUNT("posts"."id") DESC
+"#ordering orders using functions 1": SELECT "posts".* FROM "posts" INNER JOIN "authors"
+  ON "authors"."id" = "posts"."author_id" ORDER BY coalesce("posts"."id", "authors"."id")
+  DESC
+"#ordering orders using operations 1": SELECT "posts".* FROM "posts" INNER JOIN "authors"
+  ON "authors"."id" = "posts"."author_id" ORDER BY ("authors"."id" - "posts"."id")
+  DESC
+"#ordering orders on an aliased table 1": SELECT "posts".* FROM "posts" INNER JOIN
+  "authors" ON "authors"."id" = "posts"."author_id" INNER JOIN "posts" "posts_authors"
+  ON "posts_authors"."author_id" = "authors"."id" ORDER BY "posts_authors"."id"

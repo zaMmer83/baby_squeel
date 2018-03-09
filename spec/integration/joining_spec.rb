@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#joining', snapshot: :joining do
+describe '#joining' do
   context 'when joining explicitly' do
     it 'inner joins' do
       relation = Post.joining {
