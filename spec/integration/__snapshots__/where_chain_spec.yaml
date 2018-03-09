@@ -38,7 +38,7 @@
   ON "posts_authors"."author_id" = "authors"."id" WHERE (coalesce("posts_authors"."id",
   1) > 0)
 "#where.has wheres with a subquery 1": SELECT "posts".* FROM "posts" INNER JOIN "authors"
-  ON "authors"."id" = "posts"."author_id" WHERE "authors"."id" IN (SELECT  "authors"."id"
+  ON "authors"."id" = "posts"."author_id" WHERE "authors"."id" IN (SELECT "authors"."id"
   FROM "authors" LIMIT 3)
 "#where.has wheres with an empty subquery 1": SELECT "posts".* FROM "posts" WHERE
   "posts"."author_id" IN (SELECT "authors"."id" FROM "authors" WHERE (1=0))

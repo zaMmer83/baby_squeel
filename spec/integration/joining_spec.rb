@@ -268,7 +268,7 @@ describe '#joining' do
         it 'does what Active Record would do (in any order)' do
           baby_squeel = Post.joins(arel_join).joining { author }
           active_record = Post.joins(arel_join).joins(:author)
-          expect(baby_squeel).to produce_sql(active_record.to_sql)
+          expect(baby_squeel).to produce_sql(active_record)
         end
       end
     end
