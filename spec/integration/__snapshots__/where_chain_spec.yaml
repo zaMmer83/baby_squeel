@@ -57,15 +57,11 @@
   "posts".* FROM "posts" WHERE "posts"."author_id" = 1))
 "#where.has builds a not exists query 1": SELECT "posts".* FROM "posts" WHERE (NOT
   EXISTS(SELECT "posts".* FROM "posts" WHERE "posts"."author_id" = 1))
-"#where.has wheres with an empty subquery and keeps values 1 (Active Record: v5.0)": SELECT
-  "posts".* FROM "posts" WHERE "posts"."author_id" IN (SELECT "authors"."id" FROM
-  "authors" INNER JOIN "posts" ON "posts"."author_id" = "authors"."id" WHERE (1=0)
-  GROUP BY "authors"."id" ORDER BY "authors"."id" ASC)
+"#where.has wheres with an empty subquery and keeps values 1": SELECT "posts".* FROM
+  "posts" WHERE "posts"."author_id" IN (SELECT "authors"."id" FROM "authors" INNER
+  JOIN "posts" ON "posts"."author_id" = "authors"."id" WHERE (1=0) GROUP BY "authors"."id"
+  ORDER BY "authors"."id" ASC)
 "#where.has wheres an association using #== 1": SELECT "posts".* FROM "posts" WHERE
   ("posts"."author_id" = 42)
 "#where.has wheres an association using #!= 1": SELECT "posts".* FROM "posts" WHERE
   (("posts"."author_id" != 42))
-"#where.has wheres with an empty subquery and keeps values 1 (Active Record: v5.1)": SELECT
-  "posts".* FROM "posts" WHERE "posts"."author_id" IN (SELECT "authors"."id" FROM
-  "authors" INNER JOIN "posts" ON "posts"."author_id" = "authors"."id" WHERE (1=0)
-  GROUP BY "authors"."id" ORDER BY "authors"."id" ASC)

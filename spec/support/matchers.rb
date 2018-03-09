@@ -4,10 +4,18 @@ require_relative 'matchers/match_formatted'
 require_relative 'matchers/match_snapshot'
 
 module Matchers
-  def self.suffix
+  def self.version(value)
+  end
+
+  def self.suffix(variants: [])
     version = ActiveRecord::VERSION::STRING
     version = version.split('.').first(2).join('.')
-    "(Active Record: v#{version})"
+
+    variant = variants.find do |variant|
+      variant === version
+    end
+
+    "(Active Record: v#{variant})" if variant
   end
 
   def snapshot_index(key)
@@ -15,11 +23,15 @@ module Matchers
     @snapshot_indexes[key] += 1
   end
 
-  def match_sql_snapshot(version: false)
+  def match_sql_snapshot(**opts)
     example = RSpec.current_example
-    index = snapshot_index(example.id)
-    suffix = Matchers.suffix if version
-    snapshot = Snapshot.new(example.metadata, index, suffix: suffix)
+
+    snapshot = Snapshot.new(
+      example.metadata,
+      snapshot_index(example.id),
+      suffix: Matchers.suffix(**opts)
+    )
+
     MatchSnapshot.new(snapshot, SQLFormatter)
   end
 
