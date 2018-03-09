@@ -133,8 +133,7 @@ describe '#where.has' do
                   .none
 
     relation = Post.where.has { author_id.in other }
-
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(version: true)
   end
 
   it 'wheres with a not in subquery' do

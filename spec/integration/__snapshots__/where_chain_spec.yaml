@@ -12,6 +12,9 @@
 "#where.has wheres using complex conditions 1": SELECT "posts".* FROM "posts" INNER
   JOIN "authors" ON "authors"."id" = "posts"."author_id" WHERE ("posts"."title" LIKE
   'Simp%' OR "authors"."name" = 'meatloaf')
+"#where.has wheres on deep associations 1": SELECT "posts".* FROM "posts" INNER JOIN
+  "authors" ON "authors"."id" = "posts"."author_id" INNER JOIN "comments" ON "comments"."author_id"
+  = "authors"."id" WHERE ("comments"."id" > 0)
 "#where.has wheres on an aliased association 1": SELECT "posts".* FROM "posts" INNER
   JOIN "authors" ON "authors"."id" = "posts"."author_id" INNER JOIN "posts" "posts_authors"
   ON "posts_authors"."author_id" = "authors"."id" WHERE ("posts_authors"."id" > 0)
@@ -42,10 +45,10 @@
   FROM "authors" LIMIT 3)
 "#where.has wheres with an empty subquery 1": SELECT "posts".* FROM "posts" WHERE
   "posts"."author_id" IN (SELECT "authors"."id" FROM "authors" WHERE (1=0))
-"#where.has wheres with an empty subquery and keeps values 1": SELECT "posts".* FROM
-  "posts" WHERE "posts"."author_id" IN (SELECT "authors"."id" FROM "authors" INNER
-  JOIN "posts" ON "posts"."author_id" = "authors"."id" WHERE (1=0) GROUP BY "authors"."id"
-  ORDER BY "authors"."id" ASC)
+"#where.has wheres with an empty subquery and keeps values 1 (Active Record: v4.2)": SELECT
+  "posts".* FROM "posts" WHERE "posts"."author_id" IN (SELECT "authors"."id" FROM
+  "authors" INNER JOIN "posts" ON "posts"."author_id" = "authors"."id" WHERE (1=0)
+  GROUP BY "authors"."id" ORDER BY "authors"."id" ASC)
 "#where.has wheres with a not in subquery 1": SELECT "posts".* FROM "posts" WHERE
   ("posts"."author_id" NOT IN (SELECT "authors"."id" FROM "authors" WHERE (1=0)))
 "#where.has wheres using a simple table 1": SELECT "posts".* FROM "posts" INNER JOIN
@@ -54,10 +57,15 @@
   "posts".* FROM "posts" WHERE "posts"."author_id" = 1))
 "#where.has builds a not exists query 1": SELECT "posts".* FROM "posts" WHERE (NOT
   EXISTS(SELECT "posts".* FROM "posts" WHERE "posts"."author_id" = 1))
+"#where.has wheres with an empty subquery and keeps values 1 (Active Record: v5.0)": SELECT
+  "posts".* FROM "posts" WHERE "posts"."author_id" IN (SELECT "authors"."id" FROM
+  "authors" INNER JOIN "posts" ON "posts"."author_id" = "authors"."id" WHERE (1=0)
+  GROUP BY "authors"."id" ORDER BY "authors"."id" ASC)
 "#where.has wheres an association using #== 1": SELECT "posts".* FROM "posts" WHERE
   ("posts"."author_id" = 42)
 "#where.has wheres an association using #!= 1": SELECT "posts".* FROM "posts" WHERE
   (("posts"."author_id" != 42))
-"#where.has wheres on deep associations 1": SELECT "posts".* FROM "posts" INNER JOIN
-  "authors" ON "authors"."id" = "posts"."author_id" INNER JOIN "comments" ON "comments"."author_id"
-  = "authors"."id" WHERE ("comments"."id" > 0)
+"#where.has wheres with an empty subquery and keeps values 1 (Active Record: v5.1)": SELECT
+  "posts".* FROM "posts" WHERE "posts"."author_id" IN (SELECT "authors"."id" FROM
+  "authors" INNER JOIN "posts" ON "posts"."author_id" = "authors"."id" WHERE (1=0)
+  GROUP BY "authors"."id" ORDER BY "authors"."id" ASC)

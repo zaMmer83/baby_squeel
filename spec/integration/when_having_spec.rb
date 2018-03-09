@@ -1,20 +1,12 @@
 require 'spec_helper'
 
 describe '#when_having' do
-  def having_sql(expr)
-    if ActiveRecord::VERSION::MAJOR > 4
-      "HAVING (#{expr})" # AR5 wraps with parenthesis
-    else
-      "HAVING #{expr}"
-    end
-  end
-
   it 'adds a having clause' do
     relation = Post.selecting { id.count }
                    .grouping { author_id }
                    .when_having { id.count > 5 }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(version: true)
   end
 
   it 'adds a having clause with a calculation' do
@@ -22,7 +14,7 @@ describe '#when_having' do
                    .grouping { (author_id + 5 ) * 3 }
                    .when_having { id.count > 5 }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(version: true)
   end
 
   it 'adds a having clause with an association' do
@@ -31,7 +23,7 @@ describe '#when_having' do
                    .grouping { author.id }
                    .when_having { author.id.count > 5 }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(version: true)
   end
 
   it 'adds a having clause with an aliased table' do
@@ -40,6 +32,6 @@ describe '#when_having' do
                    .grouping { author.posts.id }
                    .when_having { author.posts.id.count > 5 }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(version: true)
   end
 end

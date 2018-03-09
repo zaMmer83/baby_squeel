@@ -4,13 +4,16 @@ module Matchers
   class Snapshot
     attr_reader :meta, :index
 
-    def initialize(meta, index)
+    def initialize(meta, index, suffix: nil)
       @meta = meta
       @index = index
+      @suffix = suffix
     end
 
     def name
-      "#{meta[:full_description]} #{index}"
+      value = "#{meta[:full_description]} #{index}"
+      value = "#{value} #{@suffix}" if @suffix
+      value
     end
 
     def path
