@@ -6,9 +6,6 @@ describe '#reordering' do
       title.asc
     end
 
-    expect(relation).to produce_sql(<<-EOSQL)
-      SELECT "posts".* FROM "posts"
-      ORDER BY "posts"."title" ASC
-    EOSQL
+    expect(relation).to match_sql_snapshot
   end
 end

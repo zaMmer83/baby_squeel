@@ -1,46 +1,33 @@
-module SqlFormatter
-  KEYWORDS = %w(
-    WHERE
-    ORDER\ BY
-    GROUP\ BY
-    HAVING
-    INNER\ JOIN
-    LEFT\ OUTER\ JOIN
-    LIMIT
-  )
+require_relative 'matchers/snapshot'
+require_relative 'matchers/sql_formatter'
+require_relative 'matchers/match_formatted'
+require_relative 'matchers/match_snapshot'
 
-  def self.call(value, &block)
-    value.gsub(/#{KEYWORDS.join('|')}/, &block)
+module Matchers
+  def self.suffix
+    version = ActiveRecord::VERSION::STRING
+    version = version.split('.').first(2).join('.')
+    "(Active Record: v#{version})"
+  end
+
+  def snapshot_index(key)
+    @snapshot_indexes ||= Hash.new { |h, k| h[k] = 0 }
+    @snapshot_indexes[key] += 1
+  end
+
+  def match_sql_snapshot(version: false)
+    example = RSpec.current_example
+    index = snapshot_index(example.id)
+    suffix = Matchers.suffix if version
+    snapshot = Snapshot.new(example.metadata, index, suffix: suffix)
+    MatchSnapshot.new(snapshot, SQLFormatter)
+  end
+
+  def produce_sql(sql)
+    MatchFormatted.new(sql, SQLFormatter)
   end
 end
 
-RSpec::Matchers.define :produce_sql do
-  match do |actual|
-    if expected.is_a? Regexp
-      squish(actual) =~ expected
-    else
-      squish(actual) == squish(expected)
-    end
-  end
-
-  failure_message do |actual|
-    act, exp = [actual, expected].map { |v|
-      v.is_a?(Regexp) ? v : sql_format(v)
-    }
-
-    "Expected:\n  #{exp}\nGot:\n  #{act}"
-  end
-
-  private
-
-  def sql_format(value)
-    SqlFormatter.call squish(value) do |match|
-      "\n  #{match}"
-    end
-  end
-
-  def squish(value)
-    value = value.to_sql if value.respond_to?(:to_sql)
-    value.squish.gsub(/\( /, '(').gsub(/ \)/, ')')
-  end
+RSpec.configure do |config|
+  config.include Matchers
 end
