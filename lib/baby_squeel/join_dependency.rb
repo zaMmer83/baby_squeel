@@ -2,14 +2,32 @@ require 'join_dependency'
 
 module BabySqueel
   module JoinDependency
-    # Unfortunately, this is mostly all duplication of
-    # ActiveRecord::QueryMethods#build_joins
+    # This class allows BabySqueel to slip custom
+    # joins_values into Active Record's JoinDependency
+    class Injector < Array # :nodoc:
+      # Active Record will call group_by on this object
+      # in ActiveRecord::QueryMethods#build_joins. This
+      # allows BabySqueel::Joins to be treated
+      # like typical join hashes until Polyamorous can
+      # deal with them.
+      def group_by
+        super do |join|
+          case join
+          when BabySqueel::Join
+            :association_join
+          else
+            yield join
+          end
+        end
+      end
+    end
+
     class Builder # :nodoc:
       attr_reader :join_dependency
 
       def initialize(relation)
         @join_dependency = ::JoinDependency.from_relation(relation) do |join|
-          :association_join if join.kind_of? BabySqueel::JoinExpression
+          :association_join if join.kind_of? BabySqueel::Join
         end
       end
 

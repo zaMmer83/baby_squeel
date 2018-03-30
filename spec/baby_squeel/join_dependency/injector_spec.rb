@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe BabySqueel::JoinDependency::Injector do
   let(:join_path) {
-    BabySqueel::JoinExpression.new([])
+    BabySqueel::Join.new([])
   }
 
   let(:joins_values) {

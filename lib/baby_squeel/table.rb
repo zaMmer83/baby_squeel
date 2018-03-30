@@ -1,6 +1,6 @@
 require 'baby_squeel/resolver'
-require 'baby_squeel/join_expression'
-require 'baby_squeel/join_dependency/builder'
+require 'baby_squeel/join'
+require 'baby_squeel/join_dependency'
 
 module BabySqueel
   class Table
@@ -96,13 +96,13 @@ module BabySqueel
     # 2. Implicit join without using an outer join. In this case, we'll just
     #    give a hash to Active Record, and join the normal way.
     # 3. Implicit join using an outer join. In this case, we need to use
-    #    Polyamorous to build the join. We'll return a JoinExpression.
+    #    Polyamorous to build the join. We'll return a Join.
     #
     def _arel(associations = [])
       if _on
         _join.new(_table, Arel::Nodes::On.new(_on))
       elsif associations.any?(&:needs_polyamorous?)
-        JoinExpression.new(associations)
+        Join.new(associations)
       elsif associations.any?
         associations.reverse.inject({}) do |names, assoc|
           { assoc._reflection.name => names }

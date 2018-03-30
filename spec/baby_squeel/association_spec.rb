@@ -117,7 +117,7 @@ describe BabySqueel::Association do
         expect(assoc._arel).to be_an(Arel::Nodes::InnerJoin)
       end
 
-      it 'sets an on clause on the JoinExpression' do
+      it 'sets an on clause on the Join' do
         expect(assoc._on).not_to be_nil
       end
 
@@ -140,8 +140,8 @@ describe BabySqueel::Association do
       end
 
       context 'when outer joining' do
-        it 'resolves to a JoinExpression' do
-          expect(association.outer._arel).to be_a(BabySqueel::JoinExpression)
+        it 'resolves to a Join' do
+          expect(association.outer._arel).to be_a(BabySqueel::Join)
         end
 
         it 'throws a fit when an alias is attempted' do
