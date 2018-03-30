@@ -84,8 +84,8 @@ module BabySqueel
     # This method allows BabySqueel::Nodes::Attribute
     # instances to find what their alias will be.
     def find_alias(associations = [])
-      builder = JoinDependency::Builder.new(_scope.all)
-      builder.ensure_associated _arel(associations)
+      rel = _scope.joins _arel(associations)
+      builder = JoinDependency::Builder.new(rel)
       builder.find_alias(associations)
     end
 

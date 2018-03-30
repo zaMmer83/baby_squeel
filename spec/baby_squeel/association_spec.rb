@@ -36,7 +36,7 @@ describe BabySqueel::Association do
     if ActiveRecord::VERSION::MAJOR >= 5
       it 'returns an wrapped Arel::Nodes::And' do
         node = association == Author.new(id: 42)
-        expect(node._arel.left).to be_an(Arel::Nodes::Equality)
+        expect(node._arel.to_sql).to eq('"posts"."author_id" = 42')
       end
 
       it 'throws for an invalid comparison' do
@@ -57,7 +57,7 @@ describe BabySqueel::Association do
     if ActiveRecord::VERSION::MAJOR >= 5
       it 'returns some wrapped arel' do
         node = association != Author.new(id: 42)
-        expect(node._arel.left.expr).to be_an(Arel::Nodes::NotEqual)
+        expect(node._arel.to_sql).to eq('("posts"."author_id" != 42)')
       end
 
       it 'throws for an invalid comparison' do
