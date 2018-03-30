@@ -33,6 +33,8 @@ describe BabySqueel::Association do
   end
 
   describe '#==' do
+    subject(:association) { create_association Post, :author }
+
     if ActiveRecord::VERSION::MAJOR >= 5
       it 'returns an wrapped Arel::Nodes::And' do
         node = association == Author.new(id: 42)
@@ -54,6 +56,8 @@ describe BabySqueel::Association do
   end
 
   describe '#!=' do
+    subject(:association) { create_association Post, :author }
+
     if ActiveRecord::VERSION::MAJOR >= 5
       it 'returns some wrapped arel' do
         node = association != Author.new(id: 42)

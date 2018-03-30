@@ -42,7 +42,7 @@ module BabySqueel
       private
 
       def find_join_association(associations)
-        associations.inject(join_root) do |parent, assoc|
+        associations.inject(join_dependency.send(:join_root)) do |parent, assoc|
           parent.children.find do |join_association|
             reflections_equal?(
               assoc._reflection,
@@ -51,7 +51,7 @@ module BabySqueel
           end
         end
       end
-      
+
       # Compare two reflections and see if they're the same.
       def reflections_equal?(a, b)
         comparable_reflection(a) == comparable_reflection(b)
