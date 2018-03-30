@@ -33,10 +33,12 @@ describe BabySqueel::Association do
   end
 
   describe '#==' do
+    subject(:association) { create_association Post, :author }
+
     if ActiveRecord::VERSION::MAJOR >= 5
       it 'returns an wrapped Arel::Nodes::And' do
         node = association == Author.new(id: 42)
-        expect(node._arel.left).to be_an(Arel::Nodes::Equality)
+        expect(node._arel.to_sql).to eq('"posts"."author_id" = 42')
       end
 
       it 'throws for an invalid comparison' do
@@ -54,10 +56,12 @@ describe BabySqueel::Association do
   end
 
   describe '#!=' do
+    subject(:association) { create_association Post, :author }
+
     if ActiveRecord::VERSION::MAJOR >= 5
       it 'returns some wrapped arel' do
         node = association != Author.new(id: 42)
-        expect(node._arel.left.expr).to be_an(Arel::Nodes::NotEqual)
+        expect(node._arel.to_sql).to eq('("posts"."author_id" != 42)')
       end
 
       it 'throws for an invalid comparison' do
@@ -117,7 +121,7 @@ describe BabySqueel::Association do
         expect(assoc._arel).to be_an(Arel::Nodes::InnerJoin)
       end
 
-      it 'sets an on clause on the JoinExpression' do
+      it 'sets an on clause on the Join' do
         expect(assoc._on).not_to be_nil
       end
 
@@ -140,8 +144,8 @@ describe BabySqueel::Association do
       end
 
       context 'when outer joining' do
-        it 'resolves to a JoinExpression' do
-          expect(association.outer._arel).to be_a(BabySqueel::JoinExpression)
+        it 'resolves to a Join' do
+          expect(association.outer._arel).to be_a(BabySqueel::Join)
         end
 
         it 'throws a fit when an alias is attempted' do

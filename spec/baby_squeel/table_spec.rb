@@ -17,7 +17,7 @@ describe BabySqueel::Table do
 
     context 'when outer joining' do
       let(:association) { create_association(Author, :posts).outer }
-      specify { is_expected.to be_a(BabySqueel::JoinExpression) }
+      specify { is_expected.to be_a(BabySqueel::Join) }
     end
 
     context 'when not joining' do

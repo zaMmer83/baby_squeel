@@ -2,8 +2,8 @@ module BabySqueel
   # This is the thing that gets added to Active Record's joins_values.
   # By including Polyamorous::TreeNode, when this instance is found when
   # traversing joins in ActiveRecord::Associations::JoinDependency::walk_tree,
-  # JoinExpression#add_to_tree will be called.
-  class JoinExpression
+  # Join#add_to_tree will be called.
+  class Join
     include Polyamorous::TreeNode
 
     def initialize(associations)
