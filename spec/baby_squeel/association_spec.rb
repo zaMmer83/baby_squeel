@@ -38,7 +38,7 @@ describe BabySqueel::Association do
     if ActiveRecord::VERSION::MAJOR >= 5
       it 'generates SQL' do
         node = association == Author.new(id: 42)
-        expect(node._arel.to_sql).to eq('"posts"."author_id" = 42')
+        expect(node._arel.to_sql).to match_sql_snapshot(variants: ['5.2'])
       end
 
       it 'throws for an invalid comparison' do
@@ -61,7 +61,7 @@ describe BabySqueel::Association do
     if ActiveRecord::VERSION::MAJOR >= 5
       it 'generates SQL' do
         node = association != Author.new(id: 42)
-        expect(node._arel.to_sql).to eq('("posts"."author_id" != 42)')
+        expect(node._arel.to_sql).to match_sql_snapshot(variants: ['5.2'])
       end
 
       it 'throws for an invalid comparison' do
