@@ -2,6 +2,10 @@
 
 Nothing to see here.
 
+## [1.2.1] - 2018-04-25
+## Fixed
+- Added support for Active Record 5.2
+
 ## [1.2.0] - 2017-10-20
 ### Added
 - `reordering`, which is just a BabySqueel version of Active Record's `reorder`.
@@ -127,7 +131,8 @@ Nothing to see here.
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/rzane/baby_squeel/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/rzane/baby_squeel/compare/v1.1.5...v1.2.0
 [1.1.5]: https://github.com/rzane/baby_squeel/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/rzane/baby_squeel/compare/v1.1.3...v1.1.4
