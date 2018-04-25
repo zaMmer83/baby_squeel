@@ -39,9 +39,15 @@ module BabySqueel
       # This is a monkey patch, and I'm not happy about it.
       # Active Record will call `group_by` on the `joins`. The
       # Injector has a custom `group_by` method that handles
-      # BabySqueel::JoinExpression nodes.
-      def build_joins(manager, joins)
-        super manager, BabySqueel::JoinDependency::Injector.new(joins)
+      # BabySqueel::Join nodes.
+      if ::ActiveRecord::VERSION::MAJOR >= 5 && ::ActiveRecord::VERSION::MINOR >= 2
+        def build_joins(manager, joins, aliases)
+          super manager, BabySqueel::JoinDependency::Injector.new(joins), aliases
+        end
+      else
+        def build_joins(manager, joins)
+          super manager, BabySqueel::JoinDependency::Injector.new(joins)
+        end
       end
     end
   end

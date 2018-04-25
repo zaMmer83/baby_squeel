@@ -50,7 +50,7 @@ describe '#where.has' do
       author.comments.id > 0
     }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'wheres on an aliased association' do
@@ -58,7 +58,7 @@ describe '#where.has' do
       author.posts.id > 0
     }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'wheres on an aliased association with through' do
@@ -66,10 +66,14 @@ describe '#where.has' do
       author_comments.id > 0
     }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'wheres on polymorphic associations' do
+    if ActiveRecord::VERSION::STRING >= '5.2.0'
+      pending "polyamorous's support for polymorphism is broken"
+    end
+
     relation = Picture.joining { imageable.of(Post) }.where.has {
       imageable.of(Post).title =~ 'meatloaf'
     }
@@ -78,6 +82,10 @@ describe '#where.has' do
   end
 
   it 'wheres on polymorphic associations outer join' do
+    if ActiveRecord::VERSION::STRING >= '5.2.0'
+      pending "polyamorous's support for polymorphism is broken"
+    end
+
     relation = Picture.joining { imageable.of(Post).outer }.where.has {
       imageable.of(Post).title =~ 'meatloaf'
     }
@@ -106,7 +114,7 @@ describe '#where.has' do
       coalesce(author.posts.id, 1) > 0
     }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'wheres with a subquery' do
@@ -141,7 +149,7 @@ describe '#where.has' do
       author_id.not_in Author.none.select(:id)
     }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'wheres using a simple table' do
@@ -163,7 +171,7 @@ describe '#where.has' do
       exists Post.where.has { author_id == 1 }
     }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'builds a not exists query' do
@@ -171,7 +179,7 @@ describe '#where.has' do
       not_exists Post.where.has { author_id == 1 }
     }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'wheres an association using #==' do
@@ -184,7 +192,7 @@ describe '#where.has' do
       post.author == author
     end
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'wheres an association using #!=' do
@@ -197,7 +205,7 @@ describe '#where.has' do
       post.author != author
     end
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'handles a hash' do
