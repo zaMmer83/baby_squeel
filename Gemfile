@@ -13,7 +13,6 @@ else
 end
 
 gem 'bump'
-gem 'join_dependency', github: 'rzane/join_dependency'
 
 group :test do
   gem 'pry'
