@@ -2,6 +2,10 @@
 
 Nothing to see here.
 
+## [1.3.0] - 2018-05-04
+## Added
+- The ability to use `plucking` with an array of nodes. For example, `User.plucking { [id, name] }`.
+
 ## [1.2.1] - 2018-04-25
 ## Fixed
 - Added support for Active Record 5.2
@@ -131,7 +135,8 @@ Nothing to see here.
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/rzane/baby_squeel/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/rzane/baby_squeel/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/rzane/baby_squeel/compare/v1.1.5...v1.2.0
 [1.1.5]: https://github.com/rzane/baby_squeel/compare/v1.1.4...v1.1.5
