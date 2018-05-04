@@ -9,9 +9,9 @@ module BabySqueel
     # bother to use this there.
 
     if ::ActiveRecord::VERSION::MAJOR >= 5
-      def self.wrap(node); node; end
+      def self.decorate(node); node; end
     else
-      def self.wrap(node); new(node); end
+      def self.decorate(node); new(node); end
     end
 
     def initialize(node)

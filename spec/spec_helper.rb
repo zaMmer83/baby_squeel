@@ -19,6 +19,8 @@ require 'support/matchers'
 require 'support/factories'
 require 'support/query_tracker'
 
+ActiveSupport::Deprecation.behavior = :raise
+
 RSpec.configure do |config|
   config.include Factories
   config.include QueryTracker

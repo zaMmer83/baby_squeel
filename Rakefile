@@ -60,11 +60,13 @@ end
 desc 'Watch for changes and rerun specs'
 task 'spec:watch' do
   puts 'Watching...'
-  FileWatcher.new(['lib', 'spec']).watch do |filename|
-    if filename =~ /_spec\.rb$/
-      system "bundle exec rspec #{filename}"
-    else
-      system 'bundle exec rspec'
+  Filewatcher.new(['lib', 'spec']).watch do |filename|
+    Bundler.with_clean_env do
+      if filename =~ /_spec\.rb$/
+        system "bundle exec rspec #{filename}"
+      else
+        system 'bundle exec rspec'
+      end
     end
   end
 end
@@ -74,7 +76,9 @@ Bump::Bump::BUMPS.each do |bump|
   task "release:#{bump}" => "bump:#{bump}" do
     # we can't just run this as a prereq, because gem_tasks
     # loads the version when rake loads
-    sh 'rake release'
+    Bundler.with_clean_env do
+      sh 'bundle exec rake release'
+    end
   end
 end
 

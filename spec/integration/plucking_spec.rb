@@ -14,6 +14,11 @@ describe '#plucking' do
     expect(result).to match_array(['one', 'two'])
   end
 
+  it 'plucks with array' do
+    result = Post.plucking { [title] }
+    expect(result).to match_array(['one', 'two'])
+  end
+
   it 'plucks distinct' do
     result = Post.distinct.plucking { view_count }
     expect(result).to match_array([1])
