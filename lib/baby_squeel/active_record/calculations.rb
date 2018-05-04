@@ -5,7 +5,9 @@ module BabySqueel
   module ActiveRecord
     module Calculations
       def plucking(&block)
-        pluck Pluck.wrap(DSL.evaluate(self, &block))
+        nodes = Array.wrap(DSL.evaluate(self, &block))
+        nodes = nodes.map { |node| Pluck.decorate(node) }
+        pluck(*nodes)
       end
 
       def counting(&block)
