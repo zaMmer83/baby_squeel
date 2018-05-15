@@ -2,6 +2,10 @@
 
 Nothing to see here.
 
+## [1.3.1] - 2018-05-15
+## Fixed
+- Upgraded `join_dependency` requirement, which fixes [issue #1](https://github.com/rzane/join_dependency/issues/1).
+
 ## [1.3.0] - 2018-05-04
 ## Added
 - The ability to use `plucking` with an array of nodes. For example, `User.plucking { [id, name] }`.
@@ -135,7 +139,8 @@ Nothing to see here.
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/rzane/baby_squeel/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/rzane/baby_squeel/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/rzane/baby_squeel/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/rzane/baby_squeel/compare/v1.1.5...v1.2.0
