@@ -240,6 +240,24 @@ Post.joining {
 }
 ```
 
+##### Polymorphism
+
+Given this polymorphism:
+```ruby
+# app/models/picture.rb
+belongs_to :imageable, polymorphic: true
+
+# app/models/post.rb
+has_many :pictures, as: :imageable
+```
+
+The query might look like this:
+```ruby
+Picture.
+  joining { imageable.of(Post) }.
+  selecting { imageable.of(Post).id }
+```
+
 ##### Helpers
 
 ```ruby
