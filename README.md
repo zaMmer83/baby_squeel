@@ -1,4 +1,4 @@
-# BabySqueel
+# BabySqueel 🐷
 
 [![Build Status](https://travis-ci.org/rzane/baby_squeel.svg?branch=master)](https://travis-ci.org/rzane/baby_squeel)
 [![Code Climate](https://codeclimate.com/github/rzane/baby_squeel/badges/gpa.svg)](https://codeclimate.com/github/rzane/baby_squeel)
