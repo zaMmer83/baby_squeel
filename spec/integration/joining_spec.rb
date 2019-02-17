@@ -122,20 +122,12 @@ describe '#joining' do
 
     describe 'polymorphism' do
       it 'inner joins' do
-        if ActiveRecord::VERSION::STRING >= '5.2.0'
-          pending "polyamorous's support for polymorphism is broken"
-        end
-
         relation = Picture.joining { imageable.of(Post) }
 
         expect(relation).to match_sql_snapshot
       end
 
       it 'outer joins' do
-        if ActiveRecord::VERSION::STRING >= '5.2.0'
-          pending "polyamorous's support for polymorphism is broken"
-        end
-
         relation = Picture.joining { imageable.of(Post).outer }
 
         expect(relation).to match_sql_snapshot
@@ -164,10 +156,6 @@ describe '#joining' do
       end
 
       it 'handles polymorphism' do
-        if ActiveRecord::VERSION::STRING >= '5.2.0'
-          pending "polyamorous's support for polymorphism is broken"
-        end
-
         relation = Picture.joining { imageable.of(Post).comments }
 
         expect(relation).to match_sql_snapshot

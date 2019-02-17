@@ -12,7 +12,7 @@ else
   gem 'activerecord', ENV['AR']
 end
 
-git 'https://github.com/activerecord-hackery/ransack', branch: 'master' do
+git 'https://github.com/gregmolnar/ransack', branch: 'fix-polymorphic-joins' do
   gem 'polyamorous'
 end
 
