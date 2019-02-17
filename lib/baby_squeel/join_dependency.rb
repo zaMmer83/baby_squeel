@@ -35,8 +35,13 @@ module BabySqueel
       # a list (in order of chaining) of associations and finding
       # the respective JoinAssociation at each level.
       def find_alias(associations)
-        table = find_join_association(associations).table
-        reconstruct_with_type_caster(table, associations)
+        join_association = find_join_association(associations)
+
+        if join_association.table
+          join_association.table
+        else
+          join_association.base_klass.arel_table
+        end
       end
 
       private
@@ -62,16 +67,6 @@ module BabySqueel
       # In AR5, #parent_reflection returns just a reflection
       def comparable_reflection(reflection)
         [*reflection.parent_reflection].last || reflection
-      end
-
-      # Active Record 5's AliasTracker initializes Arel tables
-      # with the type_caster belonging to the wrong model.
-      #
-      # See: https://github.com/rails/rails/pull/27994
-      def reconstruct_with_type_caster(table, associations)
-        return table if ::ActiveRecord::VERSION::MAJOR < 5
-        type_caster = associations.last._scope.type_caster
-        ::Arel::Table.new(table.name, type_caster: type_caster)
       end
     end
   end
