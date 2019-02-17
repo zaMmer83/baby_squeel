@@ -12,6 +12,10 @@ else
   gem 'activerecord', ENV['AR']
 end
 
+git 'https://github.com/activerecord-hackery/ransack', branch: 'master' do
+  gem 'polyamorous'
+end
+
 gem 'bump'
 
 group :test do
