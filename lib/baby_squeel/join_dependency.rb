@@ -37,9 +37,15 @@ module BabySqueel
       def find_alias(associations)
         join_association = find_join_association(associations)
 
+        # NOTE: Below is a hack. It does not work. In previous
+        # versions of Active Record, `#table` would ALWAYS return
+        # an instance of Arel::Table.
         if join_association.table
           join_association.table
         else
+          # This literally does not work. This will often
+          # give you the wrong Arel::Table instance, which
+          # causes aliases in the query to be wrong.
           join_association.base_klass.arel_table
         end
       end
