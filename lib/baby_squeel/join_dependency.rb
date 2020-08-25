@@ -35,44 +35,36 @@ module BabySqueel
       # a list (in order of chaining) of associations and finding
       # the respective JoinAssociation at each level.
       def find_alias(associations)
+        # If we tell join_dependency to construct its tables, Active Record
+        # handles building the correct aliases and attaching them to its
+        # JoinDepenencies.
+        join_dependency.send(:construct_tables!, join_dependency.send(:join_root))
         join_association = find_join_association(associations)
 
-        # NOTE: Below is a hack. It does not work. In previous
-        # versions of Active Record, `#table` would ALWAYS return
-        # an instance of Arel::Table.
-        if join_association.table
-          join_association.table
-        else
-          # This literally does not work. This will often
-          # give you the wrong Arel::Table instance, which
-          # causes aliases in the query to be wrong.
-          join_association.base_klass.arel_table
-        end
+        join_association.table
       end
 
       private
 
       def find_join_association(associations)
-        associations.inject(join_dependency.send(:join_root)) do |parent, assoc|
-          parent.children.find do |join_association|
-            reflections_equal?(
-              assoc._reflection,
-              join_association.reflection
-            )
-          end
+        join_root = join_dependency.send(:join_root)
+        steps = associations.map {|a| a._reflection.name}
+        association_from_steps(join_root, steps)
+      end
+
+      # Search depth-first through the descendants of +current+ for successive
+      # associations in +steps+.
+      #
+      # Each generation of descent consumes one element of +steps+.
+      def association_from_steps(current, steps)
+        return current if steps.empty?
+        matching_assoc = nil
+        current.children.each do |child|
+          next unless child.reflection.name == steps.first
+          matching_assoc = association_from_steps(child, steps[1..-1])
+          break if matching_assoc
         end
-      end
-
-      # Compare two reflections and see if they're the same.
-      def reflections_equal?(a, b)
-        comparable_reflection(a) == comparable_reflection(b)
-      end
-
-      # Get the parent of the reflection if it has one.
-      # In AR4, #parent_reflection returns [name, reflection]
-      # In AR5, #parent_reflection returns just a reflection
-      def comparable_reflection(reflection)
-        [*reflection.parent_reflection].last || reflection
+        matching_assoc
       end
     end
   end
