@@ -19,4 +19,5 @@ group :test do
   gem 'coveralls'
   gem 'simplecov'
   gem 'filewatcher'
+  gem 'byebug'
 end
