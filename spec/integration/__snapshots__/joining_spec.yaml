@@ -18,8 +18,8 @@
 "#joining when joining explicitly aliases after the on clause 1": SELECT "posts".*
   FROM "posts" INNER JOIN "authors" "a" ON "authors"."id" = "posts"."author_id"
 "#joining when joining explicitly merges bind values 1": SELECT "posts".* FROM "posts"
-  INNER JOIN "authors" ON "authors"."ugly" = 't' AND "authors"."id" = "posts"."author_id"
-  INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+  INNER JOIN "authors" ON "authors"."id" = "posts"."author_id" AND "authors"."ugly"
+  = 't' INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
 "#joining when joining explicitly with complex conditions inner joins 1": SELECT "posts".*
   FROM "posts" INNER JOIN "authors" ON ("posts"."author_id" = "authors"."id" AND "authors"."id"
   != 5 OR "authors"."name" IS NULL)
@@ -91,3 +91,6 @@
 : SELECT "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
   LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id" INNER JOIN
   "authors" "authors_posts" ON "authors_posts"."id" = "posts"."author_id"
+"#joining when joining explicitly merges bind values 1 (Active Record: v5.2)": SELECT "posts".* FROM "posts"
+  INNER JOIN "authors" ON "authors"."ugly" = 't' AND "authors"."id" = "posts"."author_id"
+  INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
