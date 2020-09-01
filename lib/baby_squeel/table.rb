@@ -9,6 +9,7 @@ module BabySqueel
 
     def initialize(arel_table)
       @_table = arel_table
+      @_accumulated_associations = {}
     end
 
     # See Arel::Table#[]
@@ -84,7 +85,13 @@ module BabySqueel
     # This method allows BabySqueel::Nodes::Attribute
     # instances to find what their alias will be.
     def find_alias(associations = [])
-      rel = _scope.joins _arel(associations)
+      this_arel = _arel(associations)
+      if this_arel.kind_of?(Hash)
+        _accumulate_associations(@_accumulated_associations, this_arel)
+        rel = _scope.joins @_accumulated_associations
+      else
+        rel = _scope.joins this_arel
+      end
       builder = JoinDependency::Builder.new(rel)
       builder.find_alias(associations)
     end
@@ -122,6 +129,13 @@ module BabySqueel
 
     def method_missing(*args, &block)
       resolver.resolve!(*args, &block) || super
+    end
+    
+    def _accumulate_associations(dest, source)
+      source.each_pair do |k, v|
+        dest[k] ||= {}
+        _accumulate_associations(dest[k], v)
+      end
     end
   end
 end

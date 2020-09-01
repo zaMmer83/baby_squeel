@@ -284,5 +284,15 @@ describe '#joining' do
         Post.joining { author.outer.alias('a') }.to_sql
       }.to raise_error(BabySqueel::AssociationAliasingError, /'author' as 'a'/)
     end
+
+    it "correctly identifies a table independenty joined via separate associations" do
+      relation = Post
+      relation = relation.joining { [author, comments.author] }
+      relation = relation.where.has {
+        comments.author.name == 'Bob'
+      }
+      
+      expect(relation.to_sql).to match_sql_snapshot
+    end
   end
 end
