@@ -47,24 +47,15 @@ module BabySqueel
       private
 
       def find_join_association(associations)
-        join_root = join_dependency.send(:join_root)
-        steps = associations.map {|a| a._reflection.name}
-        association_from_steps(join_root, steps)
-      end
-
-      # Search depth-first through the descendants of +current+ for successive
-      # associations in +steps+.
-      #
-      # Each generation of descent consumes one element of +steps+.
-      def association_from_steps(current, steps)
-        return current if steps.empty?
-        matching_assoc = nil
-        current.children.each do |child|
-          next unless child.reflection.name == steps.first
-          matching_assoc = association_from_steps(child, steps[1..-1])
-          break if matching_assoc
+        current = join_dependency.send(:join_root)
+        
+        associations.each do |association|
+          name = association._reflection.name
+          current = current.children.find { |c| c.reflection.name == name }
+          break if current.nil?
         end
-        matching_assoc
+        
+        current
       end
     end
   end
