@@ -3,6 +3,7 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    name: Active Record v${{ matrix.activerecord }} (compat=${{ matrix.compat }})
     strategy:
       matrix:
         activerecord: ["5.2.0", "5.2.5"]
