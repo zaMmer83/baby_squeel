@@ -3,5 +3,9 @@ module BabySqueel
     def ==(other)
       eq(other)
     end
+
+    def !=(other)
+      neq(other)
+    end
   end
 end
