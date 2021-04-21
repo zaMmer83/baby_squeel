@@ -150,6 +150,8 @@ describe '#joining' do
       end
 
       it 'outer joins' do
+        pending "This feature is known to be broken"
+
         relation = Post.joining { author.outer.comments }
 
         expect(relation).to match_sql_snapshot
@@ -195,6 +197,8 @@ describe '#joining' do
       end
 
       it 'joins a through association and then back again' do
+        pending "This feature is known to be broken"
+
         relation = Post.joining { author.posts.author_comments.outer.post.author_comments }
 
         expect(relation).to match_sql_snapshot
