@@ -14,9 +14,9 @@ env:
     - AR=5.0.6
     - AR=5.1.5
     - AR=5.2.0
-    - AR=latest
+    - AR=5.2.5
     - AR=4.2.10 COMPAT=1
     - AR=5.0.6 COMPAT=1
     - AR=5.1.5 COMPAT=1
     - AR=5.2.0 COMPAT=1
-    - AR=latest COMPAT=1
+    - AR=5.2.5 COMPAT=1
