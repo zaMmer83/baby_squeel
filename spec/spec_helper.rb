@@ -1,5 +1,6 @@
 require 'bundler/setup'
 require 'simplecov'
+require 'coveralls'
 require 'pry'
 
 SimpleCov.formatter =
