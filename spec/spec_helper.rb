@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require "baby_squeel"
+require "irb"
+require_relative "support/schema"
+require_relative "support/models"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

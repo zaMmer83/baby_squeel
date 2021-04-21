@@ -6,6 +6,15 @@ RSpec.describe BabySqueel do
   end
 
   it "does something useful" do
-    expect(false).to eq(true)
+    articles = Article.query do
+      select(id, name)
+      where(id == 1)
+    end
+
+    expect(articles.to_sql).to eq(<<~SQL.squish)
+      SELECT "articles"."id", "articles"."name"
+      FROM "articles"
+      WHERE "articles"."id" = 1
+    SQL
   end
 end
