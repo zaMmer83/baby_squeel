@@ -91,3 +91,11 @@
 : SELECT "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
   LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id" INNER JOIN
   "authors" "authors_posts" ON "authors_posts"."id" = "posts"."author_id"
+"#joining when joining explicitly merges bind values 1 (Active Record: v5.2)": SELECT
+  "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."ugly" = 't' AND "authors"."id"
+  = "posts"."author_id" INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+"#joining when joining implicitly correctly identifies a table independenty joined via separate associations 1": SELECT
+  "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+  INNER JOIN "comments" ON "comments"."post_id" = "posts"."id" INNER JOIN "authors"
+  "authors_comments" ON "authors_comments"."id" = "comments"."author_id" WHERE
+  "authors_comments"."name" = 'Bob'

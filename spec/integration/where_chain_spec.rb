@@ -70,27 +70,19 @@ describe '#where.has' do
   end
 
   it 'wheres on polymorphic associations' do
-    if ActiveRecord::VERSION::STRING >= '5.2.0'
-      pending "polyamorous's support for polymorphism is broken"
-    end
-
     relation = Picture.joining { imageable.of(Post) }.where.has {
       imageable.of(Post).title =~ 'meatloaf'
     }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'wheres on polymorphic associations outer join' do
-    if ActiveRecord::VERSION::STRING >= '5.2.0'
-      pending "polyamorous's support for polymorphism is broken"
-    end
-
     relation = Picture.joining { imageable.of(Post).outer }.where.has {
       imageable.of(Post).title =~ 'meatloaf'
     }
 
-    expect(relation).to match_sql_snapshot
+    expect(relation).to match_sql_snapshot(variants: ['5.2'])
   end
 
   it 'wheres and correctly aliases' do

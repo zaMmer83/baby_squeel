@@ -35,43 +35,27 @@ module BabySqueel
       # a list (in order of chaining) of associations and finding
       # the respective JoinAssociation at each level.
       def find_alias(associations)
-        table = find_join_association(associations).table
-        reconstruct_with_type_caster(table, associations)
+        # If we tell join_dependency to construct its tables, Active Record
+        # handles building the correct aliases and attaching them to its
+        # JoinDepenencies.
+        join_dependency.send(:construct_tables!, join_dependency.send(:join_root))
+        join_association = find_join_association(associations)
+
+        join_association.table
       end
 
       private
 
       def find_join_association(associations)
-        associations.inject(join_dependency.send(:join_root)) do |parent, assoc|
-          parent.children.find do |join_association|
-            reflections_equal?(
-              assoc._reflection,
-              join_association.reflection
-            )
-          end
+        current = join_dependency.send(:join_root)
+        
+        associations.each do |association|
+          name = association._reflection.name
+          current = current.children.find { |c| c.reflection.name == name }
+          break if current.nil?
         end
-      end
-
-      # Compare two reflections and see if they're the same.
-      def reflections_equal?(a, b)
-        comparable_reflection(a) == comparable_reflection(b)
-      end
-
-      # Get the parent of the reflection if it has one.
-      # In AR4, #parent_reflection returns [name, reflection]
-      # In AR5, #parent_reflection returns just a reflection
-      def comparable_reflection(reflection)
-        [*reflection.parent_reflection].last || reflection
-      end
-
-      # Active Record 5's AliasTracker initializes Arel tables
-      # with the type_caster belonging to the wrong model.
-      #
-      # See: https://github.com/rails/rails/pull/27994
-      def reconstruct_with_type_caster(table, associations)
-        return table if ::ActiveRecord::VERSION::MAJOR < 5
-        type_caster = associations.last._scope.type_caster
-        ::Arel::Table.new(table.name, type_caster: type_caster)
+        
+        current
       end
     end
   end

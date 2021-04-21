@@ -73,7 +73,7 @@ describe '#joining' do
     it 'merges bind values' do
       relation = Post.joining { ugly_author_comments }
 
-      expect(relation).to match_sql_snapshot
+      expect(relation).to match_sql_snapshot(variants: ['5.2'])
     end
 
     context 'with complex conditions' do
@@ -122,20 +122,12 @@ describe '#joining' do
 
     describe 'polymorphism' do
       it 'inner joins' do
-        if ActiveRecord::VERSION::STRING >= '5.2.0'
-          pending "polyamorous's support for polymorphism is broken"
-        end
-
         relation = Picture.joining { imageable.of(Post) }
 
         expect(relation).to match_sql_snapshot
       end
 
       it 'outer joins' do
-        if ActiveRecord::VERSION::STRING >= '5.2.0'
-          pending "polyamorous's support for polymorphism is broken"
-        end
-
         relation = Picture.joining { imageable.of(Post).outer }
 
         expect(relation).to match_sql_snapshot
@@ -164,10 +156,6 @@ describe '#joining' do
       end
 
       it 'handles polymorphism' do
-        if ActiveRecord::VERSION::STRING >= '5.2.0'
-          pending "polyamorous's support for polymorphism is broken"
-        end
-
         relation = Picture.joining { imageable.of(Post).comments }
 
         expect(relation).to match_sql_snapshot
@@ -295,6 +283,16 @@ describe '#joining' do
       expect {
         Post.joining { author.outer.alias('a') }.to_sql
       }.to raise_error(BabySqueel::AssociationAliasingError, /'author' as 'a'/)
+    end
+
+    it "correctly identifies a table independenty joined via separate associations" do
+      relation = Post
+      relation = relation.joining { [author, comments.author] }
+      relation = relation.where.has {
+        comments.author.name == 'Bob'
+      }
+      
+      expect(relation.to_sql).to match_sql_snapshot
     end
   end
 end
