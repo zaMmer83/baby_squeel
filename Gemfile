@@ -29,7 +29,6 @@ gem 'bump'
 
 group :test do
   gem 'pry'
-  gem 'coveralls'
   gem 'simplecov'
   gem 'byebug'
 end

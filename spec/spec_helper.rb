@@ -1,16 +1,8 @@
 require 'bundler/setup'
 require 'simplecov'
-require 'coveralls'
 require 'pry'
 
-SimpleCov.formatter =
-  if ENV['CI']
-    SimpleCov.formatter = Coveralls::SimpleCov::Formatter
-  else
-    SimpleCov::Formatter::HTMLFormatter
-  end
-
-SimpleCov.start { add_filter 'spec/' } unless ENV['SKIPCOV']
+SimpleCov.start { add_filter 'spec/' }
 
 require 'baby_squeel'
 require 'support/schema'
