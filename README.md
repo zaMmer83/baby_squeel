@@ -4,8 +4,6 @@
 [![Code Climate](https://codeclimate.com/github/rzane/baby_squeel/badges/gpa.svg)](https://codeclimate.com/github/rzane/baby_squeel)
 [![Coverage Status](https://coveralls.io/repos/github/rzane/baby_squeel/badge.svg?branch=master)](https://coveralls.io/github/rzane/baby_squeel?branch=master)
 
-<img align="right" src="http://static.thefrisky.com/uploads/2010/07/01/pig_in_boots_070110_m.jpg" alt="biddy piggy">
-
 Have you ever used the [Squeel](https://github.com/activerecord-hackery/squeel) gem? It's a really nice way to build complex queries. However, Squeel monkeypatches Active Record internals, because it was aimed at enhancing the existing API with the aim of inclusion into Rails. However, that inclusion never happened, and it left Squeel susceptible to breakage from arbitrary changes in Active Record, eventually burning out the maintainer.
 
 BabySqueel provides a Squeel-like query DSL for Active Record while hopefully avoiding the majority of the version upgrade difficulties via a minimum of monkeypatching. :heart:
@@ -258,6 +256,7 @@ Post.joining {
 ##### Polymorphism
 
 Given this polymorphism:
+
 ```ruby
 # app/models/picture.rb
 belongs_to :imageable, polymorphic: true
@@ -267,6 +266,7 @@ has_many :pictures, as: :imageable
 ```
 
 The query might look like this:
+
 ```ruby
 Picture.
   joining { imageable.of(Post) }.
@@ -316,7 +316,7 @@ Post.joins(:author).where.has {
 The following methods give you access to BabySqueel's DSL:
 
 | BabySqueel    | Active Record Equivalent |
-|---------------|--------------------------|
+| ------------- | ------------------------ |
 | `selecting`   | `select`                 |
 | `ordering`    | `order`                  |
 | `joining`     | `joins`                  |
