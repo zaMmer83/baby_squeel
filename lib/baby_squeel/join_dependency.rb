@@ -38,9 +38,11 @@ module BabySqueel
         # If we tell join_dependency to construct its tables, Active Record
         # handles building the correct aliases and attaching them to its
         # JoinDepenencies.
-        join_dependency.send(:construct_tables!, join_dependency.send(:join_root))
-        join_association = find_join_association(associations)
+        if ::ActiveRecord::VERSION::STRING >= '5.2.3'
+          join_dependency.send(:construct_tables!, join_dependency.send(:join_root))
+        end
 
+        join_association = find_join_association(associations)
         join_association.table
       end
 
@@ -48,13 +50,13 @@ module BabySqueel
 
       def find_join_association(associations)
         current = join_dependency.send(:join_root)
-        
+
         associations.each do |association|
           name = association._reflection.name
           current = current.children.find { |c| c.reflection.name == name }
           break if current.nil?
         end
-        
+
         current
       end
     end

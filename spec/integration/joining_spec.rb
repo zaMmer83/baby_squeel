@@ -73,7 +73,7 @@ describe '#joining' do
     it 'merges bind values' do
       relation = Post.joining { ugly_author_comments }
 
-      expect(relation).to match_sql_snapshot
+      expect(relation).to match_sql_snapshot(variants: ['5.2.0'])
     end
 
     context 'with complex conditions' do
@@ -150,7 +150,9 @@ describe '#joining' do
       end
 
       it 'outer joins' do
-        pending "This feature is known to be broken"
+        if ActiveRecord::VERSION::STRING >= '5.2.3'
+          pending "This feature is known to be broken"
+        end
 
         relation = Post.joining { author.outer.comments }
 
@@ -197,7 +199,9 @@ describe '#joining' do
       end
 
       it 'joins a through association and then back again' do
-        pending "This feature is known to be broken"
+        if ActiveRecord::VERSION::STRING >= '5.2.3'
+          pending "This feature is known to be broken"
+        end
 
         relation = Post.joining { author.posts.author_comments.outer.post.author_comments }
 

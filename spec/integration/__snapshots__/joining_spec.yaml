@@ -96,3 +96,6 @@
 : SELECT "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
   LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id" INNER JOIN
   "authors" "authors_posts" ON "authors_posts"."id" = "posts"."author_id"
+"#joining when joining explicitly merges bind values 1 (Active Record: v5.2.0)": SELECT
+  "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+  AND "authors"."ugly" = 't' INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
