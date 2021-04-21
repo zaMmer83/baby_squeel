@@ -1,6 +1,5 @@
 require 'yaml'
 require 'open3'
-require 'filewatcher'
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'coveralls/rake/task'
@@ -53,20 +52,6 @@ task 'spec:matrix' do
   envs.each do |env|
     unless version_passes? env
       abort format_version(env, failed: true)
-    end
-  end
-end
-
-desc 'Watch for changes and rerun specs'
-task 'spec:watch' do
-  puts 'Watching...'
-  Filewatcher.new(['lib', 'spec']).watch do |filename|
-    Bundler.with_clean_env do
-      if filename =~ /_spec\.rb$/
-        system "bundle exec rspec #{filename}"
-      else
-        system 'bundle exec rspec'
-      end
     end
   end
 end
