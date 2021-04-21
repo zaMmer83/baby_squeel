@@ -7,6 +7,9 @@ jobs:
       matrix:
         activerecord: ["5.2"]
         compat: ["0", "1"]
+    env:
+      AR: ${{ matrix.activerecord }}
+      COMPAT: ${{ matrix.compat }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -27,9 +30,6 @@ jobs:
 
       - name: Test
         run: bundle exec rspec
-        env:
-          AR: ${{ matrix.activerecord }}
-          COMPAT: ${{ matrix.compat }}
 
       - name: Coveralls
         run: bundle exec rake coveralls:push
