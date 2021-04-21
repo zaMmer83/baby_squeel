@@ -1,4 +1,16 @@
 ---
+"#joining when joining implicitly nested joins outer joins 1": SELECT "posts".* FROM
+  "posts" LEFT OUTER JOIN "authors" ON "authors"."id" = "posts"."author_id" INNER
+  JOIN "comments" ON "comments"."author_id" = "authors"."id"
+"#joining when joining implicitly nested joins joins a through association and then back again 1": SELECT
+  "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+  INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
+  LEFT OUTER JOIN "authors" "authors_posts_join" ON "authors_posts_join"."id" = "posts_authors"."author_id"
+  LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors_posts_join"."id"
+  INNER JOIN "posts" "posts_comments" ON "posts_comments"."id" = "comments"."post_id"
+  INNER JOIN "authors" "authors_posts_join_2" ON "authors_posts_join_2"."id" = "posts_comments"."author_id"
+  INNER JOIN "comments" "author_comments_posts" ON "author_comments_posts"."author_id"
+  = "authors_posts_join_2"."id"
 "#joining when joining explicitly inner joins 1": SELECT "posts".* FROM "posts" INNER
   JOIN "authors" ON "authors"."id" = "posts"."author_id"
 "#joining when joining explicitly inner joins explicitly 1": SELECT "posts".* FROM
@@ -18,8 +30,8 @@
 "#joining when joining explicitly aliases after the on clause 1": SELECT "posts".*
   FROM "posts" INNER JOIN "authors" "a" ON "authors"."id" = "posts"."author_id"
 "#joining when joining explicitly merges bind values 1": SELECT "posts".* FROM "posts"
-  INNER JOIN "authors" ON "authors"."id" = "posts"."author_id" AND "authors"."ugly"
-  = 't' INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+  INNER JOIN "authors" ON "authors"."ugly" = 't' AND "authors"."id" = "posts"."author_id"
+  INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
 "#joining when joining explicitly with complex conditions inner joins 1": SELECT "posts".*
   FROM "posts" INNER JOIN "authors" ON ("posts"."author_id" = "authors"."id" AND "authors"."id"
   != 5 OR "authors"."name" IS NULL)
@@ -33,6 +45,11 @@
   LEFT OUTER JOIN "posts" "parents_posts" ON "parents_posts"."id" = "posts"."parent_id"
   LEFT OUTER JOIN "authors" "authors_posts" ON "authors_posts"."id" = "parents_posts"."author_id"
   WHERE ("authors"."name" = 'Rick' OR "authors_posts"."name" = 'Flair')
+"#joining when joining implicitly correctly identifies a table independenty joined via separate associations 1": SELECT
+  "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+  INNER JOIN "comments" ON "comments"."post_id" = "posts"."id" INNER JOIN "authors"
+  "authors_comments" ON "authors_comments"."id" = "comments"."author_id" WHERE "authors_comments"."name"
+  = 'Bob'
 "#joining when joining implicitly polymorphism inner joins 1": SELECT "pictures".*
   FROM "pictures" INNER JOIN "posts" ON "posts"."id" = "pictures"."imageable_id" AND
   "pictures"."imageable_type" = 'Post'
@@ -46,9 +63,6 @@
 "#joining when joining implicitly nested joins inner joins 1": SELECT "posts".* FROM
   "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id" INNER JOIN
   "comments" ON "comments"."author_id" = "authors"."id"
-"#joining when joining implicitly nested joins outer joins 1": SELECT "posts".* FROM
-  "posts" LEFT OUTER JOIN "authors" ON "authors"."id" = "posts"."author_id" INNER
-  JOIN "comments" ON "comments"."author_id" = "authors"."id"
 "#joining when joining implicitly nested joins handles polymorphism 1": SELECT "pictures".*
   FROM "pictures" INNER JOIN "posts" ON "posts"."id" = "pictures"."imageable_id" AND
   "pictures"."imageable_type" = 'Post' INNER JOIN "comments" ON "comments"."post_id"
@@ -59,15 +73,6 @@
 "#joining when joining implicitly nested joins outer joins only the specified associations 1": SELECT
   "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
   LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id"
-"#joining when joining implicitly nested joins joins a through association and then back again 1": SELECT
-  "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-  INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
-  LEFT OUTER JOIN "authors" "authors_posts_join" ON "authors_posts_join"."id" = "posts_authors"."author_id"
-  LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors_posts_join"."id"
-  INNER JOIN "posts" "posts_comments" ON "posts_comments"."id" = "comments"."post_id"
-  INNER JOIN "authors" "authors_posts_join_2" ON "authors_posts_join_2"."id" = "posts_comments"."author_id"
-  INNER JOIN "comments" "author_comments_posts" ON "author_comments_posts"."author_id"
-  = "authors_posts_join_2"."id"
 "#joining when joining implicitly duplicate prevention when given two DSL joins dedupes incremental joins 1": SELECT
   "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
   INNER JOIN "posts" "posts_authors" ON "posts_authors"."author_id" = "authors"."id"
@@ -91,11 +96,3 @@
 : SELECT "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
   LEFT OUTER JOIN "comments" ON "comments"."author_id" = "authors"."id" INNER JOIN
   "authors" "authors_posts" ON "authors_posts"."id" = "posts"."author_id"
-"#joining when joining explicitly merges bind values 1 (Active Record: v5.2)": SELECT
-  "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."ugly" = 't' AND "authors"."id"
-  = "posts"."author_id" INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
-"#joining when joining implicitly correctly identifies a table independenty joined via separate associations 1": SELECT
-  "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."id" = "posts"."author_id"
-  INNER JOIN "comments" ON "comments"."post_id" = "posts"."id" INNER JOIN "authors"
-  "authors_comments" ON "authors_comments"."id" = "comments"."author_id" WHERE
-  "authors_comments"."name" = 'Bob'
