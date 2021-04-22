@@ -6,88 +6,88 @@ RSpec.describe BabySqueel do
   end
 
   it "does something useful" do
-    articles = Article.query do
+    recipes = Recipe.query do
       select id, name
       where id == 1
     end
 
-    expect(articles.to_sql).to eq(<<~SQL.squish)
-      SELECT "articles"."id", "articles"."name"
-      FROM "articles"
-      WHERE "articles"."id" = 1
+    expect(recipes.to_sql).to eq(<<~SQL.squish)
+      SELECT "recipes"."id", "recipes"."name"
+      FROM "recipes"
+      WHERE "recipes"."id" = 1
     SQL
   end
 
   it "joins an association" do
-    articles = Article.query do
+    recipes = Recipe.query do
       join assoc(:user)
     end
 
-    expect(articles.to_sql).to eq(<<~SQL.squish)
-      SELECT "articles".*
-      FROM "articles"
-      INNER JOIN "users" ON "users"."id" = "articles"."user_id"
+    expect(recipes.to_sql).to eq(<<~SQL.squish)
+      SELECT "recipes".*
+      FROM "recipes"
+      INNER JOIN "users" ON "users"."id" = "recipes"."user_id"
     SQL
   end
 
   it "joins an aliased association" do
-    articles = Article.query do
+    recipes = Recipe.query do
       join assoc(:user, :u)
     end
 
-    expect(articles.to_sql).to eq(<<~SQL.squish)
-      SELECT "articles".*
-      FROM "articles"
-      INNER JOIN "users" "u" ON "u"."id" = "articles"."user_id"
+    expect(recipes.to_sql).to eq(<<~SQL.squish)
+      SELECT "recipes".*
+      FROM "recipes"
+      INNER JOIN "users" "u" ON "u"."id" = "recipes"."user_id"
     SQL
   end
 
   it "left joins an association" do
-    articles = Article.query do
+    recipes = Recipe.query do
       left_join assoc(:user)
     end
 
-    expect(articles.to_sql).to eq(<<~SQL.squish)
-      SELECT "articles".*
-      FROM "articles"
-      LEFT OUTER JOIN "users" ON "users"."id" = "articles"."user_id"
+    expect(recipes.to_sql).to eq(<<~SQL.squish)
+      SELECT "recipes".*
+      FROM "recipes"
+      LEFT OUTER JOIN "users" ON "users"."id" = "recipes"."user_id"
     SQL
   end
 
   it "left joins an aliased association" do
-    articles = Article.query do
+    recipes = Recipe.query do
       left_join assoc(:user, :u)
     end
 
-    expect(articles.to_sql).to eq(<<~SQL.squish)
-      SELECT "articles".*
-      FROM "articles"
-      LEFT OUTER JOIN "users" "u" ON "u"."id" = "articles"."user_id"
+    expect(recipes.to_sql).to eq(<<~SQL.squish)
+      SELECT "recipes".*
+      FROM "recipes"
+      LEFT OUTER JOIN "users" "u" ON "u"."id" = "recipes"."user_id"
     SQL
   end
 
   it "complex join" do
-    articles = Article.query do
+    recipes = Recipe.query do
       u = assoc(:user, :u)
-      a = u.assoc(:articles, :a)
+      r = u.assoc(:recipes, :r)
 
-      select id, u.id, a.id
+      select id, u.id, r.id
       join u
-      left_join a
-      where a.id == 1
+      left_join r
+      where r.id == 1
     end
 
-    expect(articles.to_sql).to eq(<<~SQL.squish)
-      SELECT "articles"."id", "u"."id", "a"."id"
-      FROM "articles"
-      INNER JOIN "users" "u" ON "u"."id" = "articles"."user_id"
-      LEFT OUTER JOIN "articles" "a" ON "a"."user_id" = "u"."id"
-      WHERE "a"."id" = 1
+    expect(recipes.to_sql).to eq(<<~SQL.squish)
+      SELECT "recipes"."id", "u"."id", "r"."id"
+      FROM "recipes"
+      INNER JOIN "users" "u" ON "u"."id" = "recipes"."user_id"
+      LEFT OUTER JOIN "recipes" "r" ON "r"."user_id" = "u"."id"
+      WHERE "r"."id" = 1
     SQL
   end
 
   it "aggregates" do
-    articles = Article.query do
+    recipes = Recipe.query do
       select user_id, sql.count(id)
       where id > 2
       where_not id > 20
@@ -96,14 +96,14 @@ RSpec.describe BabySqueel do
       order_by user_id.desc
     end
 
-    expect(articles.to_sql).to eq(<<~SQL.squish)
-      SELECT "articles"."user_id", COUNT("articles"."id")
-      FROM "articles"
-      WHERE "articles"."id" > 2
-      AND "articles"."id" <= 20
-      GROUP BY "articles"."user_id"
-      HAVING COUNT("articles"."id") > 3
-      ORDER BY "articles"."user_id" DESC
+    expect(recipes.to_sql).to eq(<<~SQL.squish)
+      SELECT "recipes"."user_id", COUNT("recipes"."id")
+      FROM "recipes"
+      WHERE "recipes"."id" > 2
+      AND "recipes"."id" <= 20
+      GROUP BY "recipes"."user_id"
+      HAVING COUNT("recipes"."id") > 3
+      ORDER BY "recipes"."user_id" DESC
     SQL
   end
 end

@@ -20,7 +20,9 @@ Or install it yourself as:
 
     $ gem install baby_squeel
 
-## Usage
+## Example
+
+Your models look like this:
 
 ```ruby
 class ApplicationRecord < ActiveRecord::Base
@@ -32,7 +34,7 @@ class User < ApplicationRecord
   has_many :articles
 end
 
-class Article < ApplicationRecord
+class Recipe < ApplicationRecord
   belongs_to :user
   has_many :comments
 end
@@ -40,7 +42,11 @@ end
 class Comment < ApplicationRecord
   belongs_to :article
 end
+```
 
+#### Joins
+
+```ruby
 User.query do
   comments = assoc :comments, :c
   recipes = comments.assoc :recipes, :r
@@ -48,14 +54,40 @@ User.query do
   select id, name
   join comments
   join recipes
-  where recipes.title == "Pasta"
+  where recipes.name == "Pasta"
   where comments.body =~ "%delicious%"
 end
-# SELECT "users"."id", "users"."name"
-# INNER JOIN "recipes" "r" ON "r"."user_id" = "users"."id"
-# INNER JOIN "comments" "c" ON "c"."recipe_id" = "r"."id"
-# WHERE "r"."title" = "Pasta"
-# AND "c"."body" LIKE "%delicious%"
+```
+
+```sql
+SELECT "users"."id", "users"."name"
+INNER JOIN "recipes" "r" ON "r"."user_id" = "users"."id"
+INNER JOIN "comments" "c" ON "c"."recipe_id" = "r"."id"
+WHERE "r"."name" = "Pasta"
+AND "c"."body" LIKE "%delicious%"
+```
+
+#### Aggregation
+
+```ruby
+Recipe.query do
+  select user_id, sql.count(id)
+  where id > 2
+  where_not id > 20
+  group_by user_id
+  having sql.count(id) > 3
+  order_by user_id.desc
+end
+```
+
+```sql
+SELECT "recipe"."user_id", COUNT("recipe"."id")
+FROM "recipe"
+WHERE "recipe"."id" > 2
+AND "recipe"."id" <= 20
+GROUP BY "recipe"."user_id"
+HAVING COUNT("recipe"."id") > 3
+ORDER BY "recipe"."user_id" DESC
 ```
 
 ## Development

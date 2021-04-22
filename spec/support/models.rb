@@ -5,9 +5,9 @@ class ApplicationRecord < ActiveRecord::Base
 end
 
 class User < ApplicationRecord
-  has_many :articles
+  has_many :recipes
 end
 
-class Article < ApplicationRecord
+class Recipe < ApplicationRecord
   belongs_to :user
 end
