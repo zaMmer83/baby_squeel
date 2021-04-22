@@ -65,4 +65,24 @@ RSpec.describe BabySqueel do
       LEFT OUTER JOIN "users" "u" ON "u"."id" = "articles"."user_id"
     SQL
   end
+
+  it "complex join" do
+    articles = Article.query do
+      u = assoc(:user, :u)
+      a = u.assoc(:articles, :a)
+
+      select id, u.id, a.id
+      join u
+      left_join a
+      where a.id == 1
+    end
+
+    expect(articles.to_sql).to eq(<<~SQL.squish)
+      SELECT "articles"."id", "u"."id", "a"."id"
+      FROM "articles"
+      INNER JOIN "users" "u" ON "u"."id" = "articles"."user_id"
+      LEFT OUTER JOIN "articles" "a" ON "a"."user_id" = "u"."id"
+      WHERE "a"."id" = 1
+    SQL
+  end
 end

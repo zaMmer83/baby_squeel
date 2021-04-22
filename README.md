@@ -23,15 +23,39 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-User.query do
-  p = assoc(:posts, :p)
-  u = p.assoc(:users, :u)
-
-  select(id, name)
-  join(p, on: p.id == 1)
-  join(u)
-  where(p.id == 1)
+class ApplicationRecord < ActiveRecord::Base
+  extend BabySqueel::Extension
+  self.abstract_class = true
 end
+
+class User < ApplicationRecord
+  has_many :articles
+end
+
+class Article < ApplicationRecord
+  belongs_to :user
+  has_many :comments
+end
+
+class Comment < ApplicationRecord
+  belongs_to :article
+end
+
+User.query do
+  comments = assoc :comments, :c
+  recipes = comments.assoc :recipes, :r
+
+  select id, name
+  join comments
+  join recipes
+  where recipes.title == "Pasta"
+  where comments.body =~ "%delicious%"
+end
+# SELECT "users"."id", "users"."name"
+# INNER JOIN "recipes" "r" ON "r"."user_id" = "users"."id"
+# INNER JOIN "comments" "c" ON "c"."recipe_id" = "r"."id"
+# WHERE "r"."title" = "Pasta"
+# AND "c"."body" LIKE "%delicious%"
 ```
 
 ## Development

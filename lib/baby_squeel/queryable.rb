@@ -2,24 +2,29 @@ require_relative "attribute"
 
 module BabySqueel
   module Queryable
-    def _model
-      raise NotImplementedError
-    end
-
-    def _alias_name
-      raise NotImplementedError
-    end
-
     # TODO: Better error
+    # Get a reference to an association
     def assoc(name, alias_name = nil)
       if reflection = _model.reflect_on_association(name)
-        Association.new(self, reflection, alias_name: alias_name)
+        Association.new(
+          reflection: reflection,
+          foreign_table: _table,
+          alias_name: alias_name
+        )
       else
         raise "Can't join '#{_model}' to association named '#{name}'"
       end
     end
 
     private
+
+    def _model
+      raise NotImplementedError
+    end
+
+    def _table
+      _model.arel_table
+    end
 
     def respond_to_missing?(name, *)
       _model.column_names.include?(name.to_s) || super
@@ -29,7 +34,7 @@ module BabySqueel
     # TODO: Is it terrible to extend an instance?
     def method_missing(name, *)
       if _model.column_names.include?(name.to_s)
-        attribute = _scope.arel_table[name]
+        attribute = _table[name]
         attribute.extend Attribute
         attribute
       else

@@ -1,5 +1,5 @@
 class ApplicationRecord < ActiveRecord::Base
-  extend BabySqueel::Model
+  extend BabySqueel::Extension
 
   self.abstract_class = true
 end

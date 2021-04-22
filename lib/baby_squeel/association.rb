@@ -4,9 +4,9 @@ module BabySqueel
   class Association
     include Queryable
 
-    def initialize(parent, reflection, alias_name:)
-      @_parent = parent
+    def initialize(reflection:, foreign_table:, alias_name:) # :nodoc:
       @_reflection = reflection
+      @_foreign_table = foreign_table
       @_alias_name = alias_name
     end
 
@@ -24,30 +24,24 @@ module BabySqueel
         raise "Can't join a composed_of association"
       end
 
-      table = _reflection.klass.arel_table
-      table = table.alias(_alias_name) if _alias_name
+      primary_key = _table[_reflection.join_primary_key]
+      foreign_key = _foreign_table[_reflection.join_foreign_key]
 
-      foreign_table = _parent._model.arel_table
-      foreign_table = foreign_table.alias(_parent._alias_name) if _parent._alias_name
-
-      pk = _reflection.join_primary_key
-      fk = _reflection.join_foreign_key
-
-      join = foreign_table.join(table, node)
-      join = join.on(table[pk].eq(foreign_table[fk]))
-      join.join_sources
+      node.new(_table, Arel::Nodes::On.new(primary_key.eq(foreign_key)))
     end
+
+    private
+
+    attr_reader :_reflection, :_foreign_table, :_alias_name
 
     def _model
       _reflection.klass
     end
 
-    def _alias_name
-      @_alias_name
+    def _table
+      table = _model.arel_table
+      table = table.alias(_alias_name) if _alias_name
+      table
     end
-
-    private
-
-    attr_reader :_parent, :_reflection
   end
 end

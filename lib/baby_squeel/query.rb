@@ -4,10 +4,18 @@ module BabySqueel
   class Query
     include Queryable
 
-    attr_reader :_scope
-
-    def initialize(scope)
+    def initialize(scope) # :nodoc:
       self._scope = scope
+    end
+
+    def _evaluate(&block) # :nodoc:
+      if block.arity.zero?
+        instance_eval(&block)
+      else
+        instance_exec(self, &block)
+      end
+
+      _scope
     end
 
     def select(*columns)
@@ -30,16 +38,14 @@ module BabySqueel
       nil
     end
 
+    protected
+
+    attr_accessor :_scope
+
+    private
+
     def _model
       _scope.klass
     end
-
-    def _alias_name
-      nil
-    end
-
-    protected
-
-    attr_writer :_scope
   end
 end
