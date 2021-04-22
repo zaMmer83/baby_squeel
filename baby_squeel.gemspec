@@ -21,7 +21,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activerecord', '~> 5.2'
   spec.add_dependency 'ransack', '~> 2.3'
-  spec.add_dependency 'join_dependency', '~> 0.1.4'
 
   spec.add_development_dependency 'bundler', '~> 2'
   spec.add_development_dependency 'rake', '~> 13.0'
