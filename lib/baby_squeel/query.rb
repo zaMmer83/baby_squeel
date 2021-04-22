@@ -38,6 +38,18 @@ module BabySqueel
       nil
     end
 
+    def func(name, *args)
+      Arel::Nodes::NamedFunction.new(name.to_s.upcase, args)
+    end
+
+    def sql(value)
+      Arel.sql(value)
+    end
+
+    def quoted(value)
+      sql _scope.connection.quote(value)
+    end
+
     protected
 
     attr_accessor :_scope
