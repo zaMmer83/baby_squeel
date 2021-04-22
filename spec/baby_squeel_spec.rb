@@ -30,6 +30,18 @@ RSpec.describe BabySqueel do
     SQL
   end
 
+  it "joins an aliased association" do
+    articles = Article.query do
+      join assoc(:user, :u)
+    end
+
+    expect(articles.to_sql).to eq(<<~SQL.squish)
+      SELECT "articles".*
+      FROM "articles"
+      INNER JOIN "users" "u" ON "u"."id" = "articles"."user_id"
+    SQL
+  end
+
   it "left joins an association" do
     articles = Article.query do
       left_join assoc(:user)
@@ -39,6 +51,18 @@ RSpec.describe BabySqueel do
       SELECT "articles".*
       FROM "articles"
       LEFT OUTER JOIN "users" ON "users"."id" = "articles"."user_id"
+    SQL
+  end
+
+  it "left joins an aliased association" do
+    articles = Article.query do
+      left_join assoc(:user, :u)
+    end
+
+    expect(articles.to_sql).to eq(<<~SQL.squish)
+      SELECT "articles".*
+      FROM "articles"
+      LEFT OUTER JOIN "users" "u" ON "u"."id" = "articles"."user_id"
     SQL
   end
 end
