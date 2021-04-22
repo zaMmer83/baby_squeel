@@ -108,4 +108,30 @@ RSpec.describe BabySqueel do
       ORDER BY "recipes"."user_id" DESC
     SQL
   end
+
+  it "supports explicit joins using a table reference" do
+    recipes = Recipe.query do
+      users = table(:users, :u)
+      join users, on: users.id == user_id
+    end
+
+    expect(recipes.to_sql).to match_sql(<<~SQL)
+      SELECT "recipes".*
+      FROM "recipes"
+      INNER JOIN "users" "u" ON "u"."id" = "recipes"."user_id"
+    SQL
+  end
+
+  it "supports explicit joins using an association reference" do
+    recipes = Recipe.query do
+      users = assoc(:user, :u)
+      join users, on: users.id == user_id
+    end
+
+    expect(recipes.to_sql).to match_sql(<<~SQL)
+      SELECT "recipes".*
+      FROM "recipes"
+      INNER JOIN "users" "u" ON "u"."id" = "recipes"."user_id"
+    SQL
+  end
 end

@@ -16,15 +16,15 @@ module BabySqueel
       end
     end
 
-    private
-
-    def _model
+    def _model # :nodoc:
       raise NotImplementedError
     end
 
-    def _table
+    def _table # :nodoc:
       _model.arel_table
     end
+
+    private
 
     def respond_to_missing?(name, *)
       _model.column_names.include?(name.to_s) || super

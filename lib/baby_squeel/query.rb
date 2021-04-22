@@ -1,4 +1,5 @@
 require_relative "sql"
+require_relative "table"
 require_relative "queryable"
 
 module BabySqueel
@@ -17,6 +18,10 @@ module BabySqueel
       end
 
       _scope
+    end
+
+    def table(name, alias_name = nil)
+      Table.new(name, alias_name: alias_name)
     end
 
     def select(*columns)
@@ -49,18 +54,22 @@ module BabySqueel
       nil
     end
 
-    def join(association)
-      self._scope = _scope.joins(association._construct_join(Arel::Nodes::InnerJoin))
+    def join(other, on: nil)
+      self._scope = _scope.joins(_join(other, on, Arel::Nodes::InnerJoin))
       nil
     end
 
-    def left_join(association)
-      self._scope = _scope.joins(association._construct_join(Arel::Nodes::OuterJoin))
+    def left_join(other, on: nil)
+      self._scope = _scope.joins(_join(other, on, Arel::Nodes::OuterJoin))
       nil
     end
 
     def sql
       SQL.new(_scope.connection)
+    end
+
+    def _model # :nodoc:
+      _scope.klass
     end
 
     protected
@@ -69,8 +78,23 @@ module BabySqueel
 
     private
 
-    def _model
-      _scope.klass
+    def _join(other, on, node)
+      case other
+      when Table
+        if on
+          node.new(other._table, Arel::Nodes::On.new(on))
+        else
+          raise "An `:on` clause is required"
+        end
+      when Association
+        if on
+          node.new(other._table, Arel::Nodes::On.new(on))
+        else
+          other._construct_join(node)
+        end
+      else
+        raise "Unsupported join: #{other.inspect}"
+      end
     end
   end
 end

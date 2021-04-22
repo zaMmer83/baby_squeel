@@ -30,18 +30,18 @@ module BabySqueel
       node.new(_table, Arel::Nodes::On.new(primary_key.eq(foreign_key)))
     end
 
-    private
-
-    attr_reader :_reflection, :_foreign_table, :_alias_name
-
-    def _model
+    def _model # :nodoc:
       _reflection.klass
     end
 
-    def _table
+    def _table # :nodoc:
       table = _model.arel_table
       table = table.alias(_alias_name) if _alias_name
       table
     end
+
+    private
+
+    attr_reader :_reflection, :_foreign_table, :_alias_name
   end
 end
