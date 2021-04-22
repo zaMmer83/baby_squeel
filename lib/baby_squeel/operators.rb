@@ -1,5 +1,5 @@
 module BabySqueel
-  module Attribute
+  module Operators
     def self.register(operator, arel_name)
       define_method operator do |*args|
         send(arel_name, *args)

@@ -1,3 +1,4 @@
+require_relative "sql"
 require_relative "queryable"
 
 module BabySqueel
@@ -19,12 +20,32 @@ module BabySqueel
     end
 
     def select(*columns)
-      self._scope = _scope.select(*columns)
+      self._scope = _scope.select(columns)
+      nil
+    end
+
+    def order_by(*columns)
+      self._scope = _scope.order(columns)
       nil
     end
 
     def where(clause)
       self._scope = _scope.where(clause)
+      nil
+    end
+
+    def where_not(clause)
+      self._scope = _scope.where.not(clause)
+      nil
+    end
+
+    def group_by(*clauses)
+      self._scope = _scope.group(clauses)
+      nil
+    end
+
+    def having(clause)
+      self._scope = _scope.having(clause)
       nil
     end
 
@@ -38,16 +59,8 @@ module BabySqueel
       nil
     end
 
-    def func(name, *args)
-      Arel::Nodes::NamedFunction.new(name.to_s.upcase, args)
-    end
-
-    def sql(value)
-      Arel.sql(value)
-    end
-
-    def quoted(value)
-      sql _scope.connection.quote(value)
+    def sql
+      SQL.new(_scope.connection)
     end
 
     protected

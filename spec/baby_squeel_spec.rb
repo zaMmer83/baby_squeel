@@ -85,4 +85,25 @@ RSpec.describe BabySqueel do
       WHERE "a"."id" = 1
     SQL
   end
+
+  it "aggregates" do
+    articles = Article.query do
+      select user_id, sql.count(id)
+      where id > 2
+      where_not id > 20
+      group_by user_id
+      having sql.count(id) > 3
+      order_by user_id.desc
+    end
+
+    expect(articles.to_sql).to eq(<<~SQL.squish)
+      SELECT "articles"."user_id", COUNT("articles"."id")
+      FROM "articles"
+      WHERE "articles"."id" > 2
+      AND "articles"."id" <= 20
+      GROUP BY "articles"."user_id"
+      HAVING COUNT("articles"."id") > 3
+      ORDER BY "articles"."user_id" DESC
+    SQL
+  end
 end

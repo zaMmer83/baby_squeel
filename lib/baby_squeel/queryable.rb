@@ -1,4 +1,4 @@
-require_relative "attribute"
+require_relative "operators"
 
 module BabySqueel
   module Queryable
@@ -35,7 +35,7 @@ module BabySqueel
     def method_missing(name, *)
       if _model.column_names.include?(name.to_s)
         attribute = _table[name]
-        attribute.extend Attribute
+        attribute.extend Operators
         attribute
       else
         super
