@@ -1,37 +1,45 @@
-require_relative "attribute"
+require_relative "queryable"
 
 module BabySqueel
   class Query
-    attr_accessor :_scope
+    include Queryable
+
+    attr_reader :_scope
 
     def initialize(scope)
-      @_scope = scope
+      self._scope = scope
     end
 
     def select(*columns)
       self._scope = _scope.select(*columns)
-      self
+      nil
     end
 
-    def where(condition)
-      self._scope = _scope.where(condition)
-      self
+    def where(clause)
+      self._scope = _scope.where(clause)
+      nil
     end
 
-    private
-
-    def respond_to_missing?(name, *)
-      _scope.klass.column_names.include?(name.to_s) || super
+    def join(association)
+      self._scope = _scope.joins(association._construct_join(Arel::Nodes::InnerJoin))
+      nil
     end
 
-    def method_missing(name, *)
-      if _scope.klass.column_names.include?(name.to_s)
-        attribute = _scope.arel_table[name]
-        attribute.extend Attribute
-        attribute
-      else
-        super
-      end
+    def left_join(association)
+      self._scope = _scope.joins(association._construct_join(Arel::Nodes::OuterJoin))
+      nil
     end
+
+    def _model
+      _scope.klass
+    end
+
+    def _alias_name
+      nil
+    end
+
+    protected
+
+    attr_writer :_scope
   end
 end

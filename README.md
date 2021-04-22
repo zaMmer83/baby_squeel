@@ -22,7 +22,17 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+User.query do
+  p = assoc(:posts, :p)
+  u = p.assoc(:users, :u)
+
+  select(id, name)
+  join(p, on: p.id == 1)
+  join(u)
+  where(p.id == 1)
+end
+```
 
 ## Development
 
