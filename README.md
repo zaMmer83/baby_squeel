@@ -31,7 +31,8 @@ class ApplicationRecord < ActiveRecord::Base
 end
 
 class User < ApplicationRecord
-  has_many :articles
+  has_many :comments
+  has_many :recipes
 end
 
 class Recipe < ApplicationRecord
@@ -40,7 +41,8 @@ class Recipe < ApplicationRecord
 end
 
 class Comment < ApplicationRecord
-  belongs_to :article
+  belongs_to :recipe
+  belongs_to :user
 end
 ```
 
@@ -49,11 +51,11 @@ end
 ```ruby
 User.query do
   comments = assoc :comments, :c
-  recipes = comments.assoc :recipes, :r
+  recipes = comments.assoc :recipe, :r
 
   select id, name
   join comments
-  join recipes
+  left_join recipes
   where recipes.name == "Pasta"
   where comments.body =~ "%delicious%"
 end
@@ -61,10 +63,11 @@ end
 
 ```sql
 SELECT "users"."id", "users"."name"
-INNER JOIN "recipes" "r" ON "r"."user_id" = "users"."id"
-INNER JOIN "comments" "c" ON "c"."recipe_id" = "r"."id"
-WHERE "r"."name" = "Pasta"
-AND "c"."body" LIKE "%delicious%"
+FROM "users"
+INNER JOIN "comments" "c" ON "c"."user_id" = "users"."id"
+LEFT OUTER JOIN "recipes" "r" ON "r"."id" = "c"."recipe_id"
+WHERE "r"."name" = 'Pasta'
+AND "c"."body" LIKE '%delicious%'
 ```
 
 #### Aggregation
@@ -81,13 +84,13 @@ end
 ```
 
 ```sql
-SELECT "recipe"."user_id", COUNT("recipe"."id")
-FROM "recipe"
-WHERE "recipe"."id" > 2
-AND "recipe"."id" <= 20
-GROUP BY "recipe"."user_id"
-HAVING COUNT("recipe"."id") > 3
-ORDER BY "recipe"."user_id" DESC
+SELECT "recipes"."user_id", COUNT("recipes"."id")
+FROM "recipes"
+WHERE "recipes"."id" > 2
+AND "recipes"."id" <= 20
+GROUP BY "recipes"."user_id"
+HAVING COUNT("recipes"."id") > 3
+ORDER BY "recipes"."user_id" DESC
 ```
 
 ## Development

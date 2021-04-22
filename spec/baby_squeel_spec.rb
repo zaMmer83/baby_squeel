@@ -11,7 +11,7 @@ RSpec.describe BabySqueel do
       where id == 1
     end
 
-    expect(recipes.to_sql).to eq(<<~SQL.squish)
+    expect(recipes.to_sql).to match_sql(<<~SQL)
       SELECT "recipes"."id", "recipes"."name"
       FROM "recipes"
       WHERE "recipes"."id" = 1
@@ -23,7 +23,7 @@ RSpec.describe BabySqueel do
       join assoc(:user)
     end
 
-    expect(recipes.to_sql).to eq(<<~SQL.squish)
+    expect(recipes.to_sql).to match_sql(<<~SQL)
       SELECT "recipes".*
       FROM "recipes"
       INNER JOIN "users" ON "users"."id" = "recipes"."user_id"
@@ -35,7 +35,7 @@ RSpec.describe BabySqueel do
       join assoc(:user, :u)
     end
 
-    expect(recipes.to_sql).to eq(<<~SQL.squish)
+    expect(recipes.to_sql).to match_sql(<<~SQL)
       SELECT "recipes".*
       FROM "recipes"
       INNER JOIN "users" "u" ON "u"."id" = "recipes"."user_id"
@@ -47,7 +47,7 @@ RSpec.describe BabySqueel do
       left_join assoc(:user)
     end
 
-    expect(recipes.to_sql).to eq(<<~SQL.squish)
+    expect(recipes.to_sql).to match_sql(<<~SQL)
       SELECT "recipes".*
       FROM "recipes"
       LEFT OUTER JOIN "users" ON "users"."id" = "recipes"."user_id"
@@ -59,7 +59,7 @@ RSpec.describe BabySqueel do
       left_join assoc(:user, :u)
     end
 
-    expect(recipes.to_sql).to eq(<<~SQL.squish)
+    expect(recipes.to_sql).to match_sql(<<~SQL)
       SELECT "recipes".*
       FROM "recipes"
       LEFT OUTER JOIN "users" "u" ON "u"."id" = "recipes"."user_id"
@@ -67,22 +67,24 @@ RSpec.describe BabySqueel do
   end
 
   it "complex join" do
-    recipes = Recipe.query do
-      u = assoc(:user, :u)
-      r = u.assoc(:recipes, :r)
+    users = User.query do
+      comments = assoc :comments, :c
+      recipes = comments.assoc :recipe, :r
 
-      select id, u.id, r.id
-      join u
-      left_join r
-      where r.id == 1
+      select id, name
+      join comments
+      left_join recipes
+      where recipes.name == "Pasta"
+      where comments.body =~ "%delicious%"
     end
 
-    expect(recipes.to_sql).to eq(<<~SQL.squish)
-      SELECT "recipes"."id", "u"."id", "r"."id"
-      FROM "recipes"
-      INNER JOIN "users" "u" ON "u"."id" = "recipes"."user_id"
-      LEFT OUTER JOIN "recipes" "r" ON "r"."user_id" = "u"."id"
-      WHERE "r"."id" = 1
+    expect(users.to_sql).to match_sql(<<~SQL)
+      SELECT "users"."id", "users"."name"
+      FROM "users"
+      INNER JOIN "comments" "c" ON "c"."user_id" = "users"."id"
+      LEFT OUTER JOIN "recipes" "r" ON "r"."id" = "c"."recipe_id"
+      WHERE "r"."name" = 'Pasta'
+      AND "c"."body" LIKE '%delicious%'
     SQL
   end
 
@@ -96,7 +98,7 @@ RSpec.describe BabySqueel do
       order_by user_id.desc
     end
 
-    expect(recipes.to_sql).to eq(<<~SQL.squish)
+    expect(recipes.to_sql).to match_sql(<<~SQL)
       SELECT "recipes"."user_id", COUNT("recipes"."id")
       FROM "recipes"
       WHERE "recipes"."id" > 2
