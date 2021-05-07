@@ -54,11 +54,19 @@ module BabySqueel
 
         associations.each do |association|
           name = association._reflection.name
-          current = current.children.find { |c| c.reflection.name == name }
+          current = current.children.find { |c| c.reflection.name == name && klass_equal?(association, c) }
           break if current.nil?
         end
 
         current
+      end
+
+      # If association is not polymorphic return true.
+      # If association is polymorphic compare the association polymorphic class with the join association base_klass
+      def klass_equal?(assoc, join_association)
+        return true unless assoc._reflection.polymorphic?
+
+        assoc._polymorphic_klass == join_association.base_klass
       end
 
       def collect_joins(relation)

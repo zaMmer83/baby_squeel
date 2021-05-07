@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- Fix table alias when joining a polymorphic table twice (#108)
 - removed internal class `BabySqueel::Pluck`. You can still use `plucking`. For example, `Post.joining { author }.plucking { author.name }`
 - removed old code from activerecord < 5.2
 - removed dependency `join_dependency`
