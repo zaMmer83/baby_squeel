@@ -36,7 +36,7 @@ module BabySqueel
         # If we tell join_dependency to construct its tables, Active Record
         # handles building the correct aliases and attaching them to its
         # JoinDepenencies.
-        if ::ActiveRecord::VERSION::STRING >= '5.2.3'
+        if at_least?(5, 2, 3)
           join_dependency.send(:construct_tables!, join_dependency.send(:join_root))
         end
 
