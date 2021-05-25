@@ -96,19 +96,13 @@ module BabySqueel
 
     private
 
-    if ActiveRecord::VERSION::MAJOR >= 5
-      def build_where_clause(other)
-        if valid_where_clause?(other)
-          relation = @parent._scope.all
-          factory = relation.send(:where_clause_factory)
-          factory.build({ _reflection.name => other }, [])
-        else
-          raise AssociationComparisonError.new(_reflection.name, other)
-        end
-      end
-    else
-      def build_where_clause(_)
-        raise AssociationComparisonNotSupportedError.new(_reflection.name)
+    def build_where_clause(other)
+      if valid_where_clause?(other)
+        relation = @parent._scope.all
+        factory = relation.send(:where_clause_factory)
+        factory.build({ _reflection.name => other }, [])
+      else
+        raise AssociationComparisonError.new(_reflection.name, other)
       end
     end
 

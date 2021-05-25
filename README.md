@@ -329,7 +329,7 @@ Check out the [migration guide](https://github.com/rzane/baby_squeel/wiki/Migrat
 
 ## Development
 
-1. Pick an Active Record version to develop against, then export it: `export AR=4.2.6`.
+1. Pick an Active Record version to develop against, then export it: `export AR=5.2.0`.
 2. Run `bin/setup` to install dependencies.
 3. Run `rake` to run the specs.
 

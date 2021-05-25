@@ -40,17 +40,6 @@ module BabySqueel
           super
         end
       end
-
-      if ::ActiveRecord::VERSION::MAJOR < 5
-        # @override
-        def type_for(field)
-          if field.kind_of? Calculation
-            field
-          else
-            super
-          end
-        end
-      end
     end
   end
 end

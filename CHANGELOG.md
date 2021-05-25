@@ -1,7 +1,7 @@
 ## [Unreleased]
 
-Nothing to see here.
-- remove join_dependency dependency
+- removed old code from activerecord < 5.2
+- removed dependency `join_dependency`
 
 ## [1.4.0.beta1] - 2021-04-21
 ## Fixed

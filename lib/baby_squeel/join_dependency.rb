@@ -99,31 +99,17 @@ module BabySqueel
           relation.table.create_string_join(Arel.sql(join)) unless join.blank?
         end.compact
 
-        join_list =
-          if at_least?(5)
-            join_nodes + joins
-          else
-            relation.send(:custom_join_ast, relation.table.from(relation.table), string_joins)
-          end
+        join_list = join_nodes + joins
 
+        alias_tracker = Associations::AliasTracker.create(relation.klass.connection, relation.table.name, join_list)
         if exactly?(5, 2, 0)
-          alias_tracker = Associations::AliasTracker.create(relation.klass.connection, relation.table.name, join_list)
           join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, alias_tracker)
-          join_nodes.each do |join|
-            join_dependency.send(:alias_tracker).aliases[join.left.name.downcase] = 1
-          end
-        elsif at_least?(5, 2, 1)
-          alias_tracker = Associations::AliasTracker.create(relation.klass.connection, relation.table.name, join_list)
+        else
           join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins)
           join_dependency.instance_variable_set(:@alias_tracker, alias_tracker)
-          join_nodes.each do |join|
-            join_dependency.send(:alias_tracker).aliases[join.left.name.downcase] = 1
-          end
-        else
-          join_dependency = Associations::JoinDependency.new(relation.klass, association_joins, join_list)
-          join_nodes.each do |join|
-            join_dependency.send(:alias_tracker).aliases[join.left.name.downcase] = 1
-          end
+        end
+        join_nodes.each do |join|
+          join_dependency.send(:alias_tracker).aliases[join.left.name.downcase] = 1
         end
 
         join_dependency
@@ -135,8 +121,8 @@ module BabySqueel
 
       def at_least?(major, minor = 0, tiny = 0)
         MAJOR > major ||
-        (MAJOR == major && MINOR >= minor) ||
-        (MAJOR == major && MINOR == minor && TINY == tiny)
+          (MAJOR == major && MINOR >= minor) ||
+          (MAJOR == major && MINOR == minor && TINY == tiny)
       end
     end
   end
