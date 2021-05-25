@@ -1,6 +1,13 @@
 ## [Unreleased]
 
 Nothing to see here.
+- remove join_dependency dependency
+
+## [1.4.0.beta1] - 2021-04-21
+## Fixed
+- Add Support for activerecord '>= 5.2.3'
+- Drop Support for Active Record versions that have reached EOL (activerecord < 5.2)
+- Use polyamorous from ransack '~> 2.3'
 
 ## [1.3.1] - 2018-05-15
 ## Fixed
