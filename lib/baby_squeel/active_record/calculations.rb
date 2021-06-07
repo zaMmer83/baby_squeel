@@ -1,12 +1,10 @@
 require 'baby_squeel/calculation'
-require 'baby_squeel/pluck'
 
 module BabySqueel
   module ActiveRecord
     module Calculations
       def plucking(&block)
         nodes = Array.wrap(DSL.evaluate(self, &block))
-        nodes = nodes.map { |node| Pluck.decorate(node) }
         pluck(*nodes)
       end
 
