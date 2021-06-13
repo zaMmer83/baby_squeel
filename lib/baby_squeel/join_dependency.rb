@@ -24,9 +24,7 @@ module BabySqueel
       attr_reader :join_dependency
 
       def initialize(relation)
-        @join_dependency = from_relation(relation) do |join|
-          :association_join if join.kind_of? BabySqueel::Join
-        end
+        @join_dependency = build(relation, collect_joins(relation))
       end
 
       # Find the alias of a BabySqueel::Association, by passing
@@ -63,11 +61,7 @@ module BabySqueel
         current
       end
 
-      def from_relation(relation, &block)
-        build(relation, collect_joins(relation, &block))
-      end
-
-      def collect_joins(relation, &block)
+      def collect_joins(relation)
         joins = []
         joins += relation.joins_values
         joins += relation.left_outer_joins_values if at_least?(5)
@@ -82,8 +76,10 @@ module BabySqueel
             :stashed_join
           when Arel::Nodes::Join
             :join_node
+          when BabySqueel::Join
+            :association_join
           else
-            (block_given? && yield(join)) || raise("unknown class: %s" % join.class.name)
+            raise("unknown class: %s" % join.class.name)
           end
         end
       end
