@@ -6,12 +6,6 @@ module BabySqueel
       @node = node
     end
 
-    # This is only used in 4.2. We're just pretending to be
-    # a database column to fake the casting here.
-    def type_cast_from_database(value)
-      value
-    end
-
     # In Active Record 5, we don't *need* this class to make
     # calculations work. They happily accept arel. However,
     # when grouping with a calculation, there's a really,

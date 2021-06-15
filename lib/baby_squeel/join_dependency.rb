@@ -24,9 +24,7 @@ module BabySqueel
       attr_reader :join_dependency
 
       def initialize(relation)
-        @join_dependency = from_relation(relation) do |join|
-          :association_join if join.kind_of? BabySqueel::Join
-        end
+        @join_dependency = build(relation, collect_joins(relation))
       end
 
       # Find the alias of a BabySqueel::Association, by passing
@@ -63,11 +61,7 @@ module BabySqueel
         current
       end
 
-      def from_relation(relation, &block)
-        build(relation, collect_joins(relation, &block))
-      end
-
-      def collect_joins(relation, &block)
+      def collect_joins(relation)
         joins = []
         joins += relation.joins_values
         joins += relation.left_outer_joins_values if at_least?(5)
@@ -82,8 +76,10 @@ module BabySqueel
             :stashed_join
           when Arel::Nodes::Join
             :join_node
+          when BabySqueel::Join
+            :association_join
           else
-            (block_given? && yield(join)) || raise("unknown class: %s" % join.class.name)
+            raise("unknown class: %s" % join.class.name)
           end
         end
       end
@@ -99,31 +95,17 @@ module BabySqueel
           relation.table.create_string_join(Arel.sql(join)) unless join.blank?
         end.compact
 
-        join_list =
-          if at_least?(5)
-            join_nodes + joins
-          else
-            relation.send(:custom_join_ast, relation.table.from(relation.table), string_joins)
-          end
+        join_list = join_nodes + joins
 
+        alias_tracker = Associations::AliasTracker.create(relation.klass.connection, relation.table.name, join_list)
         if exactly?(5, 2, 0)
-          alias_tracker = Associations::AliasTracker.create(relation.klass.connection, relation.table.name, join_list)
           join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, alias_tracker)
-          join_nodes.each do |join|
-            join_dependency.send(:alias_tracker).aliases[join.left.name.downcase] = 1
-          end
-        elsif at_least?(5, 2, 1)
-          alias_tracker = Associations::AliasTracker.create(relation.klass.connection, relation.table.name, join_list)
+        else
           join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins)
           join_dependency.instance_variable_set(:@alias_tracker, alias_tracker)
-          join_nodes.each do |join|
-            join_dependency.send(:alias_tracker).aliases[join.left.name.downcase] = 1
-          end
-        else
-          join_dependency = Associations::JoinDependency.new(relation.klass, association_joins, join_list)
-          join_nodes.each do |join|
-            join_dependency.send(:alias_tracker).aliases[join.left.name.downcase] = 1
-          end
+        end
+        join_nodes.each do |join|
+          join_dependency.send(:alias_tracker).aliases[join.left.name.downcase] = 1
         end
 
         join_dependency
@@ -135,8 +117,8 @@ module BabySqueel
 
       def at_least?(major, minor = 0, tiny = 0)
         MAJOR > major ||
-        (MAJOR == major && MINOR >= minor) ||
-        (MAJOR == major && MINOR == minor && TINY == tiny)
+          (MAJOR == major && MINOR >= minor) ||
+          (MAJOR == major && MINOR == minor && TINY == tiny)
       end
     end
   end
