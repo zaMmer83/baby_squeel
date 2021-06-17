@@ -1,9 +1,11 @@
 ## [Unreleased]
 
+## [1.4.0] - 2021-06-17
+## Fixed
 - Fix table alias when joining a polymorphic table twice (#108)
-- removed internal class `BabySqueel::Pluck`. You can still use `plucking`. For example, `Post.joining { author }.plucking { author.name }`
-- removed old code from activerecord < 5.2
-- removed dependency `join_dependency`
+- Removed internal class `BabySqueel::Pluck`. You can still use `plucking`. For example, `Post.joining { author }.plucking { author.name }`
+- Removed old code from Active Record < 5.2
+- Removed dependency `join_dependency`
 
 ## [1.4.0.beta1] - 2021-04-21
 ## Fixed
@@ -148,7 +150,9 @@
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/rzane/baby_squeel/compare/v1.4.0.beta1...v1.4.0
+[1.4.0.beta1]: https://github.com/rzane/baby_squeel/compare/v1.3.1...v1.4.0.beta1
 [1.3.1]: https://github.com/rzane/baby_squeel/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/rzane/baby_squeel/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/rzane/baby_squeel/compare/v1.2.0...v1.2.1
