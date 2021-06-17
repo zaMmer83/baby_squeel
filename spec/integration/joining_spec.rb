@@ -132,6 +132,13 @@ describe '#joining' do
 
         expect(relation).to match_sql_snapshot
       end
+
+      it 'double polymorphic joining' do
+        join_scope = Picture.joining { [imageable.of(Author), imageable.of(Post)] }
+        relation = join_scope.where.has { imageable.of(Author).name.eq('NameOfTheAuthor').or(imageable.of(Post).title.eq('NameOfThePost')) }
+
+        expect(relation).to match_sql_snapshot
+      end
     end
 
     describe 'habtm' do
