@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [1.4.1] - 2021-06-17
+## Fixed
+- Fixed a bug related to checking the Active Record version.
+
 ## [1.4.0] - 2021-06-17
 ## Fixed
 - Fix table alias when joining a polymorphic table twice (#108)
@@ -150,7 +154,8 @@
 ### Added
 - Initial support for selects, orders, wheres, and joins.
 
-[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/rzane/baby_squeel/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/rzane/baby_squeel/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/rzane/baby_squeel/compare/v1.4.0.beta1...v1.4.0
 [1.4.0.beta1]: https://github.com/rzane/baby_squeel/compare/v1.3.1...v1.4.0.beta1
 [1.3.1]: https://github.com/rzane/baby_squeel/compare/v1.3.0...v1.3.1

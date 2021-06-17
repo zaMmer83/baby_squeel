@@ -34,7 +34,7 @@ module BabySqueel
         # If we tell join_dependency to construct its tables, Active Record
         # handles building the correct aliases and attaching them to its
         # JoinDepenencies.
-        if at_least?(5, 2, 3)
+        if at_least?("5.2.3")
           join_dependency.send(:construct_tables!, join_dependency.send(:join_root))
         end
 
@@ -44,9 +44,6 @@ module BabySqueel
 
       private
 
-      MAJOR = ::ActiveRecord::VERSION::MAJOR
-      MINOR = ::ActiveRecord::VERSION::MINOR
-      TINY = ::ActiveRecord::VERSION::TINY
       Associations = ::ActiveRecord::Associations
 
       def find_join_association(associations)
@@ -72,7 +69,7 @@ module BabySqueel
       def collect_joins(relation)
         joins = []
         joins += relation.joins_values
-        joins += relation.left_outer_joins_values if at_least?(5)
+        joins += relation.left_outer_joins_values if at_least?("5")
 
         buckets = joins.group_by do |join|
           case join
@@ -106,7 +103,7 @@ module BabySqueel
         join_list = join_nodes + joins
 
         alias_tracker = Associations::AliasTracker.create(relation.klass.connection, relation.table.name, join_list)
-        if exactly?(5, 2, 0)
+        if exactly?("5.2.0")
           join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, alias_tracker)
         else
           join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins)
@@ -119,14 +116,12 @@ module BabySqueel
         join_dependency
       end
 
-      def exactly?(major, minor = 0, tiny = 0)
-        MAJOR == major && MINOR == minor && TINY == tiny
+      def exactly?(version)
+        ::ActiveRecord.gem_version == Gem::Version.new(version)
       end
 
-      def at_least?(major, minor = 0, tiny = 0)
-        MAJOR > major ||
-          (MAJOR == major && MINOR >= minor) ||
-          (MAJOR == major && MINOR == minor && TINY == tiny)
+      def at_least?(version)
+        ::ActiveRecord.gem_version >= Gem::Version.new(version)
       end
     end
   end
