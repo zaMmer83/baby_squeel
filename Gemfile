@@ -6,10 +6,18 @@ gemspec
 case ENV.fetch('AR', 'latest')
 when 'latest'
   gem 'activerecord'
+  gem 'sqlite3', '~> 1.4'
 when 'master'
   gem 'activerecord', github: 'rails/rails'
+  gem 'sqlite3', '~> 1.4'
 else
   gem 'activerecord', ENV['AR']
+
+  if Gem::Version.new(ENV['AR']) < Gem::Version.new('5.2.3')
+    gem 'sqlite3', '~> 1.3.6'
+  else
+    gem 'sqlite3', '~> 1.4'
+  end
 end
 
 case ENV.fetch('RANSACK', 'latest')

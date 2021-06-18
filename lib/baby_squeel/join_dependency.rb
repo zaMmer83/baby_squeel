@@ -2,7 +2,7 @@ module BabySqueel
   module JoinDependency
     # This class allows BabySqueel to slip custom
     # joins_values into Active Record's JoinDependency
-    class Injector < Array # :nodoc:
+    class Injector5_2 < Array # :nodoc:
       # Active Record will call group_by on this object
       # in ActiveRecord::QueryMethods#build_joins. This
       # allows BabySqueel::Joins to be treated
@@ -15,6 +15,29 @@ module BabySqueel
             :association_join
           else
             yield join
+          end
+        end
+      end
+    end
+
+    # This class allows BabySqueel to slip custom
+    # joins_values into Active Record's JoinDependency
+    class Injector6_0 < Array # :nodoc:
+      # https://github.com/rails/rails/pull/36805/files
+      # This commit changed group_by to each
+      def each(&block)
+        super do |join|
+          if block.binding.local_variables.include?(:buckets)
+            buckets = block.binding.local_variable_get(:buckets)
+
+            case join
+            when BabySqueel::Join
+              buckets[:association_join] << join
+            else
+              block.call(join)
+            end
+          else
+            block.call(join)
           end
         end
       end
@@ -105,6 +128,9 @@ module BabySqueel
         alias_tracker = Associations::AliasTracker.create(relation.klass.connection, relation.table.name, join_list)
         if exactly?("5.2.0")
           join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, alias_tracker)
+        elsif at_least?("6.0.0")
+          join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, Arel::Nodes::InnerJoin)
+          join_dependency.instance_variable_set(:@alias_tracker, alias_tracker)
         else
           join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins)
           join_dependency.instance_variable_set(:@alias_tracker, alias_tracker)

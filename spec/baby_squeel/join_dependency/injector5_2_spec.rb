@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BabySqueel::JoinDependency::Injector do
+describe BabySqueel::JoinDependency::Injector5_2 do
   let(:join_path) {
     BabySqueel::Join.new([])
   }
