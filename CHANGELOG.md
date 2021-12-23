@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- add support for activerecord 6.1
 - add support for activerecord 6.0
 
 ## [1.4.1] - 2021-06-17

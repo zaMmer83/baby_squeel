@@ -1,9 +1,26 @@
 require 'baby_squeel/dsl'
 require 'baby_squeel/join_dependency'
+require 'baby_squeel/active_record/version_helper'
 
 module BabySqueel
   module ActiveRecord
     module QueryMethods
+      # This class allows BabySqueel to slip custom
+      # joins_values into Active Record's JoinDependency
+      module Injector6_1
+        def each(&block)
+          super do |join|
+            if join.is_a?(BabySqueel::Join)
+              result = block.binding.local_variables.include?(:result) && block.binding.local_variable_get(:result)
+              result << join if result
+              join
+            else
+              block.call(join)
+            end
+          end
+        end
+      end
+
       # Constructs Arel for ActiveRecord::QueryMethods#joins using the DSL.
       def joining(&block)
         joins DSL.evaluate(self, &block)
@@ -36,25 +53,33 @@ module BabySqueel
 
       private
 
+      if BabySqueel::ActiveRecord::VersionHelper.at_least?("6.1")
+        # https://github.com/rails/rails/commit/c0c53ee9d28134757cf1418521cb97c4a135f140
+        def select_association_list(*args)
+          args[0].extend(BabySqueel::ActiveRecord::QueryMethods::Injector6_1)
+          super *args
+        end
+
+        def construct_join_dependency(associations, join_type)
+          super(associations, join_type).extend(BabySqueel::JoinDependency::Injector6_1)
+        end
+      end
+
       # This is a monkey patch, and I'm not happy about it.
       def build_joins(*args)
-        if ::ActiveRecord::VERSION::MAJOR == 5 && ::ActiveRecord::VERSION::MINOR == 2
+        if BabySqueel::ActiveRecord::VersionHelper.is?(5, 2)
           # Active Record will call `group_by` on the `joins`. The
           # Injector has a custom `group_by` method that handles
           # BabySqueel::Join nodes.
           args[1] = BabySqueel::JoinDependency::Injector5_2.new(args.second)
-        elsif ::ActiveRecord::VERSION::MAJOR == 6 && ::ActiveRecord::VERSION::MINOR == 0
+        elsif BabySqueel::ActiveRecord::VersionHelper.is?(6, 0)
           # Active Record will call `each` on the `joins`. The
           # Injector has a custom `each` method that handles
           # BabySqueel::Join nodes.
           args[1] = BabySqueel::JoinDependency::Injector6_0.new(args.second)
         else
-          # Please help baby_squeel to get ready for Rails 6.1.
-          # I think you can start at this commits:
-          # https://github.com/rails/rails/commit/c0c53ee9d28134757cf1418521cb97c4a135f140
-          # https://github.com/rails/rails/commit/f799f019641f432e9d1260e38846129b40f81d28
-          # We might monkey patch select_association_list instead of build_joins.
-          raise('This method or the Injector probably need to change')
+          # This 'fix' is moved to:
+          # BabySqueel::ActiveRecord::QueryMethods#select_association_list
         end
 
         super *args

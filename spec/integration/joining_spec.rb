@@ -73,7 +73,7 @@ describe '#joining' do
     it 'merges bind values' do
       relation = Post.joining { ugly_author_comments }
 
-      expect(relation).to match_sql_snapshot(variants: ['5.2.0', '6.0'])
+      expect(relation).to match_sql_snapshot(variants: ['5.2.0', '6.0', '6.1'])
     end
 
     context 'with complex conditions' do
@@ -157,7 +157,8 @@ describe '#joining' do
       end
 
       it 'outer joins' do
-        if ActiveRecord::VERSION::STRING >= '5.2.3'
+        if BabySqueel::ActiveRecord::VersionHelper.at_least?("5.2.3") &&
+          !BabySqueel::ActiveRecord::VersionHelper.at_least?("6.1")
           pending "This feature is known to be broken"
         end
 
@@ -206,7 +207,7 @@ describe '#joining' do
       end
 
       it 'joins a through association and then back again' do
-        if ActiveRecord::VERSION::STRING >= '5.2.3'
+        if BabySqueel::ActiveRecord::VersionHelper.at_least?("5.2.3")
           pending "This feature is known to be broken"
         end
 
