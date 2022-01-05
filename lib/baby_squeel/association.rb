@@ -101,7 +101,7 @@ module BabySqueel
       if valid_where_clause?(other)
         relation = @parent._scope.all
 
-        if BabySqueel::ActiveRecord::VersionHelper.at_least?("6.1")
+        if BabySqueel::ActiveRecord::VersionHelper.at_least_6_1?
           relation.send(:build_where_clause, { _reflection.name => other }, [])
         else
           factory = relation.send(:where_clause_factory)

@@ -157,8 +157,8 @@ describe '#joining' do
       end
 
       it 'outer joins' do
-        if BabySqueel::ActiveRecord::VersionHelper.at_least?("5.2.3") &&
-          !BabySqueel::ActiveRecord::VersionHelper.at_least?("6.1")
+        if BabySqueel::ActiveRecord::VersionHelper.at_least_5_2_3? &&
+          !BabySqueel::ActiveRecord::VersionHelper.at_least_6_1?
           pending "This feature is known to be broken"
         end
 
@@ -207,7 +207,7 @@ describe '#joining' do
       end
 
       it 'joins a through association and then back again' do
-        if BabySqueel::ActiveRecord::VersionHelper.at_least?("5.2.3")
+        if BabySqueel::ActiveRecord::VersionHelper.at_least_5_2_3?
           pending "This feature is known to be broken"
         end
 

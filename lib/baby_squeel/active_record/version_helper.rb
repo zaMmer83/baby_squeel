@@ -3,16 +3,18 @@ require 'baby_squeel/dsl'
 module BabySqueel
   module ActiveRecord
     class VersionHelper
-      def self.exactly?(version)
-        ::ActiveRecord.gem_version == Gem::Version.new(version)
+      def self.at_least_6_1?
+        ::ActiveRecord::VERSION::MAJOR > 6 ||
+          ::ActiveRecord::VERSION::MAJOR == 6 && ::ActiveRecord::VERSION::MINOR >= 1
       end
 
-      def self.at_least?(version)
-        ::ActiveRecord.gem_version >= Gem::Version.new(version)
+      def self.at_least_6_0?
+        ::ActiveRecord::VERSION::MAJOR >= 6
       end
 
-      def self.is?(major, minor)
-        ::ActiveRecord::VERSION::MAJOR == major && ::ActiveRecord::VERSION::MINOR == minor
+      def self.at_least_5_2_3?
+        at_least_6_0? ||
+          ::ActiveRecord::VERSION::MAJOR >= 5 && ::ActiveRecord::VERSION::MINOR >= 2 && ::ActiveRecord::VERSION::TINY >= 3
       end
     end
   end
