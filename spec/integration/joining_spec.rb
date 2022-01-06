@@ -73,7 +73,7 @@ describe '#joining' do
     it 'merges bind values' do
       relation = Post.joining { ugly_author_comments }
 
-      expect(relation).to match_sql_snapshot(variants: ['5.2.0', '6.0', '6.1'])
+      expect(relation).to match_sql_snapshot(variants: ['5.2.0', '6.0', '6.1', '7.0'])
     end
 
     context 'with complex conditions' do

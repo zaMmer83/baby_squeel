@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- add support for activerecord 7.0
 - add support for activerecord 6.1
 - add support for activerecord 6.0
 
