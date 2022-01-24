@@ -13,7 +13,7 @@ when 'master'
 else
   gem 'activerecord', ENV['AR']
 
-  if Gem::Version.new(ENV['AR']) < Gem::Version.new('5.2.3')
+  if ENV['AR'] == '5.2.0'
     gem 'sqlite3', '~> 1.3.6'
   else
     gem 'sqlite3', '~> 1.4'

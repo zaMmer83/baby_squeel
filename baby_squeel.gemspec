@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir.glob('{lib/**/*,*.{md,txt,gemspec}}')
 
-  spec.add_dependency 'activerecord', '>= 5.2', '< 6.1'
+  spec.add_dependency 'activerecord', '>= 5.2', '< 7.1'
   spec.add_dependency 'ransack', '~> 2.3'
 
   spec.add_development_dependency 'bundler', '~> 2'

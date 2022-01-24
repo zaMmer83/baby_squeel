@@ -107,3 +107,9 @@
   AND "pictures"."imageable_type" = 'Author' INNER JOIN "posts" ON "posts"."id" =
   "pictures"."imageable_id" AND "pictures"."imageable_type" = 'Post' WHERE ("authors"."name"
   = 'NameOfTheAuthor' OR "posts"."title" = 'NameOfThePost')
+"#joining when joining explicitly merges bind values 1 (Active Record: v6.1)": SELECT
+  "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."ugly" = 1 AND "authors"."id"
+  = "posts"."author_id" INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+"#joining when joining explicitly merges bind values 1 (Active Record: v7.0)": SELECT
+  "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."ugly" = 1 AND "authors"."id"
+  = "posts"."author_id" INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"

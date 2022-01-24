@@ -1,3 +1,5 @@
+require 'baby_squeel/active_record/version_helper'
+
 module BabySqueel
   module JoinDependency
     # This class allows BabySqueel to slip custom
@@ -43,6 +45,16 @@ module BabySqueel
       end
     end
 
+    # This is a 'fix' for the left outer joins
+    # rails way would be to call left_outer_joins so the join_type gets set to Arel::Nodes::OuterJoin
+    # Maybe this could be fixed in joining but I do not know how.
+    module Injector6_1 # :nodoc:
+      def make_constraints(parent, child, join_type) # :nodoc:
+        join_type = child.join_type if child.join_type
+        super(parent, child, join_type)
+      end
+    end
+
     class Builder # :nodoc:
       attr_reader :join_dependency
 
@@ -54,10 +66,19 @@ module BabySqueel
       # a list (in order of chaining) of associations and finding
       # the respective JoinAssociation at each level.
       def find_alias(associations)
-        # If we tell join_dependency to construct its tables, Active Record
-        # handles building the correct aliases and attaching them to its
-        # JoinDepenencies.
-        if at_least?("5.2.3")
+        if BabySqueel::ActiveRecord::VersionHelper.at_least_6_1?
+          # construct_tables! got removed by rails
+          # https://github.com/rails/rails/commit/590b045ee2c0906ff162e6658a184afb201865d7
+          #
+          # construct_tables_for_association! is a method from the polyamorous (ransack) gem
+          join_root = join_dependency.send(:join_root)
+          join_root.each_children do |parent, child|
+            join_dependency.construct_tables_for_association!(parent, child)
+          end
+        elsif BabySqueel::ActiveRecord::VersionHelper.at_least_5_2_3?
+          # If we tell join_dependency to construct its tables, Active Record
+          # handles building the correct aliases and attaching them to its
+          # JoinDepenencies.
           join_dependency.send(:construct_tables!, join_dependency.send(:join_root))
         end
 
@@ -92,7 +113,7 @@ module BabySqueel
       def collect_joins(relation)
         joins = []
         joins += relation.joins_values
-        joins += relation.left_outer_joins_values if at_least?("5")
+        joins += relation.left_outer_joins_values
 
         buckets = joins.group_by do |join|
           case join
@@ -126,28 +147,21 @@ module BabySqueel
         join_list = join_nodes + joins
 
         alias_tracker = Associations::AliasTracker.create(relation.klass.connection, relation.table.name, join_list)
-        if exactly?("5.2.0")
-          join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, alias_tracker)
-        elsif at_least?("6.0.0")
+        if BabySqueel::ActiveRecord::VersionHelper.at_least_6_0?
           join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, Arel::Nodes::InnerJoin)
           join_dependency.instance_variable_set(:@alias_tracker, alias_tracker)
-        else
+        elsif BabySqueel::ActiveRecord::VersionHelper.at_least_5_2_3?
           join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins)
           join_dependency.instance_variable_set(:@alias_tracker, alias_tracker)
+        else
+          # Rails 5.2.0 - 5.2.2
+          join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, alias_tracker)
         end
         join_nodes.each do |join|
           join_dependency.send(:alias_tracker).aliases[join.left.name.downcase] = 1
         end
 
         join_dependency
-      end
-
-      def exactly?(version)
-        ::ActiveRecord.gem_version == Gem::Version.new(version)
-      end
-
-      def at_least?(version)
-        ::ActiveRecord.gem_version >= Gem::Version.new(version)
       end
     end
   end
