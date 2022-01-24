@@ -63,28 +63,22 @@ module BabySqueel
         def construct_join_dependency(associations, join_type)
           super(associations, join_type).extend(BabySqueel::JoinDependency::Injector6_1)
         end
-      end
-
-      # This is a monkey patch, and I'm not happy about it.
-      def build_joins(*args)
-        if BabySqueel::ActiveRecord::VersionHelper.at_least_6_1?
-          # This 'fix' is moved to:
-          # BabySqueel::ActiveRecord::QueryMethods#select_association_list
-        elsif BabySqueel::ActiveRecord::VersionHelper.at_least_6_0?
-          # Active Record will call `each` on the `joins`. The
-          # Injector has a custom `each` method that handles
-          # BabySqueel::Join nodes.
+      elsif BabySqueel::ActiveRecord::VersionHelper.at_least_6_0?
+        # Active Record will call `each` on the `joins`. The
+        # Injector has a custom `each` method that handles
+        # BabySqueel::Join nodes.
+        def build_joins(*args)
           args[1] = BabySqueel::JoinDependency::Injector6_0.new(args.second)
-        else
-          # Rails 5.2
-
-          # Active Record will call `group_by` on the `joins`. The
-          # Injector has a custom `group_by` method that handles
-          # BabySqueel::Join nodes.
-          args[1] = BabySqueel::JoinDependency::Injector5_2.new(args.second)
+          super(*args)
         end
-
-        super *args
+      else
+        # Active Record will call `group_by` on the `joins`. The
+        # Injector has a custom `group_by` method that handles
+        # BabySqueel::Join nodes.
+        def build_joins(*args)
+          args[1] = BabySqueel::JoinDependency::Injector5_2.new(args.second)
+          super(*args)
+        end
       end
     end
   end
