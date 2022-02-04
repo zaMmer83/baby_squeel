@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [1.4.3] - 2022-02-04
+
+### Fixed
+
+- ActiveRecord::Relation#left_joins performs INNER JOIN on Active Record 6.1 (#118)
+
 ## [1.4.2] - 2022-01-24
 
 ### Fixed
@@ -219,7 +225,8 @@
 
 - Initial support for selects, orders, wheres, and joins.
 
-[unreleased]: https://github.com/rzane/baby_squeel/compare/v1.4.2...HEAD
+[unreleased]: https://github.com/rzane/baby_squeel/compare/v1.4.3...HEAD
+[1.4.3]: https://github.com/rzane/baby_squeel/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/rzane/baby_squeel/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/rzane/baby_squeel/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/rzane/baby_squeel/compare/v1.4.0.beta1...v1.4.0
