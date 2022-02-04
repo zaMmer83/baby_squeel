@@ -38,8 +38,6 @@
 "#joining when joining explicitly with complex conditions outer joins 1": SELECT "posts".*
   FROM "posts" LEFT OUTER JOIN "authors" ON ("posts"."author_id" = "authors"."id"
   AND "authors"."id" != 5 OR "authors"."name" IS NULL)
-"#joining when joining implicitly outer joins 1": SELECT "posts".* FROM "posts" LEFT
-  OUTER JOIN "authors" ON "authors"."id" = "posts"."author_id"
 "#joining when joining implicitly correctly aliases when joining the same table twice 1": SELECT
   "posts".* FROM "posts" LEFT OUTER JOIN "authors" ON "authors"."id" = "posts"."author_id"
   LEFT OUTER JOIN "posts" "parents_posts" ON "parents_posts"."id" = "posts"."parent_id"
@@ -113,3 +111,10 @@
 "#joining when joining explicitly merges bind values 1 (Active Record: v7.0)": SELECT
   "posts".* FROM "posts" INNER JOIN "authors" ON "authors"."ugly" = 1 AND "authors"."id"
   = "posts"."author_id" INNER JOIN "comments" ON "comments"."author_id" = "authors"."id"
+"#joining when joining implicitly inner joins 1": SELECT "posts".* FROM "posts" INNER
+  JOIN "authors" ON "authors"."id" = "posts"."author_id"
+"#joining when joining implicitly outer joins single 1": SELECT "posts".* FROM "posts"
+  LEFT OUTER JOIN "authors" ON "authors"."id" = "posts"."author_id"
+"#joining when joining implicitly outer joins multi 1": SELECT "posts".* FROM "posts"
+  LEFT OUTER JOIN "posts" "parents_posts" ON "parents_posts"."id" = "posts"."parent_id"
+  LEFT OUTER JOIN "authors" ON "authors"."id" = "posts"."author_id"

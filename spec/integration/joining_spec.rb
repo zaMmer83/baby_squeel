@@ -102,13 +102,31 @@ describe '#joining' do
   context 'when joining implicitly' do
     it 'inner joins' do
       relation = Post.joining { author }
+
+      expect(relation).to match_sql_snapshot
       expect(relation).to produce_sql(Post.joins(:author))
     end
 
-    it 'outer joins' do
-      relation = Post.joining { author.outer }
+    context 'outer joins' do
+      it 'single' do
+        relation = Post.joining { author.outer }
 
-      expect(relation).to match_sql_snapshot
+        expect(relation).to match_sql_snapshot
+        expect(relation).to produce_sql(Post.left_joins(:author))
+      end
+
+      it 'multi' do
+        relation = Post.joining { parent.outer }.joining { author.outer }
+
+        expect(relation).to match_sql_snapshot
+        expect(relation).to produce_sql(Post.joining { [parent.outer, author.outer] })
+        expect(relation).to produce_sql(Post.left_joins(:parent).left_joins(:author))
+        expect(relation).to produce_sql(Post.joining { parent.outer }.left_joins(:author))
+
+        # The order is different left_joins are at the end
+        relation = Post.joining { [author.outer, parent.outer] }
+        expect(relation).to produce_sql(Post.left_joins(:parent).joining { author.outer })
+      end
     end
 
     it 'correctly aliases when joining the same table twice' do
@@ -154,11 +172,11 @@ describe '#joining' do
         relation = Post.joining { author.comments }
 
         expect(relation).to match_sql_snapshot
+        expect(relation).to produce_sql(Post.joins(author: :comments))
       end
 
       it 'outer joins' do
-        if BabySqueel::ActiveRecord::VersionHelper.at_least_5_2_3? &&
-          !BabySqueel::ActiveRecord::VersionHelper.at_least_6_1?
+        if BabySqueel::ActiveRecord::VersionHelper.at_least_5_2_3?
           pending "This feature is known to be broken"
         end
 
@@ -177,6 +195,7 @@ describe '#joining' do
         relation = Post.joining { author.outer.comments.outer }
 
         expect(relation).to match_sql_snapshot
+        expect(relation).to produce_sql(Post.left_joins(author: :comments))
       end
 
       it 'outer joins only the specified associations' do
@@ -188,6 +207,7 @@ describe '#joining' do
       it 'joins back with a new alias' do
         baby_squeel = Post.joining { author.posts }
         active_record = Post.joins(author: :posts)
+
         expect(baby_squeel).to produce_sql(active_record)
       end
 
@@ -202,7 +222,7 @@ describe '#joining' do
 
       it 'joins a through association' do
         baby_squeel = Post.joining { author.posts.author_comments }
-        active_record = Post.joins(author: { posts: :author_comments})
+        active_record = Post.joins(author: { posts: :author_comments })
         expect(baby_squeel).to produce_sql(active_record)
       end
 
