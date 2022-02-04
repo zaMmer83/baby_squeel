@@ -61,7 +61,11 @@ module BabySqueel
         end
 
         def construct_join_dependency(associations, join_type)
-          super(associations, join_type).extend(BabySqueel::JoinDependency::Injector6_1)
+          result = super(associations, join_type)
+          if associations.any? { |assoc| assoc.is_a?(BabySqueel::Join) }
+            result.extend(BabySqueel::JoinDependency::Injector6_1)
+          end
+          result
         end
       elsif BabySqueel::ActiveRecord::VersionHelper.at_least_6_0?
         # Active Record will call `each` on the `joins`. The

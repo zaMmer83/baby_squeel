@@ -50,7 +50,7 @@ module BabySqueel
     # Maybe this could be fixed in joining but I do not know how.
     module Injector6_1 # :nodoc:
       def make_constraints(parent, child, join_type) # :nodoc:
-        join_type = child.join_type if child.join_type
+        join_type = child.join_type if child.join_type == Arel::Nodes::OuterJoin
         super(parent, child, join_type)
       end
     end
