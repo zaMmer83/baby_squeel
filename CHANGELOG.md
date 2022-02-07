@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Fixed
+
+-  Nested merge-joins query causes NoMethodError with ActiveRecord 6.1.4.4 #119
+
 ## [1.4.3] - 2022-02-04
 
 ### Fixed

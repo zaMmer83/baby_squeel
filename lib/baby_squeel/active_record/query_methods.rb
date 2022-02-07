@@ -51,15 +51,7 @@ module BabySqueel
         having DSL.evaluate(self, &block)
       end
 
-      private
-
       if BabySqueel::ActiveRecord::VersionHelper.at_least_6_1?
-        # https://github.com/rails/rails/commit/c0c53ee9d28134757cf1418521cb97c4a135f140
-        def select_association_list(*args)
-          args[0].extend(BabySqueel::ActiveRecord::QueryMethods::Injector6_1)
-          super *args
-        end
-
         def construct_join_dependency(associations, join_type)
           result = super(associations, join_type)
           if associations.any? { |assoc| assoc.is_a?(BabySqueel::Join) }
@@ -67,7 +59,17 @@ module BabySqueel
           end
           result
         end
+
+        private
+
+        # https://github.com/rails/rails/commit/c0c53ee9d28134757cf1418521cb97c4a135f140
+        def select_association_list(*args)
+          args[0].extend(BabySqueel::ActiveRecord::QueryMethods::Injector6_1)
+          super *args
+        end
       elsif BabySqueel::ActiveRecord::VersionHelper.at_least_6_0?
+        private
+
         # Active Record will call `each` on the `joins`. The
         # Injector has a custom `each` method that handles
         # BabySqueel::Join nodes.
@@ -76,6 +78,8 @@ module BabySqueel
           super(*args)
         end
       else
+        private
+
         # Active Record will call `group_by` on the `joins`. The
         # Injector has a custom `group_by` method that handles
         # BabySqueel::Join nodes.
