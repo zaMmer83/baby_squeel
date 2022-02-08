@@ -1,8 +1,10 @@
 ## [Unreleased]
 
+## [1.4.4] - 2022-02-07
+
 ### Fixed
 
--  Nested merge-joins query causes NoMethodError with ActiveRecord 6.1.4.4 #119
+- Nested merge-joins query causes NoMethodError with ActiveRecord 6.1.4.4 (#119)
 
 ## [1.4.3] - 2022-02-04
 
@@ -229,7 +231,8 @@
 
 - Initial support for selects, orders, wheres, and joins.
 
-[unreleased]: https://github.com/rzane/baby_squeel/compare/v1.4.3...HEAD
+[unreleased]: https://github.com/rzane/baby_squeel/compare/v1.4.4...HEAD
+[1.4.4]: https://github.com/rzane/baby_squeel/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/rzane/baby_squeel/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/rzane/baby_squeel/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/rzane/baby_squeel/compare/v1.4.0...v1.4.1
