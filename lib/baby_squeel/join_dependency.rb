@@ -4,26 +4,6 @@ module BabySqueel
   module JoinDependency
     # This class allows BabySqueel to slip custom
     # joins_values into Active Record's JoinDependency
-    class Injector5_2 < Array # :nodoc:
-      # Active Record will call group_by on this object
-      # in ActiveRecord::QueryMethods#build_joins. This
-      # allows BabySqueel::Joins to be treated
-      # like typical join hashes until Polyamorous can
-      # deal with them.
-      def group_by
-        super do |join|
-          case join
-          when BabySqueel::Join
-            :association_join
-          else
-            yield join
-          end
-        end
-      end
-    end
-
-    # This class allows BabySqueel to slip custom
-    # joins_values into Active Record's JoinDependency
     class Injector6_0 < Array # :nodoc:
       # https://github.com/rails/rails/pull/36805/files
       # This commit changed group_by to each
@@ -75,7 +55,7 @@ module BabySqueel
           join_root.each_children do |parent, child|
             join_dependency.construct_tables_for_association!(parent, child)
           end
-        elsif BabySqueel::ActiveRecord::VersionHelper.at_least_5_2_3?
+        else
           # If we tell join_dependency to construct its tables, Active Record
           # handles building the correct aliases and attaching them to its
           # JoinDepenencies.
@@ -147,16 +127,9 @@ module BabySqueel
         join_list = join_nodes + joins
 
         alias_tracker = Associations::AliasTracker.create(relation.klass.connection, relation.table.name, join_list)
-        if BabySqueel::ActiveRecord::VersionHelper.at_least_6_0?
-          join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, Arel::Nodes::InnerJoin)
-          join_dependency.instance_variable_set(:@alias_tracker, alias_tracker)
-        elsif BabySqueel::ActiveRecord::VersionHelper.at_least_5_2_3?
-          join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins)
-          join_dependency.instance_variable_set(:@alias_tracker, alias_tracker)
-        else
-          # Rails 5.2.0 - 5.2.2
-          join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, alias_tracker)
-        end
+        join_dependency = Associations::JoinDependency.new(relation.klass, relation.table, association_joins, Arel::Nodes::InnerJoin)
+        join_dependency.instance_variable_set(:@alias_tracker, alias_tracker)
+
         join_nodes.each do |join|
           join_dependency.send(:alias_tracker).aliases[join.left.name.downcase] = 1
         end
