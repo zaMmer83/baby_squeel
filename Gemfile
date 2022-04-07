@@ -13,11 +13,7 @@ when 'master'
 else
   gem 'activerecord', ENV['AR']
 
-  if ENV['AR'] == '5.2.0'
-    gem 'sqlite3', '~> 1.3.6'
-  else
-    gem 'sqlite3', '~> 1.4'
-  end
+  gem 'sqlite3', '~> 1.4'
 end
 
 case ENV.fetch('RANSACK', 'latest')

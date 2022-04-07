@@ -67,7 +67,7 @@ module BabySqueel
           args[0].extend(BabySqueel::ActiveRecord::QueryMethods::Injector6_1)
           super *args
         end
-      elsif BabySqueel::ActiveRecord::VersionHelper.at_least_6_0?
+      else
         private
 
         # Active Record will call `each` on the `joins`. The
@@ -75,16 +75,6 @@ module BabySqueel
         # BabySqueel::Join nodes.
         def build_joins(*args)
           args[1] = BabySqueel::JoinDependency::Injector6_0.new(args.second)
-          super(*args)
-        end
-      else
-        private
-
-        # Active Record will call `group_by` on the `joins`. The
-        # Injector has a custom `group_by` method that handles
-        # BabySqueel::Join nodes.
-        def build_joins(*args)
-          args[1] = BabySqueel::JoinDependency::Injector5_2.new(args.second)
           super(*args)
         end
       end
