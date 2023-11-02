@@ -1,4 +1,7 @@
 ## [Unreleased]
+- Drop support for ActiveRecord 6.0.
+
+## [2.0.0] - 2022-08-28
 
 - AR 6.1: fix - FrozenError: can't modify frozen object: []
 - Drop support for ActiveRecord older than 6.0.
