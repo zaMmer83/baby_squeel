@@ -10,12 +10,9 @@ jobs:
     name: Active Record ${{ matrix.activerecord }} on ruby ${{ matrix.ruby }} (compat=${{ matrix.compat }})
     strategy:
       matrix:
-        activerecord: ["~> 6.0", "~> 6.1", "~> 7.0"]
+        activerecord: ["~> 6.1", "~> 7.0"]
         compat: ["0", "1"]
-        ruby: [ "2.6", "2.7", "3.0", "3.1"]
-        exclude:
-          - activerecord: "~> 7.0"
-            ruby: "2.6"
+        ruby: ["3.0", "3.1"]
     env:
       AR: ${{ matrix.activerecord }}
       COMPAT: ${{ matrix.compat }}
