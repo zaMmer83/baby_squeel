@@ -1,7 +1,8 @@
 ## [Unreleased]
-- Update ransack to 4.1.
-- Drop support for Ruby 2.6 and 2.7.
-- Drop support for ActiveRecord 6.0.
+- Test for ruby 3.2
+- Update ransack to 4.1. (#126)
+- Drop support for Ruby 2.6 and 2.7. (#126)
+- Drop support for ActiveRecord 6.0. (#126)
 
 ## [2.0.0] - 2022-08-28
 
