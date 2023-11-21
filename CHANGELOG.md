@@ -1,8 +1,12 @@
 ## [Unreleased]
-- Test for ruby 3.2
-- Update ransack to 4.1. (#126)
-- Drop support for Ruby 2.6 and 2.7. (#126)
-- Drop support for ActiveRecord 6.0. (#126)
+
+## [3.0.0] - 2023-11-20
+
+- Added support for ActiveRecord 7.1 (#125)
+- Added support for Ruby 3.2 (#128)
+- Updated ransack to 4.1. (#126)
+- Droped support for Ruby 2.6 and 2.7. (#126)
+- Droped support for ActiveRecord 6.0. (#126)
 
 ## [2.0.0] - 2022-08-28
 
@@ -240,7 +244,9 @@
 
 - Initial support for selects, orders, wheres, and joins.
 
-[unreleased]: https://github.com/rzane/baby_squeel/compare/v1.4.4...HEAD
+[unreleased]: https://github.com/rzane/baby_squeel/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/rzane/baby_squeel/compare/v2.0.0...v3.0.0
+[2.0.0]: https://github.com/rzane/baby_squeel/compare/v1.4.4...v2.0.0
 [1.4.4]: https://github.com/rzane/baby_squeel/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/rzane/baby_squeel/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/rzane/baby_squeel/compare/v1.4.1...v1.4.2
